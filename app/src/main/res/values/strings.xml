@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Zealous</string>
+    <string name="folder_name_files">Files</string>
+    <string name="io_failure">I/O Error!!</string>
+    <string name="Byte">Bytes</string>
+    <string name="kilobytes">KB</string>
+    <string name="megabytes">MB</string>
+    <string name="gigabytes">GB</string>
+    <string name="file_not_found">No such file or directory</string>
+</resources>
