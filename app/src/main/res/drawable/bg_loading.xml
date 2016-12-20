@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:height="100.0dip" android:width="100.0dip" android:drawable="@color/white" />
+    <item android:gravity="center" android:height="24.0dip" android:width="24.0dip" android:drawable="@drawable/ic_hourglass_full_black_24dp" />
+</layer-list>

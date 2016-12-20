@@ -7,4 +7,35 @@
     <string name="megabytes">MB</string>
     <string name="gigabytes">GB</string>
     <string name="file_not_found">No such file or directory</string>
+    <string name="expense_tracker_home_title">Your Expenses In A Nutshell</string>
+    <string name="content_des_menu_item_icon">home_menu_item_icon</string>
+    <string name="expense_tracker">Expense Tracker</string>
+    <string name="live_exchange_rates">Live Exchange Rates</string>
+    <string name="bank_rates">Bank Rates</string>
+    <string name="other_rates">Other Rates</string>
+    <string name="calculators">Rate &amp; Tax Calculators</string>
+    <string name="home_expense_tracker_pie_char_description">Your expenses this month by category</string>
+    <string name="start_tracking">Start Tracking</string>
+    <string name="expense_tracker_home_notice">Tracking Your Spending Has Never Been This Easy!</string>
+    <string name="spending_today">Today</string>
+    <string name="spending_last_7_days">Last 7 days</string>
+    <string name="spending_last_month">This Month</string>
+    <string name="your_budget">Your Budget</string>
+    <string name="deficit">Deficit</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="no_rates_available">Connect To The Internet To Get The Latest Rates</string>
+    <string name="question_marks">\???</string>
+    <string name="exchange_rate_calculator">Exchange Rate Calculator</string>
+    <string name="exchange_rate_calc_description">Easily inter convert every currency (including Bitcoin) based on the latest rates.</string>
+    <string name="interest_calc">Interest Rate Calculator</string>
+    <string name="interest_calc_des">Easily calculate the amount your savings or treasury bills will accrue or even how much you will pay as interest for your loan.</string>
+    <string name="tax_calc">Vat and Income Tax Calculator</string>
+    <string name="tax_calc_des">VAT and Income Tax calculation made straight-forward!. Do it using the latest rates from Ghana Revenue Authority.</string>
+    <array name="home_menu_titles">
+        <item>@string/expense_tracker</item>
+        <item>@string/live_exchange_rates</item>
+        <item>@string/bank_rates</item>
+        <item>@string/other_rates</item>
+        <item>@string/calculators</item>
+    </array>
 </resources>

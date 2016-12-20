@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/empty_view_no_internet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerVertical="true"
+    android:layout_gravity="center_vertical"
+    android:background="@color/exchangeRatePrimary"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_gap"
+        android:contentDescription="@string/no_internet_connection"
+        android:src="@drawable/no_internet" />
+
+    <TextView
+        android:id="@+id/tv_text_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="@dimen/default_gap"
+        android:text="@string/no_rates_available"
+        android:textColor="@color/white" />
+</LinearLayout>

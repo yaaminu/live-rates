@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/add_new_expense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/default_gap"
+            android:background="@drawable/bg_white_corned"
+            android:padding="@dimen/default_gap"
+            android:text="@string/start_tracking"
+            android:textColor="@color/expenseColorPrimary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/add_new_expense"
+            android:layout_centerHorizontal="true"
+            android:padding="@dimen/default_gap"
+            android:text="@string/expense_tracker_home_notice"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/root_1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/pie_chart_summary"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/default_gap"
+                android:text="@string/home_expense_tracker_pie_char_description"
+                android:textColor="@color/gray_dark" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/summary_pane"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@color/expenseColorPrimary"
+            android:orientation="vertical"
+            android:padding="@dimen/default_gap">
+
+            <TextView
+                android:id="@+id/spending_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:gravity="center"
+                android:text="@string/expense_tracker_home_title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tv_spending_today"
+                style="@style/expense_summary_item"
+                android:layout_below="@+id/spending_title"
+                android:text="@string/spending_today" />
+
+            <TextView
+                android:id="@+id/tv_spending_last_7_days"
+                style="@style/expense_summary_item"
+                android:layout_below="@+id/tv_spending_today"
+                android:text="@string/spending_last_7_days" />
+
+            <TextView
+                android:id="@+id/tv_spending_this_month"
+                style="@style/expense_summary_item"
+                android:layout_below="@+id/tv_spending_last_7_days"
+                android:text="@string/spending_last_month" />
+
+            <TextView
+                android:id="@+id/tv_your_budget"
+                style="@style/expense_summary_item"
+                android:layout_below="@+id/tv_spending_this_month"
+                android:text="@string/your_budget" />
+
+            <TextView
+                android:id="@+id/tv_total_deficit"
+                style="@style/expense_summary_item"
+                android:layout_below="@+id/tv_your_budget"
+                android:text="@string/deficit" />
+
+            <TextView
+                android:id="@+id/last_sync"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="end"
+                android:textColor="@color/white"
+                android:textSize="12.0sp" />
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>
