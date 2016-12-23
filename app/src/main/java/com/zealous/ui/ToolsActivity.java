@@ -1,4 +1,4 @@
-package com.zealous;
+package com.zealous.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,11 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 import com.zealous.adapter.SimpleListItemHolder;
 import com.zealous.adapter.SimpleRecyclerViewAdapter;
 import com.zealous.adapter.Tuple;
-import com.zealous.ui.BaseZealousActivity;
 import com.zealous.utils.UiHelpers;
 
 import java.util.ArrayList;

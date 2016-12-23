@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ToolsActivity"
+            android:name=".ui.ToolsActivity"
             android:parentActivityName=".ui.MainActivity"
             tools:ignore="UnusedAttribute">
             <meta-data

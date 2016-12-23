@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.zealous.R;
-import com.zealous.ToolsActivity;
 import com.zealous.adapter.BaseAdapter;
 import com.zealous.adapter.HomeRecyclerViewAdapter;
 import com.zealous.utils.UiHelpers;
