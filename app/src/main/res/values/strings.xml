@@ -31,6 +31,7 @@
     <string name="interest_calc_des">Easily calculate the amount your savings or treasury bills will accrue or even how much you will pay as interest for your loan.</string>
     <string name="tax_calc">Vat and Income Tax Calculator</string>
     <string name="tax_calc_des">VAT and Income Tax calculation made straight-forward!. Do it using the latest rates from Ghana Revenue Authority.</string>
+    <string name="preparing_zealous_notice">Preparing for frist use</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

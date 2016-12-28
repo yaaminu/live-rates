@@ -1,5 +1,7 @@
 package com.zealous.utils;
 
+import android.support.annotation.Nullable;
+
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.persistentQueue.sqlite.SqliteJobQueue;
 
@@ -9,6 +11,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * by Null-Pointer on 11/28/2015.
@@ -25,6 +29,17 @@ public abstract class Task extends com.birbit.android.jobqueue.Job {
     protected Task() { //required to deserialize task
         super(new Params(1));
         isValid = false;
+    }
+
+    @Override
+    public void onAdded() {
+        PLog.d(TAG, "added %s", this);
+    }
+
+
+    @Override
+    protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
+        PLog.d(TAG, "cancelled job %s with cause %s", throwable);
     }
 
     protected final boolean isValid() {

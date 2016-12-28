@@ -14,10 +14,10 @@ import com.zealous.adapter.SimpleListItemHolder;
 import com.zealous.adapter.SimpleRecyclerViewAdapter;
 import com.zealous.ui.BaseFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import io.realm.Realm;
 
 /**
  * Created by yaaminu on 12/20/16.
@@ -26,6 +26,7 @@ public class ExchageRatesHome extends BaseFragment {
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
     List<ExchangeRate> items;
+    Realm realm;
 
     @Override
     protected int getLayout() {
@@ -35,18 +36,23 @@ public class ExchageRatesHome extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        items = new ArrayList<>(5);
-        items.add(new ExchangeRate("USD", "United States Dollars", "$", 4.01));
-        items.add(new ExchangeRate("EUR", "United States Dollars", "EUR", 4.5));
-        items.add(new ExchangeRate("GBP", "Great British Pound Sterlings", "GBP", 5.3));
-        items.add(new ExchangeRate("XOF", "West African CFA francs", "CFA", 7.8));
+        realm = ExchangeRate.Realm();
+        items = realm.where(ExchangeRate.class)
+                .equalTo(ExchangeRate.FIELD_WATCHING, true)
+                .findAll();
+    }
+
+    @Override
+    public void onDestroy() {
+        realm.close();
+        super.onDestroy();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new SimpleRecyclerViewAdapter<>(delegate));
+//        recyclerView.setAdapter(new SimpleRecyclerViewAdapter<>(delegate));
     }
 
     SimpleRecyclerViewAdapter.Delegate<ExchangeRate> delegate = new SimpleRecyclerViewAdapter.Delegate<ExchangeRate>() {

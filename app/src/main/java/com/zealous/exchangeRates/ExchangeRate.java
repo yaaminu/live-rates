@@ -1,33 +1,89 @@
 package com.zealous.exchangeRates;
 
-import com.zealous.adapter.ITuple;
+import android.content.Context;
 
+import com.zealous.utils.Config;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 /**
  * Created by yaaminu on 12/20/16.
  */
-public class ExchangeRate implements ITuple {
-    @PrimaryKey
-    public final String currency;
-    public final double rate;
-    public final String currencyName;
-    public final String currencySymbol;
+public class ExchangeRate extends RealmObject {
 
-    public ExchangeRate(String currIso, String currencyName, String currencySymbol, double rate) {
-        this.currency = currIso;
-        this.rate = rate;
-        this.currencyName = currencyName;
-        this.currencySymbol = currencySymbol;
+    public static final String FIELD_CURRENCY_ISO = "currencyIso";
+    public static final String FIELD_WATCHING = "watching";
+
+    @PrimaryKey
+    private String currencyIso;
+
+    private double rate;
+    @Required
+    private String currencyName;
+
+    @Required
+    private String currencySymbol;
+    private String namePlural;
+
+    private boolean watching;
+
+    public ExchangeRate() {
     }
 
-    @Override
-    public String getFirst() {
+    public ExchangeRate(String currIso, String currencyName, String currencySymbol, String namePlural, boolean watching) {
+        this.currencyIso = currIso;
+        this.currencyName = currencyName;
+        this.currencySymbol = currencySymbol;
+        this.namePlural = namePlural;
+        this.watching = watching;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+//
+//    @Override
+//    public String getFirst() {
+//        return currencyName;
+//    }
+//
+//    @Override
+//    public String getSecond() {
+//        return currencySymbol + "  " + rate;
+//    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public String getCurrencyIso() {
+        return currencyIso;
+    }
+
+    public String getCurrencyName() {
         return currencyName;
     }
 
-    @Override
-    public String getSecond() {
-        return currencySymbol + "  " + rate;
+    public String getCurrencySymbol() {
+        return currencySymbol;
+    }
+
+    public String getNamePlural() {
+        return namePlural;
+    }
+
+    public boolean isWatching() {
+        return watching;
+    }
+
+    public static Realm Realm() {
+        return Realm.getInstance(new RealmConfiguration
+                .Builder()
+                .directory(Config.getApplication().getDir("exchange_rates.realm", Context.MODE_PRIVATE))
+                .deleteRealmIfMigrationNeeded().build());
     }
 }
