@@ -45,6 +45,10 @@ public abstract class BaseAdapter<H extends BaseAdapter.Holder, T> extends Recyc
             super(v);
             ButterKnife.bind(this, v);
         }
+
+        public Context getContext() {
+            return itemView.getContext();
+        }
     }
 
 

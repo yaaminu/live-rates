@@ -17,6 +17,7 @@ public class ExchangeRate extends RealmObject implements ITuple {
 
     public static final String FIELD_CURRENCY_ISO = "currencyIso";
     public static final String FIELD_WATCHING = "watching";
+    public static final String FIELD_CURRENCY_NAME = "currencyName";
 
     @PrimaryKey
     private String currencyIso;

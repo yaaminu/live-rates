@@ -13,7 +13,7 @@ import android.view.View;
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 import com.zealous.adapter.HomeRecyclerViewAdapter;
-import com.zealous.utils.UiHelpers;
+import com.zealous.exchangeRates.ExchangeRateListActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,8 @@ import butterknife.Bind;
  * Created by yaaminu on 12/20/16.
  */
 
-public class HomeMenuItemsFragment extends BaseFragment {
+public class
+HomeMenuItemsFragment extends BaseFragment {
 
 
     @Bind(R.id.recycler_view)
@@ -71,8 +72,10 @@ public class HomeMenuItemsFragment extends BaseFragment {
 
         @Override
         public void onItemClick(BaseAdapter<HomeRecyclerViewAdapter.VHolder, HomeItem> adapter, View view, int position, long id) {
-            UiHelpers.showToast("Clicked " + adapter.getItem(position).title);
-            if (position == 4) {
+            if (position == 1) {
+                Intent intent = new Intent(getContext(), ExchangeRateListActivity.class);
+                startActivity(intent);
+            } else if (position == 4) {
                 Intent intent = new Intent(getContext(), ToolsActivity.class);
                 startActivity(intent);
             }

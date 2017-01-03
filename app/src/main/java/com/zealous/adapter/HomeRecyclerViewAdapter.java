@@ -1,6 +1,5 @@
 package com.zealous.adapter;
 
-import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,9 +44,6 @@ public class HomeRecyclerViewAdapter extends BaseAdapter<HomeRecyclerViewAdapter
             super(view);
         }
 
-        Context getContext() {
-            return itemView.getContext();
-        }
     }
 
 

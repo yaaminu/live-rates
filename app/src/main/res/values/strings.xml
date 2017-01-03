@@ -32,6 +32,8 @@
     <string name="tax_calc">Vat and Income Tax Calculator</string>
     <string name="tax_calc_des">VAT and Income Tax calculation made straight-forward!. Do it using the latest rates from Ghana Revenue Authority.</string>
     <string name="preparing_zealous_notice">Preparing for frist use</string>
+    <string name="content_descrip_currency_icon">Currency Icon</string>
+    <string name="rate_template" formatted="false">%s  %s</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
