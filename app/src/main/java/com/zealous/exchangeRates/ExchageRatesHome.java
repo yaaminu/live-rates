@@ -36,7 +36,7 @@ public class ExchageRatesHome extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        realm = ExchangeRate.Realm();
+        realm = ExchangeRate.Realm(getContext());
         items = realm.where(ExchangeRate.class)
                 .equalTo(ExchangeRate.FIELD_WATCHING, true)
                 .findAll();
@@ -52,7 +52,7 @@ public class ExchageRatesHome extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        recyclerView.setAdapter(new SimpleRecyclerViewAdapter<>(delegate));
+        recyclerView.setAdapter(new SimpleExchangeRate(delegate));
     }
 
     SimpleRecyclerViewAdapter.Delegate<ExchangeRate> delegate = new SimpleRecyclerViewAdapter.Delegate<ExchangeRate>() {

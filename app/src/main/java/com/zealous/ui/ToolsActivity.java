@@ -35,7 +35,20 @@ public class ToolsActivity extends BaseZealousActivity {
         items.add(new Tuple(getString(R.string.interest_calc), getString(R.string.interest_calc_des)));
         items.add(new Tuple(getString(R.string.tax_calc), getString(R.string.tax_calc_des)));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new SimpleRecyclerViewAdapter<>(delegate));
+        recyclerView.setAdapter(new ToolsRecyclerViewAdapter(delegate));
+    }
+
+    static class ToolsRecyclerViewAdapter extends SimpleRecyclerViewAdapter<Tuple> {
+        public ToolsRecyclerViewAdapter(SimpleRecyclerViewAdapter.Delegate<Tuple> delegate) {
+            super(delegate);
+        }
+
+        @Override
+        protected void doBindHolder(SimpleListItemHolder holder, int position) {
+            Tuple item = getItem(position);
+            holder.first.setText(item.getFirst());
+            holder.second.setText(item.getSecond());
+        }
     }
 
     @Override

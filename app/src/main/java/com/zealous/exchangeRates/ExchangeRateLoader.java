@@ -22,7 +22,8 @@ class ExchangeRateLoader {
             InputStream in = Config.getApplicationContext().getAssets().open("latest.json");
             return new JSONObject(IOUtils.toString(in));
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            throw new IOException(e);
+//            throw new RuntimeException(e);
         }
     }
 

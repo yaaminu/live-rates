@@ -47,7 +47,7 @@ public class BankRatesFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new SimpleRecyclerViewAdapter<>(delegate));
+        recyclerView.setAdapter(new BankRatesRecyclerViewAdapter(delegate));
     }
 
     private final SimpleRecyclerViewAdapter.Delegate<Tuple> delegate = new SimpleRecyclerViewAdapter.Delegate<Tuple>() {

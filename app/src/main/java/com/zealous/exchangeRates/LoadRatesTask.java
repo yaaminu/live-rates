@@ -54,7 +54,7 @@ public class LoadRatesTask extends Task {
     @Override
     public void onRun() throws Throwable {
         synchronized (LoadRatesTask.class) {
-            Realm realm = ExchangeRate.Realm();
+            Realm realm = ExchangeRate.Realm(getApplicationContext());
             try {
                 JSONObject jsonObject = ExchangeRateLoader.loadRates();
                 jsonObject = jsonObject.getJSONObject("rates");

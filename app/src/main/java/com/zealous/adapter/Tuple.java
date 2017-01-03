@@ -12,12 +12,10 @@ public class Tuple implements ITuple {
         this.second = second;
     }
 
-    @Override
     public String getFirst() {
         return first;
     }
 
-    @Override
     public String getSecond() {
         return second;
     }

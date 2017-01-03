@@ -53,15 +53,17 @@ public class ExchangeRateManager {
     public static void initialiseRates(Context context, Realm realm) {
         ThreadUtils.ensureNotMain();
         try {
-            InputStream inputStream = context.getAssets().open("currency.json");
+            InputStream inputStream = context.getAssets().open("currencies.json");
             JSONArray array = new JSONArray(IOUtils.toString(inputStream));
+            realm.beginTransaction();
             for (int i = 0; i < array.length(); i++) {
                 JSONObject entry = array.getJSONObject(i);
                 ExchangeRate rate = jsonObjectToExchangeRate(entry);
                 realm.copyToRealmOrUpdate(rate);
             }
+            realm.commitTransaction();
         } catch (IOException | JSONException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 

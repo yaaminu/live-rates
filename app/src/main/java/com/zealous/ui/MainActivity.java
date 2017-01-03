@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 
 import com.zealous.R;
+import com.zealous.exchangeRates.ExchangeRateManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -81,6 +82,7 @@ public class MainActivity extends BaseZealousActivity {
     @Override
     protected void doCreate(@Nullable Bundle savedInstanceState) {
         super.doCreate(savedInstanceState);
+        ExchangeRateManager.loadRates();
         assert toolbar != null;
         toolbar.setNavigationIcon(R.drawable.ic_home_black_24dp);
         titles = getResources().getStringArray(R.array.home_menu_titles);

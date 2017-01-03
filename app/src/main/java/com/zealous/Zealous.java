@@ -19,6 +19,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
  */
 
 public class Zealous extends Application {
+
+    private JobRunnerImpl runner;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -29,7 +32,8 @@ public class Zealous extends Application {
                 .customLogger(new PLog("JobManager"))
                 .jobSerializer(new Task.JobSerializer())
                 .build();
-        TaskManager.init(new JobRunnerImpl(new JobManager(config)));
+        runner = new JobRunnerImpl(new JobManager(config));
+        TaskManager.init(runner);
         CalligraphyConfig.Builder configBuilder = new CalligraphyConfig.Builder().setDefaultFontPath(null);
         CalligraphyConfig.initDefault(configBuilder.build());
     }

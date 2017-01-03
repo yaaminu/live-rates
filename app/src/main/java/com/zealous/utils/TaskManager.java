@@ -141,7 +141,7 @@ public class TaskManager {
 
     private static void ensureInitialised() {
         if (!initialised.get()) {
-            throw new IllegalArgumentException("did you forget to init()?");
+            //     throw new IllegalArgumentException("did you forget to init()?");
         }
     }
 

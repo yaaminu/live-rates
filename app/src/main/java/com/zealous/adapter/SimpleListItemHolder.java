@@ -12,9 +12,9 @@ import butterknife.Bind;
  */
 public class SimpleListItemHolder extends BaseAdapter.Holder {
     @Bind(R.id.tv_first)
-    TextView first;
+    public TextView first;
     @Bind(R.id.tv_second)
-    TextView second;
+    public TextView second;
 
     public SimpleListItemHolder(View view) {
         super(view);

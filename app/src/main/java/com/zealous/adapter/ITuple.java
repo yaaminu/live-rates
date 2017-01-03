@@ -5,7 +5,4 @@ package com.zealous.adapter;
  */
 public interface ITuple {
 
-    public String getFirst();
-
-    public String getSecond();
 }

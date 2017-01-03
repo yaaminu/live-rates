@@ -9,18 +9,12 @@ import com.zealous.R;
  * Created by yaaminu on 12/20/16.
  */
 
-public class SimpleRecyclerViewAdapter<T extends ITuple> extends BaseAdapter<SimpleListItemHolder, T> {
+public abstract class SimpleRecyclerViewAdapter<T extends ITuple> extends BaseAdapter<SimpleListItemHolder, T> {
 
     public SimpleRecyclerViewAdapter(Delegate<T> delegate) {
         super(delegate);
     }
 
-    @Override
-    protected void doBindHolder(SimpleListItemHolder holder, int position) {
-        ITuple item = getItem(position);
-        holder.first.setText(item.getFirst());
-        holder.second.setText(item.getSecond());
-    }
 
     @Override
     public SimpleListItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {

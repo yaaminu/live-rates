@@ -2,7 +2,7 @@ package com.zealous.exchangeRates;
 
 import android.content.Context;
 
-import com.zealous.utils.Config;
+import com.zealous.adapter.ITuple;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -13,7 +13,7 @@ import io.realm.annotations.Required;
 /**
  * Created by yaaminu on 12/20/16.
  */
-public class ExchangeRate extends RealmObject {
+public class ExchangeRate extends RealmObject implements ITuple {
 
     public static final String FIELD_CURRENCY_ISO = "currencyIso";
     public static final String FIELD_WATCHING = "watching";
@@ -80,10 +80,10 @@ public class ExchangeRate extends RealmObject {
         return watching;
     }
 
-    public static Realm Realm() {
+    public static Realm Realm(Context context) {
         return Realm.getInstance(new RealmConfiguration
                 .Builder()
-                .directory(Config.getApplication().getDir("exchange_rates.realm", Context.MODE_PRIVATE))
+                .directory(context.getDir("exchange_rates.realm", Context.MODE_PRIVATE))
                 .deleteRealmIfMigrationNeeded().build());
     }
 }

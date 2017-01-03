@@ -37,15 +37,16 @@ public class SetupActivity extends AppCompatActivity {
                 if (ThreadUtils.isMainThread()) {
                     gotoMainActivity();
                 } else {
-                    Realm realm = ExchangeRate.Realm();
+                    Realm realm = ExchangeRate.Realm(SetupActivity.this);
                     try {
-//                        if (realm.where(ExchangeRate.class).count() < 120) {
-                        ExchangeRateManager.initialiseRates(SetupActivity.this, realm);
-//                        }
+                        if (realm.where(ExchangeRate.class).count() < 120) {
+                            ExchangeRateManager.initialiseRates(SetupActivity.this, realm);
+                        }
                         runOnUiThread(this);
                     } finally {
                         realm.close();
                     }
+                    runOnUiThread(this);
                 }
             }
         }, false);
