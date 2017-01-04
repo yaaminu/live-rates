@@ -31,6 +31,7 @@
         <activity android:name=".EmptyActivity" />
         <activity
             android:name=".exchangeRates.ExchangeRateListActivity"
+            android:label="@string/live_exchange_rates"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
