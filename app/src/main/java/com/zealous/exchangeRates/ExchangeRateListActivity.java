@@ -10,22 +10,25 @@ import android.view.View;
 
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
-import com.zealous.ui.BaseZealousActivity;
+import com.zealous.utils.GenericUtils;
 import com.zealous.utils.ViewUtils;
 
 import java.util.List;
 
 import butterknife.Bind;
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
-public class ExchangeRateListActivity extends BaseZealousActivity {
+public class ExchangeRateListActivity extends SearchActivity {
 
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
     @Bind(R.id.empty_view_no_internet)
     View emptyView;
+
+    String filter;
 
     RealmResults<ExchangeRate> exchangeRates;
     private Realm realm;
@@ -75,22 +78,31 @@ public class ExchangeRateListActivity extends BaseZealousActivity {
 
         @NonNull
         @Override
-        public List<ExchangeRate> dataSet() {
-            if (exchangeRates.isEmpty()) {
+        public List<ExchangeRate> dataSet(String constraint) {
+            List<ExchangeRate> ret;
+            if (GenericUtils.isEmpty(constraint)) {
+                ret = exchangeRates;
+            } else {
+                ret = realm.where(ExchangeRate.class).beginsWith(ExchangeRate.FIELD_CURRENCY_NAME, constraint, Case.INSENSITIVE)
+                        .or()
+                        .equalTo(ExchangeRate.FIELD_CURRENCY_ISO, constraint, Case.INSENSITIVE)
+                        .findAllSorted(ExchangeRate.FIELD_CURRENCY_NAME);
+            }
+            if (ret.isEmpty()) {
                 com.zealous.utils.ViewUtils.showViews(emptyView);
                 ViewUtils.hideViews(recyclerView);
             } else {
                 ViewUtils.hideViews(emptyView);
                 ViewUtils.showViews(recyclerView);
             }
-            return exchangeRates;
+            return ret;
         }
     };
 
     final RealmChangeListener<RealmResults<ExchangeRate>> changeListener = new RealmChangeListener<RealmResults<ExchangeRate>>() {
         @Override
         public void onChange(RealmResults<ExchangeRate> element) {
-            adapter.notifyDataChanged();
+            adapter.notifyDataChanged(filter);
         }
     };
 
@@ -98,5 +110,11 @@ public class ExchangeRateListActivity extends BaseZealousActivity {
     protected void onDestroy() {
         realm.close();
         super.onDestroy();
+    }
+
+    @Override
+    protected void doSearch(String constraint) {
+        this.filter = constraint;
+        adapter.notifyDataChanged(constraint);
     }
 }

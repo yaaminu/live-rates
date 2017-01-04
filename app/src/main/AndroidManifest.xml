@@ -29,7 +29,14 @@
         </activity>
         <activity android:name=".ui.MainActivity" />
         <activity android:name=".EmptyActivity" />
-        <activity android:name=".exchangeRates.ExchangeRateListActivity"></activity>
+        <activity
+            android:name=".exchangeRates.ExchangeRateListActivity"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.MainActivity" />
+
+        </activity>
     </application>
 
 </manifest>

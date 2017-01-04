@@ -73,7 +73,7 @@ public class BankRatesFragment extends BaseFragment {
 
         @NonNull
         @Override
-        public List<Tuple> dataSet() {
+        public List<Tuple> dataSet(String constraint) {
             return items;
         }
     };

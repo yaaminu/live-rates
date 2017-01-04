@@ -84,7 +84,7 @@ public class ToolsActivity extends BaseZealousActivity {
 
         @NonNull
         @Override
-        public List<Tuple> dataSet() {
+        public List<Tuple> dataSet(String constraint) {
             return items;
         }
     };

@@ -78,7 +78,7 @@ public class ExchageRatesHome extends BaseFragment {
 
         @NonNull
         @Override
-        public List<ExchangeRate> dataSet() {
+        public List<ExchangeRate> dataSet(String constraint) {
             return items;
         }
     };

@@ -30,7 +30,7 @@ public abstract class BaseAdapter<H extends BaseAdapter.Holder, T> extends Recyc
     protected final LayoutInflater inflater;
 
     public BaseAdapter(Delegate<H, T> delegate) {
-        this.items = delegate.dataSet();
+        this.items = delegate.dataSet("");
         this.delegate = delegate;
         inflater = LayoutInflater.from(delegate.context());
     }
@@ -60,7 +60,7 @@ public abstract class BaseAdapter<H extends BaseAdapter.Holder, T> extends Recyc
      * {@link #outOfSync()}.
      */
     protected final void onInSync() {
-        notifyDataChanged();
+        notifyDataChanged("");
     }
 
     /**
@@ -110,13 +110,13 @@ public abstract class BaseAdapter<H extends BaseAdapter.Holder, T> extends Recyc
      * notify the adapter that it's dataset has changed
      * please use this  instead of {@link #notifyDataSetChanged()} for correct behaviour
      */
-    public void notifyDataChanged() {
+    public void notifyDataChanged(String constraint) {
         //the best place to do this is in notifyDataSetChanged() but its final so we cannot override it
         if (outOfSync()) {
             PLog.v(TAG, "out of sync");
             return;
         }
-        items = delegate.dataSet();
+        items = delegate.dataSet(constraint);
         notifyDataSetChanged();
     }
 
@@ -167,7 +167,7 @@ public abstract class BaseAdapter<H extends BaseAdapter.Holder, T> extends Recyc
          * @return the dataset used to back this adapter, may not be null
          */
         @NonNull
-        List<T> dataSet();
+        List<T> dataSet(String constrain);
 
     }
 

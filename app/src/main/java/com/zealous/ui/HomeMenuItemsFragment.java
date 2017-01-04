@@ -88,7 +88,7 @@ HomeMenuItemsFragment extends BaseFragment {
 
         @NonNull
         @Override
-        public List<HomeItem> dataSet() {
+        public List<HomeItem> dataSet(String constraint) {
             return homeItems;
         }
     };

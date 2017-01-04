@@ -34,6 +34,9 @@
     <string name="preparing_zealous_notice">Preparing for frist use</string>
     <string name="content_descrip_currency_icon">Currency Icon</string>
     <string name="rate_template" formatted="false">%s  %s</string>
+    <string name="last_updated_s">Last updated %s</string>
+    <string name="search">Search</string>
+    <string name="hint_search">Search...</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
