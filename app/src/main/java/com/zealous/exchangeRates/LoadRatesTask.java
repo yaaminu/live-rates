@@ -81,9 +81,10 @@ public class LoadRatesTask extends Task {
             ExchangeRate rate = realm.where(ExchangeRate.class)
                     .equalTo(ExchangeRate.FIELD_CURRENCY_ISO, key).findFirst();
             if (rate != null) {
-                double tempRate = BigDecimal.ONE.divide(BigDecimal.valueOf(jsonObject.getDouble(key)), MathContext.DECIMAL32)
-                        .multiply(BigDecimal.valueOf(baseRate), MathContext.DECIMAL32).doubleValue();
+                double tempRate = BigDecimal.ONE.divide(BigDecimal.valueOf(baseRate), MathContext.DECIMAL32)
+                        .multiply(BigDecimal.valueOf(jsonObject.getDouble(key)), MathContext.DECIMAL32).doubleValue();
                 rate.setRate(tempRate);
+                realm.copyToRealmOrUpdate(rate);
             } else {
                 PLog.f(TAG, "no data for currency %s", key);
             }
