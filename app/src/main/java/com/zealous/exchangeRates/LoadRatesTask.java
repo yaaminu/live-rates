@@ -92,6 +92,7 @@ public class LoadRatesTask extends Task {
 
     @Override
     protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
+        PLog.d(TAG, "job failed with error: " + throwable.getMessage(), throwable);
         return RetryConstraint.createExponentialBackoff(runCount, 100);
     }
 
