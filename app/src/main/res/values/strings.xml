@@ -37,6 +37,12 @@
     <string name="last_updated_s">Last updated %s</string>
     <string name="search">Search</string>
     <string name="hint_search">Search...</string>
+    <string name="arrow">Arrow</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="_7_days_ago">7 days ago</string>
+    <string name="a_month_ago">A month ago</string>
+    <string name="back">Back</string>
+    <string name="today_title">Today, %s</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

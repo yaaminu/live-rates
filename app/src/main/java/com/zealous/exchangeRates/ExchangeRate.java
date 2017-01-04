@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.zealous.adapter.ITuple;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmObject;
@@ -87,4 +90,11 @@ public class ExchangeRate extends RealmObject implements ITuple {
                 .directory(context.getDir("exchange_rates.realm", Context.MODE_PRIVATE))
                 .deleteRealmIfMigrationNeeded().build());
     }
+
+    public static final NumberFormat FORMAT = DecimalFormat.getNumberInstance();
+
+    static {
+        FORMAT.setMaximumFractionDigits(2);
+    }
+
 }

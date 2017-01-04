@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#ffffffff">
+
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/back"
+            android:padding="@dimen/default_gap"
+            android:src="@drawable/ic_clear_black24dp" />
+
+        <android.support.v7.widget.GridLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="@dimen/activity_horizontal_margin"
+            app:columnCount="3"
+            app:orientation="horizontal"
+            app:useDefaultMargins="true">
+
+            <TextView
+                android:id="@+id/title_today"
+                fontPath="fonts/roboto-light.ttf"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                app:layout_columnSpan="3"
+                app:layout_columnWeight="1.0"
+                tools:ignore="MissingPrefix"
+                tools:text="Today 11, May" />
+
+            <android.support.v4.widget.Space
+                android:layout_height="@dimen/default_gap"
+                android:layout_marginBottom="@dimen/default_gap"
+                app:layout_columnSpan="3"
+                app:layout_columnWeight="1.0" />
+
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_columnWeight="1.0"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:id="@+id/iv_currency_icon_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/content_descrip_currency_icon"
+                    tools:src="@drawable/ghs" />
+
+                <TextView
+                    android:id="@+id/tv_currency_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:paddingTop="2.0dip"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textSize="12.0sp"
+                    tools:text="Ghanaian Cedis" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/ib_compare_arrow"
+                android:background="@color/transparent"
+                android:contentDescription="@string/arrow"
+                android:src="@drawable/ic_compare_arrows_24dp"
+                app:layout_columnWeight="1.0" />
+
+            <LinearLayout
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_columnWeight="1.0"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:id="@+id/iv_currency_icon_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/content_descrip_currency_icon"
+                    tools:src="@drawable/usd" />
+
+                <TextView
+                    android:id="@+id/tv_currency_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:paddingTop="2.0dip"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textSize="12.0sp"
+                    app:layout_columnWeight="1.0"
+                    tools:text="United States Dollars" />
+            </LinearLayout>
+
+            <android.support.v4.widget.Space
+                android:layout_height="@dimen/default_gap"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                app:layout_columnSpan="3"
+                app:layout_columnWeight="1.0" />
+
+
+            <EditText
+                android:id="@+id/tv_currency_from_rate"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:inputType="numberDecimal"
+                android:maxLength="@integer/currency_name_max"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                app:layout_columnWeight="1.0"
+                tools:text="1.00" />
+
+            <android.support.v4.widget.Space app:layout_columnWeight="1.0" />
+
+            <EditText
+                android:id="@+id/tv_currency_to_rate"
+                android:gravity="center"
+                android:inputType="numberDecimal"
+                android:maxLength="@integer/currency_name_max"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                app:layout_columnWeight="1.0"
+                tools:text="3.98" />
+        </android.support.v7.widget.GridLayout>
+    </android.support.v7.widget.CardView>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ff263238">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffffff"
+            android:orientation="vertical"
+            android:weightSum="1.0">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:padding="@dimen/activity_horizontal_margin">
+
+                <LinearLayout
+                    android:layout_width="0.0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_yesterday_rate"
+                        fontPath="fonts/roboto-light.ttf"
+                        android:layout_width="72.0dip"
+                        android:layout_height="72.0dip"
+                        android:background="@drawable/ic_lens_yellow_24dp"
+                        android:gravity="center"
+                        android:padding="@dimen/default_gap"
+                        android:textColor="@android:color/white"
+                        android:textSize="12.0sp"
+                        tools:ignore="MissingPrefix"
+                        tools:text="3.89" />
+
+                    <TextView
+                        android:id="@+id/tv_yesterday_rate_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/yesterday"
+                        android:textColor="@android:color/black"
+                        app:layout_columnWeight="1.0" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0.0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_7_days_ago_rate"
+                        fontPath="fonts/roboto-light.ttf"
+                        android:layout_width="72.0dip"
+                        android:layout_height="72.0dip"
+                        android:background="@drawable/ic_lens_red_24dp"
+                        android:gravity="center"
+                        android:padding="@dimen/default_gap"
+                        android:textColor="@android:color/white"
+                        android:textSize="12.0sp"
+                        tools:ignore="MissingPrefix"
+                        tools:text="3.94" />
+
+                    <TextView
+                        android:id="@+id/tv_7_days_ago_rate_title"
+                        fontPath="fonts/roboto-regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_7_days_ago"
+                        android:textColor="@android:color/black"
+                        app:layout_columnWeight="1.0"
+                        tools:ignore="MissingPrefix" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0.0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_last_month_rate"
+                        fontPath="fonts/roboto-light.ttf"
+                        android:layout_width="72.0dip"
+                        android:layout_height="72.0dip"
+                        android:background="@drawable/ic_lens_green_24dp"
+                        android:gravity="center"
+                        android:padding="@dimen/default_gap"
+                        android:textColor="@android:color/white"
+                        android:textSize="12.0sp"
+                        tools:ignore="MissingPrefix"
+                        tools:text="3.98" />
+
+                    <TextView
+                        android:id="@+id/tv_last_month_rate_title"
+                        fontPath="fonts/roboto-regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/a_month_ago"
+                        android:textColor="@android:color/black"
+                        app:layout_columnWeight="1.0"
+                        tools:ignore="MissingPrefix" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_gap"
+                android:background="@color/graph_background"
+                android:gravity="center">
+
+                <lecho.lib.hellocharts.view.LineChartView
+                    android:id="@+id/graph_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/graph_title"
+                    android:background="@color/graph_background"
+                    android:minHeight="240.0dip" />
+
+                <TextView
+                    android:id="@+id/graph_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="top"
+                    android:padding="@dimen/default_gap"
+                    android:textColor="#ffffffff"
+                    android:textSize="12.0sp"
+                    tools:text="Ghana cedis against the US dollars" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -36,7 +36,7 @@ public class ExchangeRatesListAdapter extends BaseAdapter<ExchangeRatesListAdapt
         );
         holder.currencyName.setText(rate.getCurrencyName());
         holder.currencyRate.setText(holder.getContext().getString(R.string.rate_template,
-                rate.getCurrencySymbol(), "" + rate.getRate()));
+                rate.getCurrencySymbol(), "" + ExchangeRate.FORMAT.format(rate.getRate())));
     }
 
     @Override
