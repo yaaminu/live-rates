@@ -11,7 +11,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/default_gap">
 
 
         <ImageView
@@ -61,10 +62,9 @@
         android:id="@+id/divider"
         android:layout_width="fill_parent"
         android:layout_height="0.100000024dip"
-        android:layout_marginBottom="@dimen/default_gap"
         android:layout_marginLeft="8.0dip"
         android:layout_marginRight="8.0dip"
-        android:layout_marginTop="@dimen/default_gap"
+        android:layout_marginTop="2dp"
         android:background="#22000000"
         app:layout_columnSpan="2" />
 </LinearLayout>
