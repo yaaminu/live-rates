@@ -44,7 +44,7 @@ public abstract class BaseZealousActivity extends AppCompatActivity {
         doCreate(savedInstanceState);
     }
 
-    protected void setUpStatusBarColor(@ColorRes int colorRes) {
+    protected final void setUpStatusBarColor(@ColorRes int colorRes) {
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, colorRes));
         }

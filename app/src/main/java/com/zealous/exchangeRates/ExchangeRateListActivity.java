@@ -25,6 +25,8 @@ import io.realm.RealmResults;
 
 public class ExchangeRateListActivity extends SearchActivity {
 
+    public static final String EXTRA_PICK_CURRENCY = "pick_currrency";
+    public static final String EXTRA_SELECTED = "selected";
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
     @Bind(R.id.empty_view_no_internet)
@@ -56,6 +58,11 @@ public class ExchangeRateListActivity extends SearchActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ExchangeRatesListAdapter(delegate);
         recyclerView.setAdapter(adapter);
+        if (EXTRA_PICK_CURRENCY.equals(getIntent().getAction())) {
+            //noinspection ConstantConditions
+            getSupportActionBar().setTitle(R.string.select_currency);
+        }
+
     }
 
     private ExchangeRatesListAdapter.Delegate delegate = new ExchangeRatesListAdapter.Delegate() {
@@ -68,10 +75,19 @@ public class ExchangeRateListActivity extends SearchActivity {
         public void onItemClick
                 (BaseAdapter<ExchangeRatesListAdapter.Holder, ExchangeRate> adapter, View view,
                  int position, long id) {
-            Intent intent = new Intent(context(), ExchangeRateDetailActivity.class);
-            intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_SOURCE,"GHS");
-            intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_TARGET,adapter.getItem(position).getCurrencyIso());
-            startActivity(intent);
+            if (EXTRA_PICK_CURRENCY.equals(getIntent().getAction())) {
+                Intent results = new Intent();
+                Bundle bundle = new Bundle(1);
+                bundle.putString(EXTRA_SELECTED, adapter.getItem(position).getCurrencyIso());
+                results.putExtras(bundle);
+                setResult(RESULT_OK, results);
+                finish();
+            } else {
+                Intent intent = new Intent(context(), ExchangeRateDetailActivity.class);
+                intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_SOURCE, "GHS");
+                intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_TARGET, adapter.getItem(position).getCurrencyIso());
+                startActivity(intent);
+            }
         }
 
         @Override

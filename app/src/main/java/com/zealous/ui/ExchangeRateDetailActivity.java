@@ -1,20 +1,41 @@
 package com.zealous.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.text.Editable;
 import android.text.format.DateUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.zealous.R;
 import com.zealous.exchangeRates.ExchangeRate;
+import com.zealous.exchangeRates.ExchangeRateListActivity;
+import com.zealous.exchangeRates.ExchangeRateManager;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.Bind;
@@ -31,6 +52,8 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     public static final String EXTRA_CURRENCY_TARGET = "currency_target";
     public static final String EXTRA_CURRENCY_SOURCE = "currency_source";
     public static final String TAG = ExchangeRateDetailActivity.class.getSimpleName();
+    public static final int PICK_EXCHANGE_RATE_REQUEST_FROM = 1001;
+    private static final int PICK_EXCHANGE_RATE_REQUEST_TO = 1002;
     @Bind(R.id.tv_currency_from_rate)
     EditText currencyFromRate;
     @Bind(R.id.tv_currency_to_rate)
@@ -52,6 +75,13 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     @Bind(R.id.tv_last_month_rate)
     TextView lastMonthRate;
 
+    @Bind(R.id.graph_view)
+    com.github.mikephil.charting.charts.LineChart lineChartView;
+
+    @Bind(R.id.drawer)
+    DrawerLayout drawer;
+    List<ExchangeRate> historicalRates;
+
     private Realm realm;
     private ExchangeRate rateTo, rateFrom;
     private String to;
@@ -59,7 +89,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
 
     @Override
     protected boolean hasParent() {
-        return true;
+        return false;
     }
 
     @Override
@@ -77,19 +107,35 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         TextView title = ButterKnife.findById(this, R.id.title_today);
         title.setText(getString(R.string.today_title, DateUtils.formatDateTime(this, System.currentTimeMillis(),
                 FORMAT_SHOW_DATE)));
-        lastMonthRate.setText("0.00");
-        yesterdayRate.setText("0.00");
-        $7daysAgoRate.setText("0.00");
-
+        historicalRates = new ArrayList<>(30);
         selfChanged = true;
         currencyFromRate.setText("1.00");
         selfChanged = false;
+        setUpStatusBarColor(R.color.exchangeRatePrimaryDark);
+        toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.exchangeRatePrimary));
+        getSupportActionBar().setTitle(R.string.historical_rates_title);
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
         refreshDisplay(false);
+        EventBus.getDefault().register(this);
+        ExchangeRateManager.loadHistoricalRates(from, to);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Object event) {
+        //noinspection unchecked,unchecked
+        historicalRates = ((List<ExchangeRate>) event);
+        refreshDisplay(false);
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Override
@@ -139,16 +185,30 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
             double inputTo = getDouble(currencyToRate.getText().toString().trim()),
                     inputFrom = getDouble(currencyFromRate.getText().toString().trim());
 
+            double tmp;
             if (toChanged) {
-                double tmp = BigDecimal.valueOf(inputTo).divide(BigDecimal.valueOf(rateTo.getRate()), MathContext.DECIMAL128)
+                tmp = BigDecimal.valueOf(inputTo).divide(BigDecimal.valueOf(rateTo.getRate()), MathContext.DECIMAL128)
                         .multiply(BigDecimal.valueOf(rateFrom.getRate())).doubleValue();
                 currencyFromRate.setText(FORMAT.format(tmp));
 
             } else {
-                double tmp = BigDecimal.valueOf(inputFrom).divide(BigDecimal.valueOf(rateFrom.getRate()), MathContext.DECIMAL128)
+                tmp = BigDecimal.valueOf(inputFrom).divide(BigDecimal.valueOf(rateFrom.getRate()), MathContext.DECIMAL128)
                         .multiply(BigDecimal.valueOf(rateTo.getRate())).doubleValue();
                 currencyToRate.setText(FORMAT.format(tmp));
             }
+            if (!historicalRates.isEmpty()) {
+                yesterdayRate.setText(FORMAT.format(historicalRates.get(0).getRate()));
+                $7daysAgoRate.setText(FORMAT.format(historicalRates.get(5).getRate()));
+                lastMonthRate.setText(FORMAT.format(historicalRates.get(26).getRate()));
+                plotGraph();
+            } else {
+                yesterdayRate.setText(FORMAT.format(0));
+                $7daysAgoRate.setText(FORMAT.format(0));
+                lastMonthRate.setText(FORMAT.format(0));
+                clearGraph();
+            }
+        } catch (Exception e) {
+            PLog.e(TAG, e.getMessage(), e);
         } finally {
             selfChanged = false;
         }
@@ -163,14 +223,113 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         }
     }
 
-    @OnClick({R.id.back, R.id.iv_currency_icon_from, R.id.iv_currency_icon_to})
+    @OnClick({R.id.back, R.id.open_history, R.id.iv_currency_icon_from, R.id.iv_currency_icon_to})
     void onclick(View v) {
         switch (v.getId()) {
             case R.id.back:
                 finish();
                 break;
+            case R.id.open_history:
+                if (!drawer.isDrawerOpen(Gravity.RIGHT)) {
+                    setupFragmentPagerAdapter();
+                    drawer.openDrawer(Gravity.RIGHT);
+                }
+                break;
+            case R.id.iv_currency_icon_from:
+                Intent intent = new Intent(this, ExchangeRateListActivity.class);
+                intent.setAction(ExchangeRateListActivity.EXTRA_PICK_CURRENCY);
+                startActivityForResult(intent, PICK_EXCHANGE_RATE_REQUEST_FROM);
+                break;
+            case R.id.iv_currency_icon_to:
+                intent = new Intent(this, ExchangeRateListActivity.class);
+                intent.setAction(ExchangeRateListActivity.EXTRA_PICK_CURRENCY);
+                startActivityForResult(intent, PICK_EXCHANGE_RATE_REQUEST_TO);
+                break;
             default:
                 throw new AssertionError();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_EXCHANGE_RATE_REQUEST_FROM || requestCode == PICK_EXCHANGE_RATE_REQUEST_TO) {
+            if (resultCode == RESULT_OK) {
+                String ret = data.getStringExtra(ExchangeRateListActivity.EXTRA_SELECTED);
+                if (requestCode == PICK_EXCHANGE_RATE_REQUEST_TO) {
+                    to = ret;
+                    refreshDisplay(true);
+                } else {
+                    from = ret;
+                    refreshDisplay(false);
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    ViewPager pager;
+
+    private void setupFragmentPagerAdapter() {
+        if (pager == null) {
+            pager = ButterKnife.findById(this, R.id.pager);
+            TabLayout tablayout = ButterKnife.findById(this, R.id.tab_strip);
+            pager.setAdapter(new FragmentPagerAdapterCustom(getSupportFragmentManager(), getResources().getStringArray(R.array.months)));
+            tablayout.setupWithViewPager(pager);
+        }
+    }
+
+    static class FragmentPagerAdapterCustom extends FragmentStatePagerAdapter {
+
+        private final int currentMonth;
+        private final int currentYear;
+        private final String[] titles;
+
+        public FragmentPagerAdapterCustom(FragmentManager fragmentManager, String[] titles) {
+            super(fragmentManager);
+            Calendar calendar = Calendar.getInstance(Locale.US);
+            currentMonth = calendar.get(Calendar.MONTH);
+            currentYear = calendar.get(Calendar.YEAR);
+            this.titles = titles;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return HistoricalRateMontFragment.create(currentYear, position);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
+        }
+
+        @Override
+        public int getCount() {
+            return currentMonth + 1;
+        }
+    }
+
+    void plotGraph() {
+        List<Entry> pointValues = new ArrayList<>(historicalRates.size());
+        for (int i = 0; i < historicalRates.size(); i++) {
+            pointValues.add(new Entry(i, ((float) historicalRates.get(i).getRate())));
+        }
+        LineDataSet line = new LineDataSet(pointValues, "rates");
+        LineData data = new LineData(line);
+        lineChartView.setData(data);
+    }
+
+    void clearGraph() {
+        LineData lineCharData = new LineData();
+        lineChartView.setData(lineCharData);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(Gravity.RIGHT)) {
+            drawer.closeDrawer(Gravity.RIGHT);
+            return;
+        }
+        super.onBackPressed();
     }
 }

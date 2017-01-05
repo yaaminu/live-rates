@@ -43,6 +43,9 @@
     <string name="a_month_ago">A month ago</string>
     <string name="back">Back</string>
     <string name="today_title">Today, %s</string>
+    <string name="missing">\?\?</string>
+    <string name="historical_rates_title">Rates This Year</string>
+    <string name="select_currency">Selected Currency</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
