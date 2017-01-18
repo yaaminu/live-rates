@@ -24,6 +24,7 @@ import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class ExchangeRateListActivity extends SearchActivity {
 
@@ -98,7 +99,8 @@ public class ExchangeRateListActivity extends SearchActivity {
                 ret = realm.where(ExchangeRate.class).beginsWith(ExchangeRate.FIELD_CURRENCY_NAME, constraint, Case.INSENSITIVE)
                         .or()
                         .equalTo(ExchangeRate.FIELD_CURRENCY_ISO, constraint, Case.INSENSITIVE)
-                        .findAllSorted(ExchangeRate.FIELD_CURRENCY_NAME);
+                        .findAllSorted(ExchangeRate.FIELD_WATCHING, Sort.DESCENDING,
+                                ExchangeRate.FIELD_CURRENCY_NAME, Sort.ASCENDING);
             }
             if (ret.isEmpty()) {
                 com.zealous.utils.ViewUtils.showViews(emptyView);
@@ -125,7 +127,9 @@ public class ExchangeRateListActivity extends SearchActivity {
     protected void doCreate(@Nullable Bundle savedInstanceState) {
         super.doCreate(savedInstanceState);
         realm = ExchangeRate.Realm(this);
-        exchangeRates = realm.where(ExchangeRate.class).findAllSortedAsync(ExchangeRate.FIELD_CURRENCY_NAME);
+        exchangeRates = realm.where(ExchangeRate.class).
+                findAllSortedAsync(ExchangeRate.FIELD_WATCHING, Sort.DESCENDING,
+                        ExchangeRate.FIELD_CURRENCY_NAME, Sort.ASCENDING);
         exchangeRates.addChangeListener(changeListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ExchangeRatesListAdapter(delegate);

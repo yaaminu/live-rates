@@ -27,34 +27,6 @@ public class ExchageRatesHome extends BaseFragment {
     RecyclerView recyclerView;
     List<ExchangeRate> items;
     Realm realm;
-
-    @Override
-    protected int getLayout() {
-        return R.layout.home_exchange_rates;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        realm = ExchangeRate.Realm(getContext());
-        items = realm.where(ExchangeRate.class)
-                .equalTo(ExchangeRate.FIELD_WATCHING, true)
-                .findAll();
-    }
-
-    @Override
-    public void onDestroy() {
-        realm.close();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new SimpleExchangeRate(delegate));
-    }
-
     SimpleRecyclerViewAdapter.Delegate<ExchangeRate> delegate = new SimpleRecyclerViewAdapter.Delegate<ExchangeRate>() {
         @Override
         public Context context() {
@@ -82,4 +54,31 @@ public class ExchageRatesHome extends BaseFragment {
             return items;
         }
     };
+
+    @Override
+    protected int getLayout() {
+        return R.layout.home_exchange_rates;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        realm = ExchangeRate.Realm(getContext());
+        items = realm.where(ExchangeRate.class)
+                .equalTo(ExchangeRate.FIELD_WATCHING, 1)
+                .findAll();
+    }
+
+    @Override
+    public void onDestroy() {
+        realm.close();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new SimpleExchangeRate(delegate));
+    }
 }

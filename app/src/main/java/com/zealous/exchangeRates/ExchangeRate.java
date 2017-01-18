@@ -14,7 +14,7 @@ import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
 /**
- * Created by yaaminu on 12/20/16.
+ * by yaaminu on 12/20/16.
  */
 public class ExchangeRate extends RealmObject implements ITuple {
 
@@ -33,7 +33,7 @@ public class ExchangeRate extends RealmObject implements ITuple {
     private String currencySymbol;
     private String namePlural;
 
-    private boolean watching;
+    private byte watching;
 
     public ExchangeRate() {
     }
@@ -43,11 +43,16 @@ public class ExchangeRate extends RealmObject implements ITuple {
         this.currencyName = currencyName;
         this.currencySymbol = currencySymbol;
         this.namePlural = namePlural;
-        this.watching = watching;
+        this.watching = (byte) (watching ? 1 : 0);
     }
 
-    public void setRate(double rate) {
-        this.rate = rate;
+
+    public ExchangeRate(String currIso, String currencyName, String currencySymbol, String namePlural, boolean watching) {
+        this.currencyIso = currIso;
+        this.currencyName = currencyName;
+        this.currencySymbol = currencySymbol;
+        this.namePlural = namePlural;
+        this.watching = (byte) (watching ? 1 : 0);
     }
 //
 //    @Override
@@ -60,8 +65,23 @@ public class ExchangeRate extends RealmObject implements ITuple {
 //        return currencySymbol + "  " + rate;
 //    }
 
+    public static Realm Realm(Context context) {
+        return Realm.getInstance(new RealmConfiguration
+                .Builder()
+                .directory(context.getDir("exchange_rates.realm", Context.MODE_PRIVATE))
+                .deleteRealmIfMigrationNeeded().build());
+    }
+
+    public void setWatching() {
+        this.watching = 1;
+    }
+
     public double getRate() {
         return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
     }
 
     public String getCurrencyIso() {
@@ -80,18 +100,11 @@ public class ExchangeRate extends RealmObject implements ITuple {
         return namePlural;
     }
 
-    public boolean isWatching() {
-        return watching;
-    }
-
-    public static Realm Realm(Context context) {
-        return Realm.getInstance(new RealmConfiguration
-                .Builder()
-                .directory(context.getDir("exchange_rates.realm", Context.MODE_PRIVATE))
-                .deleteRealmIfMigrationNeeded().build());
-    }
-
     public static final NumberFormat FORMAT = DecimalFormat.getNumberInstance();
+
+    public boolean isWatching() {
+        return watching == 1;
+    }
 
     static {
         FORMAT.setMaximumFractionDigits(2);
