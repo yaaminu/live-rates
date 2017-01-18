@@ -50,11 +50,28 @@
     <string name="now">now</string>
     <string name="base">1.00</string>
     <string name="choose_currency">Choose Currency</string>
+    <string name="interest_rate_calculator">Interest Rate Calculator</string>
+    <string name="principal">Principal</string>
+    <string name="rate_percent">rate %</string>
+    <string name="tv_duration_label">Duration</string>
+    <string name="interest">Interest</string>
+    <string name="amount">Amount</string>
+    <string name="your_bank_s_terms_and_conditions_might_affect_this_value">Note: your bank\'s terms and condition may affect final interest</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
         <item>@string/bank_rates</item>
         <item>@string/other_rates</item>
         <item>@string/calculators</item>
+    </array>
+    <array name="duration_types">
+        <item>Day</item>
+        <item>Month</item>
+        <item>Year</item>
+    </array>
+    <array name="interest_type">
+        <item>Simple Interest</item>
+        <item>Compound Interest</item>
+        <item>Treasury Bill</item>
     </array>
 </resources>

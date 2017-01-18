@@ -1,4 +1,4 @@
-package com.zealous.ui;
+package com.zealous.exchangeRates;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,9 +23,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.zealous.R;
-import com.zealous.exchangeRates.ExchangeRate;
-import com.zealous.exchangeRates.ExchangeRateListActivity;
-import com.zealous.exchangeRates.ExchangeRateManager;
+import com.zealous.ui.BaseZealousActivity;
 import com.zealous.utils.PLog;
 
 import org.greenrobot.eventbus.EventBus;

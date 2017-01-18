@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
-import com.zealous.ui.ExchangeRateDetailActivity;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.ViewUtils;
 

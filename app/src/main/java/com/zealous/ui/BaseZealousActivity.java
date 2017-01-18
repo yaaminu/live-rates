@@ -23,7 +23,7 @@ public abstract class BaseZealousActivity extends AppCompatActivity {
 
     @Nullable
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    protected Toolbar toolbar;
 
     @Override
     protected final void onCreate(@Nullable Bundle savedInstanceState) {

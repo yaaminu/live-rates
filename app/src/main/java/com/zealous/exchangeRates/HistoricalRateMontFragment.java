@@ -1,4 +1,4 @@
-package com.zealous.ui;
+package com.zealous.exchangeRates;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,8 +13,7 @@ import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 import com.zealous.adapter.SimpleListItemHolder;
 import com.zealous.adapter.SimpleRecyclerViewAdapter;
-import com.zealous.exchangeRates.ExchangeRateManager;
-import com.zealous.exchangeRates.HistoricalRateTuple;
+import com.zealous.ui.BaseFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,15 +33,51 @@ public class HistoricalRateMontFragment extends BaseFragment {
 
     public static final String ARG_MONTH = "month";
     public static final String ARG_CURRENT_YEAR = "currentYear";
-    private int currentMonth, currentYear;
-
-
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
-
     List<HistoricalRateTuple> historicalRates;
+    private final SimpleRecyclerViewAdapter.Delegate<HistoricalRateTuple> delegate
+            = new SimpleRecyclerViewAdapter.Delegate<HistoricalRateTuple>() {
+        @Override
+        public int getLayout() {
+            return R.layout.historical__rate_list_item;
+        }
+
+        @Override
+        public Context context() {
+            return getContext();
+        }
+
+        @Override
+        public void onItemClick(BaseAdapter<SimpleListItemHolder, HistoricalRateTuple> adapter, View view, int position, long id) {
+
+        }
+
+        @Override
+        public boolean onItemLongClick(BaseAdapter<SimpleListItemHolder, HistoricalRateTuple> adapter, View view, int position, long id) {
+            return false;
+        }
+
+        @NonNull
+        @Override
+        public List<HistoricalRateTuple> dataSet(String constrain) {
+            return historicalRates;
+        }
+
+    };
+    private int currentMonth, currentYear;
     private int todaysDate;
     private HistoricalRatesAdapter adapter;
+
+    @NonNull
+    public static Fragment create(int currentYear, int currentMonth) {
+        Fragment fragment = new HistoricalRateMontFragment();
+        Bundle args = new Bundle(2);
+        args.putInt(ARG_CURRENT_YEAR, currentYear);
+        args.putInt(ARG_MONTH, currentMonth);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     protected int getLayout() {
@@ -85,47 +120,6 @@ public class HistoricalRateMontFragment extends BaseFragment {
             historicalRates.add(new HistoricalRateTuple("??", i + ""));
         }
     }
-
-    private final SimpleRecyclerViewAdapter.Delegate<HistoricalRateTuple> delegate
-            = new SimpleRecyclerViewAdapter.Delegate<HistoricalRateTuple>() {
-        @Override
-        public int getLayout() {
-            return R.layout.historical__rate_list_item;
-        }
-
-        @Override
-        public Context context() {
-            return getContext();
-        }
-
-        @Override
-        public void onItemClick(BaseAdapter<SimpleListItemHolder, HistoricalRateTuple> adapter, View view, int position, long id) {
-
-        }
-
-        @Override
-        public boolean onItemLongClick(BaseAdapter<SimpleListItemHolder, HistoricalRateTuple> adapter, View view, int position, long id) {
-            return false;
-        }
-
-        @NonNull
-        @Override
-        public List<HistoricalRateTuple> dataSet(String constrain) {
-            return historicalRates;
-        }
-
-    };
-
-    @NonNull
-    public static Fragment create(int currentYear, int currentMonth) {
-        Fragment fragment = new HistoricalRateMontFragment();
-        Bundle args = new Bundle(2);
-        args.putInt(ARG_CURRENT_YEAR, currentYear);
-        args.putInt(ARG_MONTH, currentMonth);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
 
     static class HistoricalRatesAdapter extends SimpleRecyclerViewAdapter<HistoricalRateTuple> {
         public HistoricalRatesAdapter(Delegate<HistoricalRateTuple> delegate) {

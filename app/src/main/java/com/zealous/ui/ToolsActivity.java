@@ -14,6 +14,8 @@ import com.zealous.adapter.BaseAdapter;
 import com.zealous.adapter.SimpleListItemHolder;
 import com.zealous.adapter.SimpleRecyclerViewAdapter;
 import com.zealous.adapter.Tuple;
+import com.zealous.bankRates.InterestRateCalculatorActivity;
+import com.zealous.exchangeRates.ExchangeRateDetailActivity;
 import com.zealous.utils.UiHelpers;
 
 import java.util.ArrayList;
@@ -39,20 +41,22 @@ public class ToolsActivity extends BaseZealousActivity {
 
         @Override
         public void onItemClick(BaseAdapter<SimpleListItemHolder, Tuple> adapter, View view, int position, long id) {
+            Intent intent = null;
             switch (position) {
                 case 0:
-                    Intent intent = new Intent(context(), ExchangeRateDetailActivity.class);
+                    intent = new Intent(context(), ExchangeRateDetailActivity.class);
                     intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_SOURCE, "GHS");
-                    startActivity(intent);
                     break;
                 case 1:
-//                    break; fall through
+                    intent = new Intent(context(), InterestRateCalculatorActivity.class);
+                    break;
                 case 3:
                     UiHelpers.showToast("selected" + adapter.getItem(position).getFirst());
                     break;
                 default:
                     throw new AssertionError();
             }
+            startActivity(intent);
         }
 
         @Override
