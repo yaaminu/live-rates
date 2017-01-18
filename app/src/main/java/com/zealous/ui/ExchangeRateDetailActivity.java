@@ -81,7 +81,8 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     @Bind(R.id.drawer)
     DrawerLayout drawer;
     List<ExchangeRate> historicalRates;
-
+    boolean selfChanged = false;
+    ViewPager pager;
     private Realm realm;
     private ExchangeRate rateTo, rateFrom;
     private String to;
@@ -116,7 +117,6 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         getSupportActionBar().setTitle(R.string.historical_rates_title);
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -143,8 +143,6 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         realm.close();
         super.onDestroy();
     }
-
-    boolean selfChanged = false;
 
     @OnTextChanged({R.id.tv_currency_from_rate})
     void handleTextChanged(Editable text) {
@@ -268,8 +266,6 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         }
     }
 
-    ViewPager pager;
-
     private void setupFragmentPagerAdapter() {
         if (pager == null) {
             pager = ButterKnife.findById(this, R.id.pager);
@@ -277,6 +273,31 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
             pager.setAdapter(new FragmentPagerAdapterCustom(getSupportFragmentManager(), getResources().getStringArray(R.array.months)));
             tablayout.setupWithViewPager(pager);
         }
+    }
+
+    void plotGraph() {
+        List<Entry> pointValues = new ArrayList<>(historicalRates.size());
+        for (int i = 0; i < historicalRates.size(); i++) {
+            pointValues.add(new Entry(i, ((float) historicalRates.get(i).getRate())));
+        }
+        LineDataSet line = new LineDataSet(pointValues, "rates");
+        LineData data = new LineData(line);
+        lineChartView.setData(data);
+        lineChartView.invalidate();
+    }
+
+    void clearGraph() {
+        LineData lineCharData = new LineData();
+        lineChartView.setData(lineCharData);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(Gravity.RIGHT)) {
+            drawer.closeDrawer(Gravity.RIGHT);
+            return;
+        }
+        super.onBackPressed();
     }
 
     static class FragmentPagerAdapterCustom extends FragmentStatePagerAdapter {
@@ -307,29 +328,5 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         public int getCount() {
             return currentMonth + 1;
         }
-    }
-
-    void plotGraph() {
-        List<Entry> pointValues = new ArrayList<>(historicalRates.size());
-        for (int i = 0; i < historicalRates.size(); i++) {
-            pointValues.add(new Entry(i, ((float) historicalRates.get(i).getRate())));
-        }
-        LineDataSet line = new LineDataSet(pointValues, "rates");
-        LineData data = new LineData(line);
-        lineChartView.setData(data);
-    }
-
-    void clearGraph() {
-        LineData lineCharData = new LineData();
-        lineChartView.setData(lineCharData);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawer.isDrawerOpen(Gravity.RIGHT)) {
-            drawer.closeDrawer(Gravity.RIGHT);
-            return;
-        }
-        super.onBackPressed();
     }
 }
