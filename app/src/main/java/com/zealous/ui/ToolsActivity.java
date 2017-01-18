@@ -1,6 +1,7 @@
 package com.zealous.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,10 +23,49 @@ import butterknife.Bind;
 
 public class ToolsActivity extends BaseZealousActivity {
 
-    private List<Tuple> items;
-
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
+    private List<Tuple> items;
+    private final SimpleRecyclerViewAdapter.Delegate<Tuple> delegate = new SimpleRecyclerViewAdapter.Delegate<Tuple>() {
+        @Override
+        public int getLayout() {
+            return R.layout.tools_list_item;
+        }
+
+        @Override
+        public Context context() {
+            return ToolsActivity.this;
+        }
+
+        @Override
+        public void onItemClick(BaseAdapter<SimpleListItemHolder, Tuple> adapter, View view, int position, long id) {
+            switch (position) {
+                case 0:
+                    Intent intent = new Intent(context(), ExchangeRateDetailActivity.class);
+                    intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_SOURCE, "GHS");
+                    startActivity(intent);
+                    break;
+                case 1:
+//                    break; fall through
+                case 3:
+                    UiHelpers.showToast("selected" + adapter.getItem(position).getFirst());
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+        }
+
+        @Override
+        public boolean onItemLongClick(BaseAdapter<SimpleListItemHolder, Tuple> adapter, View view, int position, long id) {
+            return false;
+        }
+
+        @NonNull
+        @Override
+        public List<Tuple> dataSet(String constraint) {
+            return items;
+        }
+    };
 
     @Override
     protected void doCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +76,16 @@ public class ToolsActivity extends BaseZealousActivity {
         items.add(new Tuple(getString(R.string.tax_calc), getString(R.string.tax_calc_des)));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new ToolsRecyclerViewAdapter(delegate));
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_tools;
+    }
+
+    @Override
+    protected boolean hasParent() {
+        return true;
     }
 
     static class ToolsRecyclerViewAdapter extends SimpleRecyclerViewAdapter<Tuple> {
@@ -50,42 +100,4 @@ public class ToolsActivity extends BaseZealousActivity {
             holder.second.setText(item.getSecond());
         }
     }
-
-    @Override
-    protected int getLayout() {
-        return R.layout.activity_tools;
-    }
-
-    @Override
-    protected boolean hasParent() {
-        return true;
-    }
-
-    private final SimpleRecyclerViewAdapter.Delegate<Tuple> delegate = new SimpleRecyclerViewAdapter.Delegate<Tuple>() {
-        @Override
-        public int getLayout() {
-            return R.layout.tools_list_item;
-        }
-
-        @Override
-        public Context context() {
-            return ToolsActivity.this;
-        }
-
-        @Override
-        public void onItemClick(BaseAdapter<SimpleListItemHolder, Tuple> adapter, View view, int position, long id) {
-            UiHelpers.showToast("selected" + adapter.getItem(position).getFirst());
-        }
-
-        @Override
-        public boolean onItemLongClick(BaseAdapter<SimpleListItemHolder, Tuple> adapter, View view, int position, long id) {
-            return false;
-        }
-
-        @NonNull
-        @Override
-        public List<Tuple> dataSet(String constraint) {
-            return items;
-        }
-    };
 }

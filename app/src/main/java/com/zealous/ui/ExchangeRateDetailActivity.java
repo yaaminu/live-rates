@@ -2,16 +2,18 @@ package com.zealous.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,7 +26,6 @@ import com.zealous.R;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.exchangeRates.ExchangeRateListActivity;
 import com.zealous.exchangeRates.ExchangeRateManager;
-import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -83,8 +84,11 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     List<ExchangeRate> historicalRates;
     boolean selfChanged = false;
     ViewPager pager;
+    @Nullable
+    ExchangeRate rateFrom;
     private Realm realm;
-    private ExchangeRate rateTo, rateFrom;
+    @Nullable
+    private ExchangeRate rateTo;
     private String to;
     private String from;
 
@@ -103,17 +107,20 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         super.doCreate(savedInstanceState);
         to = getIntent().getStringExtra(EXTRA_CURRENCY_TARGET);
         from = getIntent().getStringExtra(EXTRA_CURRENCY_SOURCE);
-        GenericUtils.ensureNotEmpty(to, from);
+        to = to == null ? "" : to;
+        from = from == null ? "" : from;
         realm = ExchangeRate.Realm(this);
         TextView title = ButterKnife.findById(this, R.id.title_today);
         title.setText(getString(R.string.today_title, DateUtils.formatDateTime(this, System.currentTimeMillis(),
                 FORMAT_SHOW_DATE)));
         historicalRates = new ArrayList<>(30);
         selfChanged = true;
-        currencyFromRate.setText("1.00");
+        currencyFromRate.setText(R.string.base);
         selfChanged = false;
         setUpStatusBarColor(R.color.exchangeRatePrimaryDark);
+        //noinspection ConstantConditions
         toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.exchangeRatePrimary));
+        //noinspection ConstantConditions
         getSupportActionBar().setTitle(R.string.historical_rates_title);
     }
 
@@ -122,7 +129,9 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         super.onResume();
         refreshDisplay(false);
         EventBus.getDefault().register(this);
-        ExchangeRateManager.loadHistoricalRates(from, to);
+        if (!TextUtils.isEmpty(to) && !TextUtils.isEmpty(from)) {
+            ExchangeRateManager.loadHistoricalRates(from, to);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -145,7 +154,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     }
 
     @OnTextChanged({R.id.tv_currency_from_rate})
-    void handleTextChanged(Editable text) {
+    void handleTextChanged(@SuppressWarnings("UnusedParameters") Editable text) {
         if (selfChanged) {
             return;
         }
@@ -153,7 +162,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     }
 
     @OnTextChanged({R.id.tv_currency_to_rate})
-    void handleTextChanged1(Editable text) {
+    void handleTextChanged1(@SuppressWarnings("UnusedParameters") Editable text) {
         if (selfChanged) {
             return;
         }
@@ -164,17 +173,27 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         if (!to.equals(currencyToRate.getTag())) { //has changed
             currencyToRate.setTag(to);
             rateTo = realm.where(ExchangeRate.class).equalTo(ExchangeRate.FIELD_CURRENCY_ISO, to).findFirst();
-            currencyIconTo.setImageResource(getResources().getIdentifier("drawable/" + rateTo
-                    .getCurrencyIso().toLowerCase(Locale.US), null, getPackageName()));
-            currencyTo.setText(rateTo.getCurrencyName());
+            if (rateTo != null) {
+                currencyIconTo.setImageResource(getResources().getIdentifier("drawable/" + rateTo
+                        .getCurrencyIso().toLowerCase(Locale.US), null, getPackageName()));
+                currencyTo.setText(rateTo.getCurrencyName());
+            } else {
+                currencyTo.setText(R.string.choose_currency);
+                currencyIconTo.setImageResource(R.drawable.ghs);
+            }
         }
         if (!from.equals(currencyFromRate.getTag())) {
             currencyFromRate.setTag(from);
             rateFrom = realm.where(ExchangeRate.class).equalTo(ExchangeRate.FIELD_CURRENCY_ISO, from).findFirst();
-            currencyFrom.setText(rateFrom.getCurrencyName());
+            if (rateFrom != null) {
+                currencyFrom.setText(rateFrom.getCurrencyName());
 
-            currencyIconFrom.setImageResource(getResources().getIdentifier("drawable/" + rateFrom
-                    .getCurrencyIso().toLowerCase(Locale.US), null, getPackageName()));
+                currencyIconFrom.setImageResource(getResources().getIdentifier("drawable/" + rateFrom
+                        .getCurrencyIso().toLowerCase(Locale.US), null, getPackageName()));
+            } else {
+                currencyFrom.setText(R.string.choose_currency);
+                currencyIconFrom.setImageResource(R.drawable.ghs);
+            }
         }
 
 
@@ -221,24 +240,26 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         }
     }
 
-    @OnClick({R.id.back, R.id.open_history, R.id.iv_currency_icon_from, R.id.iv_currency_icon_to})
+    @OnClick({R.id.back, R.id.tv_currency_to, R.id.tv_currency_from, R.id.open_history, R.id.iv_currency_icon_from, R.id.iv_currency_icon_to})
     void onclick(View v) {
         switch (v.getId()) {
             case R.id.back:
                 finish();
                 break;
             case R.id.open_history:
-                if (!drawer.isDrawerOpen(Gravity.RIGHT)) {
+                if (!drawer.isDrawerOpen(GravityCompat.END)) {
                     setupFragmentPagerAdapter();
-                    drawer.openDrawer(Gravity.RIGHT);
+                    drawer.openDrawer(GravityCompat.END);
                 }
                 break;
-            case R.id.iv_currency_icon_from:
+            case R.id.iv_currency_icon_from: //fall through
+            case R.id.tv_currency_from:
                 Intent intent = new Intent(this, ExchangeRateListActivity.class);
                 intent.setAction(ExchangeRateListActivity.EXTRA_PICK_CURRENCY);
                 startActivityForResult(intent, PICK_EXCHANGE_RATE_REQUEST_FROM);
                 break;
-            case R.id.iv_currency_icon_to:
+            case R.id.iv_currency_icon_to: //fall through
+            case R.id.tv_currency_to:
                 intent = new Intent(this, ExchangeRateListActivity.class);
                 intent.setAction(ExchangeRateListActivity.EXTRA_PICK_CURRENCY);
                 startActivityForResult(intent, PICK_EXCHANGE_RATE_REQUEST_TO);
@@ -255,10 +276,8 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
                 String ret = data.getStringExtra(ExchangeRateListActivity.EXTRA_SELECTED);
                 if (requestCode == PICK_EXCHANGE_RATE_REQUEST_TO) {
                     to = ret;
-                    refreshDisplay(true);
                 } else {
                     from = ret;
-                    refreshDisplay(false);
                 }
             }
         } else {
@@ -293,8 +312,8 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(Gravity.RIGHT)) {
-            drawer.closeDrawer(Gravity.RIGHT);
+        if (drawer.isDrawerOpen(GravityCompat.END)) {
+            drawer.closeDrawer(GravityCompat.END);
             return;
         }
         super.onBackPressed();
@@ -306,6 +325,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         private final int currentYear;
         private final String[] titles;
 
+        @SuppressWarnings("WeakerAccess")
         public FragmentPagerAdapterCustom(FragmentManager fragmentManager, String[] titles) {
             super(fragmentManager);
             Calendar calendar = Calendar.getInstance(Locale.US);
