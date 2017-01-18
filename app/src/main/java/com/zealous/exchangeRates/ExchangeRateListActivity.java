@@ -7,7 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.TextView;
 
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
@@ -32,39 +34,28 @@ public class ExchangeRateListActivity extends SearchActivity {
     @Bind(R.id.empty_view_no_internet)
     View emptyView;
 
+    @Bind(R.id.tv_last_updated)
+    TextView tvLastUpdated;
     String filter;
 
     RealmResults<ExchangeRate> exchangeRates;
     private Realm realm;
     private ExchangeRatesListAdapter adapter;
-
-
-    @Override
-    protected int getLayout() {
-        return R.layout.activity_exchange_rate_list;
-    }
-
-    @Override
-    protected boolean hasParent() {
-        return true;
-    }
-
-    @Override
-    protected void doCreate(@Nullable Bundle savedInstanceState) {
-        super.doCreate(savedInstanceState);
-        realm = ExchangeRate.Realm(this);
-        exchangeRates = realm.where(ExchangeRate.class).findAllSortedAsync(ExchangeRate.FIELD_CURRENCY_NAME);
-        exchangeRates.addChangeListener(changeListener);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ExchangeRatesListAdapter(delegate);
-        recyclerView.setAdapter(adapter);
-        if (EXTRA_PICK_CURRENCY.equals(getIntent().getAction())) {
-            //noinspection ConstantConditions
-            getSupportActionBar().setTitle(R.string.select_currency);
+    final RealmChangeListener<RealmResults<ExchangeRate>> changeListener = new RealmChangeListener<RealmResults<ExchangeRate>>() {
+        @Override
+        public void onChange(RealmResults<ExchangeRate> element) {
+            adapter.notifyDataChanged(filter);
+            long lastUpdated = ExchangeRateManager.lastUpdated();
+            long now = System.currentTimeMillis();
+            if (now - lastUpdated < 60 * 1000) {
+                tvLastUpdated.setText(getString(R.string.last_updated_s, getString(R.string.now)));
+            } else {
+                tvLastUpdated.setText(
+                        getString(R.string.last_updated_s, (lastUpdated <= 0 ? getString(R.string.last_updated_never) :
+                                DateUtils.getRelativeTimeSpanString(lastUpdated, now, DateUtils.MINUTE_IN_MILLIS))));
+            }
         }
-
-    }
-
+    };
     private ExchangeRatesListAdapter.Delegate delegate = new ExchangeRatesListAdapter.Delegate() {
         @Override
         public Context context() {
@@ -120,12 +111,31 @@ public class ExchangeRateListActivity extends SearchActivity {
         }
     };
 
-    final RealmChangeListener<RealmResults<ExchangeRate>> changeListener = new RealmChangeListener<RealmResults<ExchangeRate>>() {
-        @Override
-        public void onChange(RealmResults<ExchangeRate> element) {
-            adapter.notifyDataChanged(filter);
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_exchange_rate_list;
+    }
+
+    @Override
+    protected boolean hasParent() {
+        return true;
+    }
+
+    @Override
+    protected void doCreate(@Nullable Bundle savedInstanceState) {
+        super.doCreate(savedInstanceState);
+        realm = ExchangeRate.Realm(this);
+        exchangeRates = realm.where(ExchangeRate.class).findAllSortedAsync(ExchangeRate.FIELD_CURRENCY_NAME);
+        exchangeRates.addChangeListener(changeListener);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ExchangeRatesListAdapter(delegate);
+        recyclerView.setAdapter(adapter);
+        if (EXTRA_PICK_CURRENCY.equals(getIntent().getAction())) {
+            //noinspection ConstantConditions
+            getSupportActionBar().setTitle(R.string.select_currency);
         }
-    };
+
+    }
 
     @Override
     protected void onDestroy() {
