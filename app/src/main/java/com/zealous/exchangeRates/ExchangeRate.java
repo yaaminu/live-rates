@@ -21,19 +21,32 @@ public class ExchangeRate extends RealmObject implements ITuple {
     public static final String FIELD_CURRENCY_ISO = "currencyIso";
     public static final String FIELD_WATCHING = "watching";
     public static final String FIELD_CURRENCY_NAME = "currencyName";
+    public static final NumberFormat FORMAT = DecimalFormat.getNumberInstance();
+
+    static {
+        FORMAT.setMaximumFractionDigits(2);
+    }
 
     @PrimaryKey
     private String currencyIso;
-
     private double rate;
     @Required
     private String currencyName;
-
     @Required
     private String currencySymbol;
     private String namePlural;
-
     private byte watching;
+
+//
+//    @Override
+//    public String getFirst() {
+//        return currencyName;
+//    }
+//
+//    @Override
+//    public String getSecond() {
+//        return currencySymbol + "  " + rate;
+//    }
 
     public ExchangeRate() {
     }
@@ -45,25 +58,6 @@ public class ExchangeRate extends RealmObject implements ITuple {
         this.namePlural = namePlural;
         this.watching = (byte) (watching ? 1 : 0);
     }
-
-
-    public ExchangeRate(String currIso, String currencyName, String currencySymbol, String namePlural, boolean watching) {
-        this.currencyIso = currIso;
-        this.currencyName = currencyName;
-        this.currencySymbol = currencySymbol;
-        this.namePlural = namePlural;
-        this.watching = (byte) (watching ? 1 : 0);
-    }
-//
-//    @Override
-//    public String getFirst() {
-//        return currencyName;
-//    }
-//
-//    @Override
-//    public String getSecond() {
-//        return currencySymbol + "  " + rate;
-//    }
 
     public static Realm Realm(Context context) {
         return Realm.getInstance(new RealmConfiguration
@@ -100,14 +94,8 @@ public class ExchangeRate extends RealmObject implements ITuple {
         return namePlural;
     }
 
-    public static final NumberFormat FORMAT = DecimalFormat.getNumberInstance();
-
     public boolean isWatching() {
         return watching == 1;
-    }
-
-    static {
-        FORMAT.setMaximumFractionDigits(2);
     }
 
 }
