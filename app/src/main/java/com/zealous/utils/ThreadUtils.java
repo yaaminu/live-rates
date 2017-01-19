@@ -2,8 +2,6 @@ package com.zealous.utils;
 
 import android.os.Looper;
 
-import com.zealous.BuildConfig;
-
 /**
  * @author Null-Pointer on 8/25/2015.
  */
@@ -14,18 +12,15 @@ public class ThreadUtils {
     }
 
     public static void ensureNotMain() {
-        if (BuildConfig.DEBUG) {
-            if (isMainThread()) {
-                oops("call must be made off the main thread!");
-            }
+        if (isMainThread()) {
+            oops("call must be made off the main thread!");
         }
     }
 
     public static void ensureMain() {
-        if (BuildConfig.DEBUG) {
-            if (!isMainThread()) {
-                oops("call must be made on the main thread!");
-            }
+        boolean isMainThread = isMainThread();
+        if (!isMainThread) {
+            oops("call must be made on the main thread!");
         }
     }
 

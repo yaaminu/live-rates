@@ -57,6 +57,10 @@
     <string name="interest">Interest</string>
     <string name="amount">Amount</string>
     <string name="your_bank_s_terms_and_conditions_might_affect_this_value">Note: your bank\'s terms and condition may affect final interest</string>
+    <string name="title_today">Today %s</string>
+    <string name="interest_amount">Interest %s</string>
+    <string name="error_rate_exceeds_100">Rate cannot exceed 100</string>
+    <string name="amount_value">Amount %s</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
