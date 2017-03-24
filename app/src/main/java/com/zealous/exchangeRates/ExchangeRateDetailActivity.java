@@ -205,17 +205,17 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
                 tmp = BigDecimal.valueOf(inputTo).divide(BigDecimal.valueOf(rateTo.getRate()), MathContext.DECIMAL128)
                         .multiply(BigDecimal.valueOf(rateFrom.getRate())).doubleValue();
                 currencyFromRate.setText(FORMAT.format(tmp));
-
+                inputFrom = tmp;
             } else {
                 tmp = BigDecimal.valueOf(inputFrom).divide(BigDecimal.valueOf(rateFrom.getRate()), MathContext.DECIMAL128)
                         .multiply(BigDecimal.valueOf(rateTo.getRate())).doubleValue();
                 currencyToRate.setText(FORMAT.format(tmp));
             }
-            if (!historicalRates.isEmpty()) {
-                yesterdayRate.setText(FORMAT.format(historicalRates.get(0).getRate()));
-                $7daysAgoRate.setText(FORMAT.format(historicalRates.get(5).getRate()));
-                lastMonthRate.setText(FORMAT.format(historicalRates.get(26).getRate()));
-                plotGraph();
+            if (!historicalRates.isEmpty() && inputFrom > 0) {
+                yesterdayRate.setText(FORMAT.format(getHistory(inputFrom, historicalRates.get(0).getRate())));
+                $7daysAgoRate.setText(FORMAT.format(getHistory(inputFrom, historicalRates.get(5).getRate())));
+                lastMonthRate.setText(FORMAT.format(getHistory(inputFrom, historicalRates.get(26).getRate())));
+                plotGraph(inputFrom);
             } else {
                 yesterdayRate.setText(FORMAT.format(0));
                 $7daysAgoRate.setText(FORMAT.format(0));
@@ -227,6 +227,12 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         } finally {
             selfChanged = false;
         }
+    }
+
+    private double getHistory(double inputFrom, double historicalRate) {
+        assert rateFrom != null;
+        return BigDecimal.valueOf(inputFrom).divide(BigDecimal.valueOf(rateFrom.getRate()), MathContext.DECIMAL128)
+                .multiply(BigDecimal.valueOf(historicalRate), MathContext.DECIMAL128).doubleValue();
     }
 
     double getDouble(String text) {
@@ -292,10 +298,10 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         }
     }
 
-    void plotGraph() {
+    void plotGraph(double inputFrom) {
         List<Entry> pointValues = new ArrayList<>(historicalRates.size());
         for (int i = 0; i < historicalRates.size(); i++) {
-            pointValues.add(new Entry(i, ((float) historicalRates.get(i).getRate())));
+            pointValues.add(new Entry(i, (float) getHistory(inputFrom, historicalRates.get(i).getRate())));
         }
         LineDataSet line = new LineDataSet(pointValues, "rates");
         LineData data = new LineData(line);
@@ -306,6 +312,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     void clearGraph() {
         LineData lineCharData = new LineData();
         lineChartView.setData(lineCharData);
+        lineChartView.invalidate();
     }
 
     @Override
