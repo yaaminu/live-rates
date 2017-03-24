@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.zealous.adapter.ITuple;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -25,6 +26,8 @@ public class ExchangeRate extends RealmObject implements ITuple {
 
     static {
         FORMAT.setMaximumFractionDigits(2);
+        FORMAT.setMinimumFractionDigits(2);
+        FORMAT.setRoundingMode(RoundingMode.HALF_UP);
     }
 
     @PrimaryKey
