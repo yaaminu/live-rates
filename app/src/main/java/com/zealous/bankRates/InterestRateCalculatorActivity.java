@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.format.DateUtils;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.zealous.R;
+import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.ui.BaseZealousActivity;
 
 import java.math.BigDecimal;
@@ -86,14 +85,12 @@ public class InterestRateCalculatorActivity extends BaseZealousActivity {
     }
 
     @OnItemSelected(R.id.sp_days_month_year)
-    void onDurationTypeSelected(AdapterView<?> adapterView,
-                                View selected, int position, long id) {
+    void onDurationTypeSelected() {
         durationChanged(duration.getText());
     }
 
     @OnItemSelected(R.id.sp_rate_type)
-    void onItemSelected(AdapterView<?> adapterView,
-                        View selected, int position, long id) {
+    void onItemSelected(int position) {
         InterestCalculator tmp = calculator;
         switch (position) {
             case 0:
@@ -138,8 +135,8 @@ public class InterestRateCalculatorActivity extends BaseZealousActivity {
     }
 
     protected void refreshDisplay() {
-        interest.setText(getString(R.string.interest_amount, calculator.getInterest().doubleValue() + ""));
-        amount.setText(getString(R.string.amount_value, calculator.getAmount().doubleValue() + ""));
+        interest.setText(getString(R.string.interest_amount, ExchangeRate.FORMAT.format(calculator.getInterest().doubleValue())));
+        amount.setText(getString(R.string.amount_value, ExchangeRate.FORMAT.format(calculator.getAmount().doubleValue())));
     }
 
     private double getDoubleSafe(CharSequence text) {
