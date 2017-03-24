@@ -21,13 +21,13 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.Bind;
 
 /**
- * Created by yaaminu on 1/4/17.
+ * @author by yaaminu on 1/4/17.
  */
 public class HistoricalRateMontFragment extends BaseFragment {
 
@@ -65,8 +65,8 @@ public class HistoricalRateMontFragment extends BaseFragment {
         }
 
     };
-    private int currentMonth, currentYear;
-    private int todaysDate;
+    private int month, year;
+    private int days;
     private HistoricalRatesAdapter adapter;
 
     @NonNull
@@ -87,20 +87,51 @@ public class HistoricalRateMontFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        currentMonth = getArguments().getInt(ARG_MONTH);
-        currentYear = getArguments().getInt(ARG_CURRENT_YEAR);
-        todaysDate = Calendar.getInstance(Locale.US).get(Calendar.DAY_OF_MONTH);
-        historicalRates = new ArrayList<>(todaysDate);
+        month = getArguments().getInt(ARG_MONTH);
+        year = getArguments().getInt(ARG_CURRENT_YEAR);
+        final GregorianCalendar cal = new GregorianCalendar();
+        final int currentMonth = cal.get(Calendar.MONTH);
+
+
+        if (month == currentMonth) {
+            days = cal.get(Calendar.DAY_OF_MONTH);
+        } else {
+            days = getNumOfDaysInMonth(month, cal.isLeapYear(cal.get(Calendar.YEAR)));
+        }
+        historicalRates = new ArrayList<>(days);
         String to = getArguments().getString("to"),
                 from = getArguments().getString("from");
         EventBus.getDefault().register(this);
-        ExchangeRateManager.loadHistoricalRates(from, to, currentYear, currentMonth, todaysDate);
+        ExchangeRateManager.loadHistoricalRates(from, to, year, month, days);
         fillHistoricalRates();
         adapter = new HistoricalRatesAdapter(delegate);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5
                 , GridLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
     }
+
+    private int getNumOfDaysInMonth(int month, boolean isLeap) {
+        switch (month) {
+            case 0:
+            case 2:
+            case 4:
+            case 6:
+            case 7:
+            case 9:
+            case 11:
+                return 31;
+            case 1:
+                return isLeap ? 29 : 28;
+            case 3:
+            case 5:
+            case 8:
+            case 10:
+                return 30;
+            default:
+                throw new AssertionError();
+        }
+    }
+
 
     @Override
     public void onDestroyView() {
@@ -110,13 +141,17 @@ public class HistoricalRateMontFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Object event) {
-        //noinspection unchecked
-        historicalRates = ((List<HistoricalRateTuple>) event);
-        adapter.notifyDataChanged("");
+        if (event instanceof List) {
+            if (!((List) event).isEmpty() && ((List) event).get(0) instanceof HistoricalRateTuple && ((List) event).size() == days) {
+                //noinspection unchecked
+                historicalRates = ((List<HistoricalRateTuple>) event);
+                adapter.notifyDataChanged("");
+            }
+        }
     }
 
     private void fillHistoricalRates() {
-        for (int i = todaysDate; i > 0; i--) {
+        for (int i = days; i > 0; i--) {
             historicalRates.add(new HistoricalRateTuple("??", i + ""));
         }
     }

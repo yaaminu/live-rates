@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -113,19 +114,30 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
                 FORMAT_SHOW_DATE)));
         historicalRates = new ArrayList<>(30);
         selfChanged = true;
-        currencyFromRate.setText(R.string.base);
+        currencyToRate.setText(R.string.base);
         selfChanged = false;
         setUpStatusBarColor(R.color.exchangeRatePrimaryDark);
         //noinspection ConstantConditions
         toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.exchangeRatePrimary));
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(R.string.historical_rates_title);
+        int width = getResources().getDisplayMetrics().widthPixels;
+        final View historyContainer = ButterKnife.findById(this, R.id.history_container);
+        DrawerLayout.LayoutParams params = ((DrawerLayout.LayoutParams) historyContainer.getLayoutParams());
+        params.width = width;
+        historyContainer.setLayoutParams(params);
+        ((Toolbar) ButterKnife.findById(this, R.id.toolbar)).setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawer(GravityCompat.END);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshDisplay(false);
+        refreshDisplay(true);
         EventBus.getDefault().register(this);
         if (!TextUtils.isEmpty(to) && !TextUtils.isEmpty(from)) {
             ExchangeRateManager.loadHistoricalRates(from, to);
@@ -134,9 +146,11 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Object event) {
-        //noinspection unchecked,unchecked
-        historicalRates = ((List<ExchangeRate>) event);
-        refreshDisplay(false);
+        if (event instanceof List) {
+            //noinspection unchecked,unchecked
+            historicalRates = ((List<ExchangeRate>) event);
+            refreshDisplay(true);
+        }
     }
 
     @Override
@@ -293,6 +307,12 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         if (pager == null) {
             pager = ButterKnife.findById(this, R.id.pager);
             TabLayout tablayout = ButterKnife.findById(this, R.id.tab_strip);
+            tablayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PLog.d(TAG, v.toString());
+                }
+            });
             pager.setAdapter(new FragmentPagerAdapterCustom(getSupportFragmentManager(), getResources().getStringArray(R.array.months)));
             tablayout.setupWithViewPager(pager);
         }

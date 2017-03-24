@@ -56,7 +56,13 @@ public class ExchangeRateListActivity extends SearchActivity {
             }
         }
     };
+    private ExchangeRate baseRate;
     private ExchangeRatesListAdapter.Delegate delegate = new ExchangeRatesListAdapter.Delegate() {
+        @Override
+        public ExchangeRate baseRate() {
+            return baseRate;
+        }
+
         @Override
         public Context context() {
             return ExchangeRateListActivity.this;
@@ -129,6 +135,11 @@ public class ExchangeRateListActivity extends SearchActivity {
         exchangeRates = realm.where(ExchangeRate.class).
                 findAllSortedAsync(ExchangeRate.FIELD_WATCHING, Sort.DESCENDING,
                         ExchangeRate.FIELD_CURRENCY_NAME, Sort.ASCENDING);
+
+        baseRate = realm.where(ExchangeRate.class)
+                .equalTo(ExchangeRate.FIELD_CURRENCY_ISO, "GHS")
+                .findFirst();
+
         exchangeRates.addChangeListener(changeListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ExchangeRatesListAdapter(delegate);

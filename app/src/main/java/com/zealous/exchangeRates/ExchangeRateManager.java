@@ -110,10 +110,10 @@ public class ExchangeRateManager {
         TaskManager.executeNow(new Runnable() {
             @Override
             public void run() {
-                List<HistoricalRateTuple> rates = new ArrayList<>(27);
+                List<HistoricalRateTuple> rates = new ArrayList<>(day);
                 SecureRandom random = new SecureRandom();
-                for (int i = 0; i < day; i++) {
-                    rates.add(new HistoricalRateTuple(ExchangeRate.FORMAT.format(3 + random.nextDouble()), "" + day));
+                for (int i = day; i > 0; i--) {
+                    rates.add(new HistoricalRateTuple(ExchangeRate.FORMAT.format(3 + random.nextDouble()), "" + i));
                 }
                 SystemClock.sleep(2000);
                 EventBus.getDefault().post(rates);

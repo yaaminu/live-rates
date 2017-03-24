@@ -52,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="end"
                 android:textSize="14sp"
+                android:textStyle="bold"
                 app:layout_columnWeight="1.0"
                 app:layout_gravity="bottom"
                 tools:text="13.2" />
