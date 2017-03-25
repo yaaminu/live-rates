@@ -9,6 +9,8 @@ import android.support.v4.view.ViewPager;
 import com.zealous.R;
 import com.zealous.exchangeRates.ExchangeRateManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
@@ -17,12 +19,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 public class MainActivity extends BaseZealousActivity {
-    @Bind(R.id.pager)
-    ViewPager pager;
-    int currentItem;
-
-    private String[] titles;
-
     @ColorRes
     static final int[] colors = {
             R.color.expenseColorPrimary,
@@ -41,7 +37,12 @@ public class MainActivity extends BaseZealousActivity {
             R.color.calculatorsPrimaryDark
 
     };
+    @Bind(R.id.pager)
+    ViewPager pager;
+    int currentItem;
+    private String[] titles;
     private Subscription timerSubscription;
+    private HomePagerAdapter homePagerAdapter;
     private Action1<Long> subscriber = new Action1<Long>() {
         @Override
         public void call(Long aLong) {
@@ -51,16 +52,6 @@ public class MainActivity extends BaseZealousActivity {
             currentItem++;
         }
     };
-
-    private void paintToolbar() {
-        int backgroundColor = ContextCompat.getColor(MainActivity.this, colors[currentItem]);
-        assert toolbar != null;
-        toolbar.setBackgroundColor(backgroundColor);
-        toolbar.setTitle(titles[currentItem]);
-        setUpStatusBarColor(darkColors[currentItem]);
-    }
-
-    private HomePagerAdapter homePagerAdapter;
     private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -79,10 +70,18 @@ public class MainActivity extends BaseZealousActivity {
         }
     };
 
+    private void paintToolbar() {
+        int backgroundColor = ContextCompat.getColor(MainActivity.this, colors[currentItem]);
+        assert toolbar != null;
+        toolbar.setBackgroundColor(backgroundColor);
+        toolbar.setTitle(titles[currentItem]);
+        setUpStatusBarColor(darkColors[currentItem]);
+    }
+
     @Override
     protected void doCreate(@Nullable Bundle savedInstanceState) {
         super.doCreate(savedInstanceState);
-        ExchangeRateManager.loadRates();
+        new ExchangeRateManager(EventBus.builder().build()).loadRates();
         assert toolbar != null;
         toolbar.setNavigationIcon(R.drawable.ic_home_black_24dp);
         titles = getResources().getStringArray(R.array.home_menu_titles);

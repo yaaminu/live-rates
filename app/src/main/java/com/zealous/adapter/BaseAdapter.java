@@ -26,31 +26,14 @@ public abstract class BaseAdapter<H extends BaseAdapter.Holder, T> extends Recyc
 
     private static final String TAG = BaseAdapter.class.getSimpleName();
     protected final Delegate<H, T> delegate;
-    private List<T> items;
     protected final LayoutInflater inflater;
+    private List<T> items;
 
     public BaseAdapter(Delegate<H, T> delegate) {
         this.items = delegate.dataSet("");
         this.delegate = delegate;
         inflater = LayoutInflater.from(delegate.context());
     }
-
-    /**
-     * a {@link RecyclerView.ViewHolder} implementation that uses
-     * butterKnife to bind views to it.. just subclass it and use all the nice butterKnife
-     * annotations. Because they will work :P
-     */
-    public static class Holder extends RecyclerView.ViewHolder {
-        public Holder(View v) {
-            super(v);
-            ButterKnife.bind(this, v);
-        }
-
-        public Context getContext() {
-            return itemView.getContext();
-        }
-    }
-
 
     /**
      * a hook for subclasses to notify us that they are now
@@ -169,6 +152,23 @@ public abstract class BaseAdapter<H extends BaseAdapter.Holder, T> extends Recyc
         @NonNull
         List<T> dataSet(String constrain);
 
+
+    }
+
+    /**
+     * a {@link RecyclerView.ViewHolder} implementation that uses
+     * butterKnife to bind views to it.. just subclass it and use all the nice butterKnife
+     * annotations. Because they will work :P
+     */
+    public static class Holder extends RecyclerView.ViewHolder {
+        public Holder(View v) {
+            super(v);
+            ButterKnife.bind(this, v);
+        }
+
+        public Context getContext() {
+            return itemView.getContext();
+        }
     }
 
 }

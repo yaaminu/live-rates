@@ -2,10 +2,10 @@ package com.zealous.exchangeRates;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -19,12 +19,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.zealous.R;
 import com.zealous.ui.BaseZealousActivity;
+import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,7 +55,12 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     public static final String EXTRA_CURRENCY_SOURCE = "currency_source";
     public static final String TAG = ExchangeRateDetailActivity.class.getSimpleName();
     public static final int PICK_EXCHANGE_RATE_REQUEST_FROM = 1001;
+    public static final String EXTRA_START_WITH = "startWith";
     private static final int PICK_EXCHANGE_RATE_REQUEST_TO = 1002;
+    @NonNull
+    private final EventBus eventBus = EventBus.builder().build();
+    @NonNull
+    private final ExchangeRateManager exchangeRateManager = new ExchangeRateManager(eventBus);
     @Bind(R.id.tv_currency_from_rate)
     EditText currencyFromRate;
     @Bind(R.id.tv_currency_to_rate)
@@ -62,25 +69,21 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     TextView currencyFrom;
     @Bind(R.id.tv_currency_to)
     TextView currencyTo;
-
     @Bind(R.id.iv_currency_icon_to)
     ImageView currencyIconTo;
     @Bind(R.id.iv_currency_icon_from)
     ImageView currencyIconFrom;
-
     @Bind(R.id.tv_yesterday_rate)
     TextView yesterdayRate;
     @Bind(R.id.tv_7_days_ago_rate)
     TextView $7daysAgoRate;
     @Bind(R.id.tv_last_month_rate)
     TextView lastMonthRate;
-
     @Bind(R.id.graph_view)
     com.github.mikephil.charting.charts.LineChart lineChartView;
-
     @Bind(R.id.drawer)
     DrawerLayout drawer;
-    List<ExchangeRate> historicalRates;
+    List<HistoricalRateTuple> historicalRates;
     boolean selfChanged = false;
     ViewPager pager;
     @Nullable
@@ -90,6 +93,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     private ExchangeRate rateTo;
     private String to;
     private String from;
+    private String startWith;
 
     @Override
     protected boolean hasParent() {
@@ -112,10 +116,9 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         TextView title = ButterKnife.findById(this, R.id.title_today);
         title.setText(getString(R.string.today_title, DateUtils.formatDateTime(this, System.currentTimeMillis(),
                 FORMAT_SHOW_DATE)));
-        historicalRates = new ArrayList<>(30);
-        selfChanged = true;
-        currencyToRate.setText(R.string.base);
-        selfChanged = false;
+        historicalRates = new ArrayList<>(28);
+        fillRates();
+        startWith = getIntent().getStringExtra(EXTRA_START_WITH);
         setUpStatusBarColor(R.color.exchangeRatePrimaryDark);
         //noinspection ConstantConditions
         toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.exchangeRatePrimary));
@@ -126,7 +129,9 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         DrawerLayout.LayoutParams params = ((DrawerLayout.LayoutParams) historyContainer.getLayoutParams());
         params.width = width;
         historyContainer.setLayoutParams(params);
-        ((Toolbar) ButterKnife.findById(this, R.id.toolbar)).setNavigationOnClickListener(new View.OnClickListener() {
+        final Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_clear_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 drawer.closeDrawer(GravityCompat.END);
@@ -134,28 +139,51 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         });
     }
 
+    private void fillRates() {
+        if (!TextUtils.isEmpty(to) && !TextUtils.isEmpty(from)) {
+            historicalRates.clear();
+            for (int i = 28; i > 0; i--) {
+                historicalRates.add(new HistoricalRateTuple(to, from, 0, i));
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        refreshDisplay(true);
-        EventBus.getDefault().register(this);
+        boolean toChanged = false;
+        if (!GenericUtils.isEmpty(startWith)) {
+            selfChanged = true;
+            if (startWith.equals(to)) {
+                toChanged = true;
+                currencyToRate.setText(R.string.base);
+            } else if (startWith.equals(from)) {
+                toChanged = false;
+                currencyFromRate.setText(R.string.base);
+            }
+            selfChanged = false;
+        }
+        refreshDisplay(toChanged);
+        eventBus.register(this);
         if (!TextUtils.isEmpty(to) && !TextUtils.isEmpty(from)) {
-            ExchangeRateManager.loadHistoricalRates(from, to);
+            exchangeRateManager.loadHistoricalRates(from, to);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Object event) {
-        if (event instanceof List) {
+        if (event instanceof HistoricalRateTuple) {
             //noinspection unchecked,unchecked
-            historicalRates = ((List<ExchangeRate>) event);
+            if (((HistoricalRateTuple) event).to.equals(to) && ((HistoricalRateTuple) event).from.equals(from)) {
+                historicalRates.set(((HistoricalRateTuple) event).index - 1, (HistoricalRateTuple) event);
+            }
             refreshDisplay(true);
         }
     }
 
     @Override
     protected void onPause() {
-        EventBus.getDefault().unregister(this);
+        eventBus.unregister(this);
         super.onPause();
     }
 
@@ -211,31 +239,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
 
         selfChanged = true;
         try {
-            double inputTo = getDouble(currencyToRate.getText().toString().trim()),
-                    inputFrom = getDouble(currencyFromRate.getText().toString().trim());
-
-            double tmp;
-            if (toChanged) {
-                tmp = BigDecimal.valueOf(inputTo).divide(BigDecimal.valueOf(rateTo.getRate()), MathContext.DECIMAL128)
-                        .multiply(BigDecimal.valueOf(rateFrom.getRate())).doubleValue();
-                currencyFromRate.setText(FORMAT.format(tmp));
-                inputFrom = tmp;
-            } else {
-                tmp = BigDecimal.valueOf(inputFrom).divide(BigDecimal.valueOf(rateFrom.getRate()), MathContext.DECIMAL128)
-                        .multiply(BigDecimal.valueOf(rateTo.getRate())).doubleValue();
-                currencyToRate.setText(FORMAT.format(tmp));
-            }
-            if (!historicalRates.isEmpty() && inputFrom > 0) {
-                yesterdayRate.setText(FORMAT.format(getHistory(inputFrom, historicalRates.get(0).getRate())));
-                $7daysAgoRate.setText(FORMAT.format(getHistory(inputFrom, historicalRates.get(5).getRate())));
-                lastMonthRate.setText(FORMAT.format(getHistory(inputFrom, historicalRates.get(26).getRate())));
-                plotGraph(inputFrom);
-            } else {
-                yesterdayRate.setText(FORMAT.format(0));
-                $7daysAgoRate.setText(FORMAT.format(0));
-                lastMonthRate.setText(FORMAT.format(0));
-                clearGraph();
-            }
+            updateValues(toChanged);
         } catch (Exception e) {
             PLog.e(TAG, e.getMessage(), e);
         } finally {
@@ -243,10 +247,40 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         }
     }
 
-    private double getHistory(double inputFrom, double historicalRate) {
+    private void updateValues(boolean toChanged) {
+        double inputTo = getDouble(currencyToRate.getText().toString().trim()),
+                inputFrom = getDouble(currencyFromRate.getText().toString().trim());
+
         assert rateFrom != null;
-        return BigDecimal.valueOf(inputFrom).divide(BigDecimal.valueOf(rateFrom.getRate()), MathContext.DECIMAL128)
-                .multiply(BigDecimal.valueOf(historicalRate), MathContext.DECIMAL128).doubleValue();
+        assert rateTo != null;
+        double tmp;
+        if (toChanged) {
+            tmp = BigDecimal.valueOf(inputTo).divide(BigDecimal.valueOf(rateTo.getRate()), MathContext.DECIMAL128)
+                    .multiply(BigDecimal.valueOf(rateFrom.getRate())).doubleValue();
+            currencyFromRate.setText(FORMAT.format(tmp));
+            inputFrom = tmp;
+        } else {
+            tmp = BigDecimal.valueOf(inputFrom).divide(BigDecimal.valueOf(rateFrom.getRate()), MathContext.DECIMAL128)
+                    .multiply(BigDecimal.valueOf(rateTo.getRate())).doubleValue();
+            currencyToRate.setText(FORMAT.format(tmp));
+            inputTo = tmp;
+        }
+        if (!historicalRates.isEmpty() && inputFrom > 0) {
+            yesterdayRate.setText(FORMAT.format(getHistory(inputTo, historicalRates.get(1).rate)));
+            $7daysAgoRate.setText(FORMAT.format(getHistory(inputTo, historicalRates.get(7).rate)));
+            lastMonthRate.setText(FORMAT.format(getHistory(inputTo, historicalRates.get(27).rate)));
+            plotGraph(inputTo);
+        } else {
+            yesterdayRate.setText(FORMAT.format(0));
+            $7daysAgoRate.setText(FORMAT.format(0));
+            lastMonthRate.setText(FORMAT.format(0));
+            clearGraph();
+        }
+    }
+
+    private double getHistory(double inputTo, double historicalRate) {
+        assert rateFrom != null;
+        return BigDecimal.valueOf(inputTo).divide(BigDecimal.valueOf(historicalRate), MathContext.DECIMAL128).doubleValue();
     }
 
     double getDouble(String text) {
@@ -297,6 +331,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
                 } else {
                     from = ret;
                 }
+                fillRates();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -304,24 +339,21 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     }
 
     private void setupFragmentPagerAdapter() {
-        if (pager == null) {
+        if (!GenericUtils.isEmpty(to) && !GenericUtils.isEmpty(from)) {
             pager = ButterKnife.findById(this, R.id.pager);
             TabLayout tablayout = ButterKnife.findById(this, R.id.tab_strip);
-            tablayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PLog.d(TAG, v.toString());
-                }
-            });
-            pager.setAdapter(new FragmentPagerAdapterCustom(getSupportFragmentManager(), getResources().getStringArray(R.array.months)));
+            pager.setAdapter(new FragmentPagerAdapterCustom(this, getResources().getStringArray(R.array.months), to, from));
             tablayout.setupWithViewPager(pager);
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.no_currency_selected
+                    , Toast.LENGTH_SHORT).show();
         }
     }
 
-    void plotGraph(double inputFrom) {
+    void plotGraph(double inputTo) {
         List<Entry> pointValues = new ArrayList<>(historicalRates.size());
         for (int i = 0; i < historicalRates.size(); i++) {
-            pointValues.add(new Entry(i, (float) getHistory(inputFrom, historicalRates.get(i).getRate())));
+            pointValues.add(new Entry(i + 1, (float) getHistory(inputTo, historicalRates.get(i).rate)));
         }
         LineDataSet line = new LineDataSet(pointValues, "rates");
         LineData data = new LineData(line);
@@ -349,19 +381,25 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         private final int currentMonth;
         private final int currentYear;
         private final String[] titles;
+        private final String to;
+        private final String from;
+        private final ExchangeRateDetailActivity activity;
 
         @SuppressWarnings("WeakerAccess")
-        public FragmentPagerAdapterCustom(FragmentManager fragmentManager, String[] titles) {
-            super(fragmentManager);
+        public FragmentPagerAdapterCustom(ExchangeRateDetailActivity activity, String[] titles, String to, String from) {
+            super(activity.getSupportFragmentManager());
+            this.activity = activity;
             Calendar calendar = Calendar.getInstance(Locale.US);
             currentMonth = calendar.get(Calendar.MONTH);
             currentYear = calendar.get(Calendar.YEAR);
             this.titles = titles;
+            this.to = to;
+            this.from = from;
         }
 
         @Override
         public Fragment getItem(int position) {
-            return HistoricalRateMontFragment.create(currentYear, position);
+            return HistoricalRateMontFragment.create(currentYear, position, activity.getDouble(activity.currencyToRate.getText().toString()), to, from);
         }
 
         @Override

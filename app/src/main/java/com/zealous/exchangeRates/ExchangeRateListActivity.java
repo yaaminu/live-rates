@@ -72,17 +72,19 @@ public class ExchangeRateListActivity extends SearchActivity {
         public void onItemClick
                 (BaseAdapter<ExchangeRatesListAdapter.Holder, ExchangeRate> adapter, View view,
                  int position, long id) {
+            final ExchangeRate exchangeRate = adapter.getItem(position);
             if (EXTRA_PICK_CURRENCY.equals(getIntent().getAction())) {
                 Intent results = new Intent();
                 Bundle bundle = new Bundle(1);
-                bundle.putString(EXTRA_SELECTED, adapter.getItem(position).getCurrencyIso());
+                bundle.putString(EXTRA_SELECTED, exchangeRate.getCurrencyIso());
                 results.putExtras(bundle);
                 setResult(RESULT_OK, results);
                 finish();
             } else {
                 Intent intent = new Intent(context(), ExchangeRateDetailActivity.class);
                 intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_SOURCE, "GHS");
-                intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_TARGET, adapter.getItem(position).getCurrencyIso());
+                intent.putExtra(ExchangeRateDetailActivity.EXTRA_START_WITH, exchangeRate.getRate() >= 1 ? "GHS" : exchangeRate.getCurrencyIso());
+                intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_TARGET, exchangeRate.getCurrencyIso());
                 startActivity(intent);
             }
         }

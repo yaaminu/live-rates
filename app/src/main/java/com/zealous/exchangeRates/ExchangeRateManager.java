@@ -3,9 +3,11 @@ package com.zealous.exchangeRates;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.content.Context;
-import android.os.SystemClock;
+import android.support.annotation.NonNull;
 
 import com.zealous.utils.Config;
+import com.zealous.utils.GenericUtils;
+import com.zealous.utils.PLog;
 import com.zealous.utils.TaskManager;
 import com.zealous.utils.ThreadUtils;
 
@@ -17,11 +19,21 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
+import rx.Observable;
+import rx.Observer;
+import rx.exceptions.Exceptions;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by yaaminu on 12/23/16.
@@ -31,16 +43,27 @@ public class ExchangeRateManager {
 
     private static final String RATES_PREFERENCES = "rates.preferences";
     private static final String RATES_LAST_UPDATED = "rates.last.updated";
-
-    public static synchronized void loadRates() {
-        if (System.currentTimeMillis() - lastUpdated() > AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15) {
-            TaskManager.executeNow(new Runnable() {
-                @Override
-                public void run() {
-                    TaskManager.runJob(LoadRatesTask.create());
-                }
-            }, false);
+    private final EventBus bus;
+    private Observer<HistoricalRateTuple> observer = new Observer<HistoricalRateTuple>() {
+        @Override
+        public void onCompleted() {
+            PLog.d(TAG, "historical rates loaded completely");
         }
+
+        @Override
+        public void onError(Throwable e) {
+            PLog.e(TAG, e.getMessage(), e);
+        }
+
+        @Override
+        public void onNext(HistoricalRateTuple o) {
+            bus.post(o);
+        }
+    };
+
+    public ExchangeRateManager(@NonNull EventBus bus) {
+        GenericUtils.ensureNotNull(bus);
+        this.bus = bus;
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -80,44 +103,59 @@ public class ExchangeRateManager {
                 entry.getString("symbol"), entry.getString("name_plural"), watching);
     }
 
-    public static void loadHistoricalRates(final String from, final String to) {
+    public synchronized void loadRates() {
+        if (System.currentTimeMillis() - lastUpdated() > AlarmManager.INTERVAL_FIFTEEN_MINUTES / 15) {
+            TaskManager.executeNow(new Runnable() {
+                @Override
+                public void run() {
+                    TaskManager.runJob(LoadRatesTask.create());
+                }
+            }, false);
+        }
+    }
+
+    public void loadHistoricalRates(final String from, final String to) {
         TaskManager.executeNow(new Runnable() {
             @Override
             public void run() {
-                Realm realm = ExchangeRate.Realm(Config.getApplicationContext());
-                double seed = 0.5 * (realm.where(ExchangeRate.class).equalTo(ExchangeRate.FIELD_CURRENCY_ISO, to)
-                        .findFirst().getRate() +
-                        realm.where(ExchangeRate.class).equalTo(ExchangeRate.FIELD_CURRENCY_ISO, from)
-                                .findFirst().getRate());
-                try {
-                    List<ExchangeRate> rates = new ArrayList<>(27);
-                    SecureRandom random = new SecureRandom();
-                    for (int i = 0; i < 27; i++) {
-                        ExchangeRate rate = new ExchangeRate(to, "Currency Name", "$", "Currency Name Plural", true);
-                        rate.setRate(seed + random.nextDouble());
-                        rates.add(rate);
-                    }
-                    SystemClock.sleep(2000);
-                    EventBus.getDefault().post(rates);
-                } finally {
-                    realm.close();
+                long date = System.currentTimeMillis();
+                for (int i = 1; i <= 28; i++) {
+                    map(new Date(date), i, to, from).subscribeOn(Schedulers.io())
+                            .subscribe(observer);
+                    date -= TimeUnit.DAYS.toMillis(1);
                 }
             }
         }, true);
     }
 
-    public static void loadHistoricalRates(String from, String to, int year, int month, final int day) {
-        TaskManager.executeNow(new Runnable() {
+    public void loadHistoricalRates(final String from, final String to, final int year, final int month, final int day) {
+        TaskManager.execute(new Runnable() {
             @Override
             public void run() {
-                List<HistoricalRateTuple> rates = new ArrayList<>(day);
-                SecureRandom random = new SecureRandom();
+                Calendar calendar = new GregorianCalendar(year, month, day);
                 for (int i = day; i > 0; i--) {
-                    rates.add(new HistoricalRateTuple(ExchangeRate.FORMAT.format(3 + random.nextDouble()), "" + i));
+                    calendar.set(Calendar.DAY_OF_MONTH, i);
+                    map(calendar.getTime(), i, to, from).subscribeOn(Schedulers.io()).subscribe(observer);
                 }
-                SystemClock.sleep(2000);
-                EventBus.getDefault().post(rates);
             }
         }, true);
+    }
+
+    @NonNull
+    private Observable<HistoricalRateTuple> map(Date date, final int i, final String to, final String from) {
+        return ExchangeRateLoader.loadHistoricalRate(date).map(new Func1<JSONObject, HistoricalRateTuple>() {
+            @Override
+            public HistoricalRateTuple call(JSONObject jsonObject) {
+                try {
+                    double toRate = jsonObject.getDouble(to),
+                            fromRate = jsonObject.getDouble(from);
+                    double rate = BigDecimal.ONE.divide(BigDecimal.valueOf(fromRate), MathContext.DECIMAL128)
+                            .multiply(BigDecimal.valueOf(toRate)).doubleValue();
+                    return new HistoricalRateTuple(to, from, rate, i);
+                } catch (JSONException e) {
+                    throw Exceptions.propagate(e);
+                }
+            }
+        });
     }
 }

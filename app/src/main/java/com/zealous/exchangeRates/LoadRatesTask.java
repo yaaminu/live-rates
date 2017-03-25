@@ -21,9 +21,8 @@ import io.realm.Realm;
  */
 
 public class LoadRatesTask extends Task {
-    private static final String TAG = "LoadRatesTask";
-
     static final String JOB_TAG = "rates";
+    private static final String TAG = "LoadRatesTask";
 
     public LoadRatesTask() {
     }
@@ -57,7 +56,6 @@ public class LoadRatesTask extends Task {
             Realm realm = ExchangeRate.Realm(getApplicationContext());
             try {
                 JSONObject jsonObject = ExchangeRateLoader.loadRates();
-                jsonObject = jsonObject.getJSONObject("rates");
                 realm.beginTransaction();
                 try {
                     persistRates(realm, jsonObject);
@@ -81,8 +79,8 @@ public class LoadRatesTask extends Task {
             ExchangeRate rate = realm.where(ExchangeRate.class)
                     .equalTo(ExchangeRate.FIELD_CURRENCY_ISO, key).findFirst();
             if (rate != null) {
-                double tempRate = BigDecimal.ONE.divide(BigDecimal.valueOf(baseRate), MathContext.DECIMAL32)
-                        .multiply(BigDecimal.valueOf(jsonObject.getDouble(key)), MathContext.DECIMAL32).doubleValue();
+                double tempRate = BigDecimal.ONE.divide(BigDecimal.valueOf(baseRate), MathContext.DECIMAL128)
+                        .multiply(BigDecimal.valueOf(jsonObject.getDouble(key)), MathContext.DECIMAL128).doubleValue();
                 rate.setRate(tempRate);
                 realm.copyToRealmOrUpdate(rate);
             } else {

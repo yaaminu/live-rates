@@ -40,7 +40,7 @@
     <string name="arrow">Arrow</string>
     <string name="yesterday">Yesterday</string>
     <string name="_7_days_ago">7 days ago</string>
-    <string name="a_month_ago">A month ago</string>
+    <string name="$28_days_ago">28 days ago</string>
     <string name="back">Back</string>
     <string name="today_title">Today, %s</string>
     <string name="missing">\?\?</string>
@@ -61,6 +61,7 @@
     <string name="interest_amount">Interest %s</string>
     <string name="error_rate_exceeds_100">Rate cannot exceed 100</string>
     <string name="amount_value">Amount %s</string>
+    <string name="no_currency_selected">No currency to selected</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

@@ -45,6 +45,7 @@ public class ExchangeRatesListAdapter extends BaseAdapter<ExchangeRatesListAdapt
 
     private String getText(ExchangeRate rate) {
         Context context = delegate.context();
+        if (rate.getRate() == 0) return "??";
         if (rate.getRate() > 1) {
             return context.getString(R.string.rate_template, delegate.baseRate().getCurrencySymbol(), ExchangeRate.FORMAT.format(1),
                     rate.getCurrencySymbol(), ExchangeRate.FORMAT.format(rate.getRate()));

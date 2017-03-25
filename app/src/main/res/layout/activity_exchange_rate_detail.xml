@@ -257,7 +257,7 @@
                             fontPath="fonts/roboto-regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/a_month_ago"
+                            android:text="@string/$28_days_ago"
                             android:textColor="@android:color/black"
                             app:layout_columnWeight="1.0"
                             tools:ignore="MissingPrefix" />
