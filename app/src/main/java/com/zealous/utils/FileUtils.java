@@ -88,14 +88,14 @@ public class FileUtils {
         return extension;
     }
 
-    public static String hash(String source) {
+    public static String sha1(String source) {
         if (source == null) {
             throw new IllegalArgumentException();
         }
-        return hash(source.getBytes());
+        return sha1(source.getBytes());
     }
 
-    public static String hash(byte[] source) {
+    public static String sha1(byte[] source) {
         if (source == null) {
             throw new IllegalArgumentException("source == null");
         }
@@ -110,7 +110,7 @@ public class FileUtils {
             //re-use param source
             source = digest.digest(source);
             String hashString = bytesToString(source);
-            PLog.d(TAG, "hash: " + hashString);
+            PLog.d(TAG, "sha1: " + hashString);
             return hashString;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e.getCause());
@@ -184,7 +184,7 @@ public class FileUtils {
             for (int i = 0; i < hash.length; i++) {
                 hashString += Integer.toString((hash[i] & 0xff) + 0x100, 16).substring(1);
             }
-            PLog.d(TAG, "hash: " + hashString);
+            PLog.d(TAG, "sha1: " + hashString);
             return hashString;
 
         } catch (NoSuchAlgorithmException e) {
@@ -282,16 +282,6 @@ public class FileUtils {
         return sizeInLowestPrecision(file.length());
     }
 
-    public interface ProgressListener {
-        void onProgress(long expected, long processed) throws IOException;
-    }
-
-
-    /**
-     * the code below was  shamelessly copied from paulBurke: https://github.com/ipaulPro/aFileChooser
-     * licensed under the apache licence
-     */
-
     /**
      * Get a file path from a Uri. This will get the the path for Storage Access
      * Framework Documents, as well as the _data field for the MediaStore and
@@ -365,6 +355,11 @@ public class FileUtils {
 
 
     /**
+     * the code below was  shamelessly copied from paulBurke: https://github.com/ipaulPro/aFileChooser
+     * licensed under the apache licence
+     */
+
+    /**
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
      *
@@ -434,7 +429,6 @@ public class FileUtils {
         return null;
     }
 
-
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
@@ -479,5 +473,9 @@ public class FileUtils {
         } catch (ActivityNotFoundException e) {
             return false;
         }
+    }
+
+    public interface ProgressListener {
+        void onProgress(long expected, long processed) throws IOException;
     }
 }

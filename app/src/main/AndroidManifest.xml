@@ -45,8 +45,8 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity" />
-
         </activity>
+        <activity android:name=".expense.ExpenseActivity"></activity>
     </application>
 
 </manifest>

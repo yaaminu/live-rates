@@ -5,6 +5,8 @@ import android.app.Application;
 import com.birbit.android.jobqueue.JobManager;
 import com.birbit.android.jobqueue.TagConstraint;
 import com.birbit.android.jobqueue.config.Configuration;
+import com.zealous.expense.DaggerExpenseActivityComponent;
+import com.zealous.expense.ExpenseActivityComponent;
 import com.zealous.utils.Config;
 import com.zealous.utils.ConnectionUtils;
 import com.zealous.utils.PLog;
@@ -21,6 +23,12 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public class Zealous extends Application {
 
     private JobRunnerImpl runner;
+    private ExpenseActivityComponent expenseActivityComponent;
+
+
+    public ExpenseActivityComponent getExpenseActivityComponent() {
+        return expenseActivityComponent;
+    }
 
     @Override
     public void onCreate() {
@@ -36,6 +44,7 @@ public class Zealous extends Application {
         TaskManager.init(runner);
         CalligraphyConfig.Builder configBuilder = new CalligraphyConfig.Builder().setDefaultFontPath(null);
         CalligraphyConfig.initDefault(configBuilder.build());
+        expenseActivityComponent = DaggerExpenseActivityComponent.create();
     }
 
     static class JobRunnerImpl implements TaskManager.JobRunner {

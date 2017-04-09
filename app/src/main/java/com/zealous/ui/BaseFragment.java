@@ -27,6 +27,34 @@ public abstract class BaseFragment extends Fragment {
         return view;
     }
 
+
+    @Override
+    public void onStop() {
+        BasePresenter<?> presenter = getBasePresenter();
+        if (presenter != null) {
+            presenter.onStop();
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        BasePresenter<?> presenter = getBasePresenter();
+        if (presenter != null) {
+            presenter.onStart();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        BasePresenter<?> presenter = getBasePresenter();
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
+        super.onDestroy();
+    }
+
     @Override
     public void onDestroyView() {
         ButterKnife.unbind(this);
@@ -35,4 +63,9 @@ public abstract class BaseFragment extends Fragment {
 
     @LayoutRes
     protected abstract int getLayout();
+
+    @Nullable
+    protected BasePresenter<?> getBasePresenter() {
+        return null;
+    }
 }

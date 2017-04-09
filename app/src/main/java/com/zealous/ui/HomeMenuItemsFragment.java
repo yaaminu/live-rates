@@ -14,6 +14,7 @@ import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 import com.zealous.adapter.HomeRecyclerViewAdapter;
 import com.zealous.exchangeRates.ExchangeRateListActivity;
+import com.zealous.expense.ExpenseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,6 @@ public class
 HomeMenuItemsFragment extends BaseFragment {
 
 
-    @Bind(R.id.recycler_view)
-    RecyclerView recyclerView;
     @DrawableRes
     private final int[] drawables = {
             R.drawable.ic_expense_tracker_24dp,
@@ -38,8 +37,50 @@ HomeMenuItemsFragment extends BaseFragment {
             R.drawable.ic_other_rates_24dp,
             R.drawable.ic_calculators_24dp
     };
-
+    @Bind(R.id.recycler_view)
+    RecyclerView recyclerView;
     private List<HomeItem> homeItems;
+    private final HomeRecyclerViewAdapter.Delegate delegate = new HomeRecyclerViewAdapter.Delegate() {
+        @Override
+        public Context context() {
+            return getActivity();
+        }
+
+        @Override
+        public void onItemClick(BaseAdapter<HomeRecyclerViewAdapter.VHolder, HomeItem> adapter, View view, int position, long id) {
+            switch (position) {
+                case 0:
+                    Intent intent = new Intent(getContext(), ExpenseActivity.class);
+                    startActivity(intent);
+                    break;
+                case 1:
+                    intent = new Intent(getContext(), ExchangeRateListActivity.class);
+                    startActivity(intent);
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    intent = new Intent(getContext(), ToolsActivity.class);
+                    startActivity(intent);
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+        }
+
+        @Override
+        public boolean onItemLongClick(BaseAdapter<HomeRecyclerViewAdapter.VHolder, HomeItem> adapter, View view, int position, long id) {
+            return false;
+        }
+
+        @NonNull
+        @Override
+        public List<HomeItem> dataSet(String constraint) {
+            return homeItems;
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,33 +104,4 @@ HomeMenuItemsFragment extends BaseFragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
         recyclerView.setAdapter(adapter);
     }
-
-    private final HomeRecyclerViewAdapter.Delegate delegate = new HomeRecyclerViewAdapter.Delegate() {
-        @Override
-        public Context context() {
-            return getActivity();
-        }
-
-        @Override
-        public void onItemClick(BaseAdapter<HomeRecyclerViewAdapter.VHolder, HomeItem> adapter, View view, int position, long id) {
-            if (position == 1) {
-                Intent intent = new Intent(getContext(), ExchangeRateListActivity.class);
-                startActivity(intent);
-            } else if (position == 4) {
-                Intent intent = new Intent(getContext(), ToolsActivity.class);
-                startActivity(intent);
-            }
-        }
-
-        @Override
-        public boolean onItemLongClick(BaseAdapter<HomeRecyclerViewAdapter.VHolder, HomeItem> adapter, View view, int position, long id) {
-            return false;
-        }
-
-        @NonNull
-        @Override
-        public List<HomeItem> dataSet(String constraint) {
-            return homeItems;
-        }
-    };
 }

@@ -21,6 +21,7 @@ import static android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
  */
 public abstract class BaseZealousActivity extends AppCompatActivity {
 
+    private static final String TAG = "BaseZealousActivity";
     @Nullable
     @Bind(R.id.toolbar)
     protected Toolbar toolbar;
