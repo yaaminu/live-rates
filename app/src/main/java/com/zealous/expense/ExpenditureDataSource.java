@@ -146,10 +146,10 @@ public class ExpenditureDataSource implements Closeable {
      * @return all categories for expenditures
      */
     public RealmResults<ExpenditureCategory> findCategories() {
-        return realm.where(ExpenditureCategory.class).findAllSorted(ExpenditureCategory.FEILD_NAME, Sort.ASCENDING);
+        return realm.where(ExpenditureCategory.class).findAllSorted(ExpenditureCategory.FIELD_NAME, Sort.ASCENDING);
     }
 
-    public RealmQuery<ExpenditureCategory> makeQuery2() {
+    public RealmQuery<ExpenditureCategory> makeExpenditureCategoryQuery() {
         return realm.where(ExpenditureCategory.class);
     }
 

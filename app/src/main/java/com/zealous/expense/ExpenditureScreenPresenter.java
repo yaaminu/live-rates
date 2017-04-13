@@ -48,8 +48,7 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     private final RealmChangeListener<RealmResults<Expenditure>> listener = new RealmChangeListener<RealmResults<Expenditure>>() {
         @Override
         public void onChange(RealmResults<Expenditure> element) {
-            totalBudget = BigDecimal.valueOf(expenditureDataSource.makeQuery2().sum(ExpenditureCategory.FEILD_BUDGET).longValue())
-                    .divide(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue();
+            totalBudget = calculateTotalBudget().divide(BigDecimal.valueOf(100), MathContext.DECIMAL128).doubleValue();
             totalExpenditure = BigDecimal.valueOf(records.sum(Expenditure.FIELD_AMOUNT).longValue()).divide(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue();
             updateUi();
         }
@@ -66,11 +65,38 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
         Random random = new SecureRandom();
         return new ExpenditureBuilder()
                 .setAmountSpent((int) Math.abs(random.nextDouble() * (9999 - 100) + 100))
-                .setCategory(new ExpenditureCategory("Food", 10000))
+                .setCategory(new ExpenditureCategory("Food", 10000, ExpenditureCategory.MONTHLY))
                 .setDescription("Burger")
                 .setLocation("McDonalds, Sandton City Shopping Center")
                 .setTime(System.currentTimeMillis())
                 .createExpenditure();
+    }
+
+    private BigDecimal calculateTotalBudget() {
+        BigDecimal tmp;
+
+        Calendar calendar = Calendar.getInstance();
+
+        tmp = BigDecimal.valueOf(expenditureDataSource.makeExpenditureCategoryQuery()
+                .equalTo(ExpenditureCategory.FIELD_BUDGET_DURATION, ExpenditureCategory.DAILY)
+                .sum(ExpenditureCategory.FIELD_BUDGET).longValue());
+
+        tmp = tmp.add(BigDecimal.valueOf(expenditureDataSource.makeExpenditureCategoryQuery()
+                .equalTo(ExpenditureCategory.FIELD_BUDGET_DURATION, ExpenditureCategory.WEEKLY)
+                .sum(ExpenditureCategory.FIELD_BUDGET).longValue())
+                .divide(BigDecimal.valueOf(7), MathContext.DECIMAL128));
+
+        tmp = tmp.add(BigDecimal.valueOf(expenditureDataSource.makeExpenditureCategoryQuery()
+                .equalTo(ExpenditureCategory.FIELD_BUDGET_DURATION, ExpenditureCategory.MONTHLY)
+                .sum(ExpenditureCategory.FIELD_BUDGET).longValue())
+                .divide(BigDecimal.valueOf(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)), MathContext.DECIMAL128));
+
+        tmp = tmp.add(BigDecimal.valueOf(expenditureDataSource.makeExpenditureCategoryQuery()
+                .equalTo(ExpenditureCategory.FIELD_BUDGET_DURATION, ExpenditureCategory.YEARLY)
+                .sum(ExpenditureCategory.FIELD_BUDGET).longValue())
+                .divide(BigDecimal.valueOf(calendar.getActualMaximum(Calendar.DAY_OF_YEAR)), MathContext.DECIMAL128));
+
+        return tmp.multiply(BigDecimal.valueOf(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)), MathContext.DECIMAL128);
     }
 
     @Override

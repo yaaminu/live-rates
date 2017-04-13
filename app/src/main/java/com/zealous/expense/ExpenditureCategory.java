@@ -2,6 +2,7 @@ package com.zealous.expense;
 
 import android.content.Context;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IntDef;
 
 import com.zealous.R;
 import com.zealous.utils.GenericUtils;
@@ -15,19 +16,25 @@ import io.realm.annotations.PrimaryKey;
 
 public class ExpenditureCategory extends RealmObject {
 
-    public static final String FEILD_NAME = "name";
-    public static final String FEILD_BUDGET = "budget";
+    public static final String FIELD_NAME = "name";
+    public static final String FIELD_BUDGET = "budget";
+    public static final String FIELD_BUDGET_DURATION = "budgetDuration";
+    public static final int DAILY = 1, WEEKLY = 2, MONTHLY = 3, YEARLY = 4;
     @PrimaryKey
     private String name;
-
-    @SuppressWarnings("FieldCanBeLocal")
+    @BudgetDuration
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    private int budgetDuration;
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private long budget;
 
-    public ExpenditureCategory(String name, long budget) {
+    public ExpenditureCategory(String name, long budget, @BudgetDuration int budgetDuration) {
         GenericUtils.ensureNotEmpty(name);
         GenericUtils.ensureConditionTrue(budget >= 0, "budget can't be negative");
+        GenericUtils.ensureConditionTrue(budgetDuration >= 1 && budgetDuration <= 4, "budget can't be negative");
         this.name = name;
         this.budget = budget;
+        this.budgetDuration = budgetDuration;
     }
 
     public ExpenditureCategory() {
@@ -51,5 +58,9 @@ public class ExpenditureCategory extends RealmObject {
             drawable = R.drawable.expense_category_custom_icon;
         }
         return drawable;
+    }
+
+    @IntDef({DAILY, WEEKLY, MONTHLY, YEARLY})
+    public @interface BudgetDuration {
     }
 }
