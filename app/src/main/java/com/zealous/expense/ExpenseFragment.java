@@ -1,8 +1,10 @@
 package com.zealous.expense;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.Bind;
-import butterknife.OnItemSelected;
+import butterknife.OnClick;
 
 /**
  * Created by yaaminu on 4/8/17.
@@ -43,6 +45,11 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     @Bind(R.id.monthly_budget)
     TextView totalBudget;
 
+    @Bind(R.id.expenditure_range_text)
+    TextView rangeText;
+
+    private String[] expenseRange;
+
     @Override
     protected int getLayout() {
         return R.layout.fragment_expenses;
@@ -57,12 +64,8 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
                 .expenseFragmentProvider(new ExpenseFragmentProvider(this))
                 .build()
                 .inject(this);
+        expenseRange = getResources().getStringArray(R.array.expense_range);
         expenditureScreenPresenter.onCreate(savedInstanceState, this);
-    }
-
-    @OnItemSelected(R.id.expenditure_range)
-    void onItemSelected(int position) {
-        expenditureScreenPresenter.onChangeExpenditureRange(position);
     }
 
     @Override
@@ -70,6 +73,19 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         super.onViewCreated(view, savedInstanceState);
         expenseList.setLayoutManager(layoutManager);
         expenseList.setAdapter(adapter);
+        rangeText.setText(expenseRange[0]);
+    }
+
+    @OnClick(R.id.expenditure_range)
+    void onClick() {
+        new AlertDialog.Builder(getContext())
+                .setItems(expenseRange, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        rangeText.setText(expenseRange[which]);
+                        expenditureScreenPresenter.onChangeExpenditureRange(which);
+                    }
+                }).create().show();
     }
 
     @Nullable
@@ -85,7 +101,6 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         this.totalBudget.setText(getString(R.string.total_budget, totalBudget));
         this.totalExpenditure.setText(getString(R.string.total_expenditire, totalExpenditure));
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
