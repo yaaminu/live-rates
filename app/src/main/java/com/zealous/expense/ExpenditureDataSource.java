@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import io.realm.Sort;
 
 /**
@@ -139,6 +140,17 @@ public class ExpenditureDataSource implements Closeable {
     public void stopListeningForChanges(@NonNull RealmChangeListener<Realm> changeListener) {
         ensureNotClosed();
         realm.removeChangeListener(changeListener);
+    }
+
+    /**
+     * @return all categories for expenditures
+     */
+    public RealmResults<ExpenditureCategory> findCategories() {
+        return realm.where(ExpenditureCategory.class).findAllSorted(ExpenditureCategory.FEILD_NAME, Sort.ASCENDING);
+    }
+
+    public RealmQuery<ExpenditureCategory> makeQuery2() {
+        return realm.where(ExpenditureCategory.class);
     }
 
     /**

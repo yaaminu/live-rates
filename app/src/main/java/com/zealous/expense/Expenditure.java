@@ -3,9 +3,15 @@ package com.zealous.expense;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.utils.GenericUtils;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.Date;
+
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -19,17 +25,24 @@ public class Expenditure extends RealmObject {
 
     public static final String FIELD_ID = "expenditureID";
     public static final String FIELD_TIME = "time";
-
+    public static final String FIELD_AMOUNT = "amountSpent";
     @Index
     private long amountSpent;
     @Required
     private String description;
     private ExpenditureCategory category;
+
+    @Index
     private long time;
     @Nullable
     private String location;
+    @SuppressWarnings("unused")
     @PrimaryKey
     private String expenditureID;
+
+    @Nullable
+    @Ignore
+    private String normalizedAmount;
 
     public Expenditure() {
 
@@ -47,5 +60,35 @@ public class Expenditure extends RealmObject {
         this.category = category;
         this.time = time;
         this.location = location;
+    }
+
+    @NonNull
+    public String getNormalizedAmount() {
+        if (normalizedAmount == null) {
+            normalizedAmount = ExchangeRate.FORMAT.format(BigDecimal.valueOf(getAmountSpent())
+                    .divide(BigDecimal.valueOf(100), MathContext.DECIMAL128));
+        }
+        return normalizedAmount;
+    }
+
+    private long getAmountSpent() {
+        return amountSpent;
+    }
+
+    public Date getExpenditureTime() {
+        return new Date(time);
+    }
+
+    public ExpenditureCategory getCategory() {
+        return category;
+    }
+
+    @Nullable
+    public String getLocation() {
+        return location;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

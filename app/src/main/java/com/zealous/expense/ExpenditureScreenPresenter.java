@@ -9,6 +9,9 @@ import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +23,7 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
+import static com.zealous.exchangeRates.ExchangeRate.FORMAT;
 import static com.zealous.expense.Expenditure.FIELD_TIME;
 
 /**
@@ -39,11 +43,15 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     @Nullable
     private ExpenseListScreen screen;
     private RealmResults<Expenditure> records;
+    private double totalBudget;
+    private double totalExpenditure;
     private final RealmChangeListener<RealmResults<Expenditure>> listener = new RealmChangeListener<RealmResults<Expenditure>>() {
         @Override
         public void onChange(RealmResults<Expenditure> element) {
-            assert screen != null;
-            screen.showExpenses(records);
+            totalBudget = BigDecimal.valueOf(expenditureDataSource.makeQuery2().sum(ExpenditureCategory.FEILD_BUDGET).longValue())
+                    .divide(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue();
+            totalExpenditure = BigDecimal.valueOf(records.sum(Expenditure.FIELD_AMOUNT).longValue()).divide(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue();
+            updateUi();
         }
     };
 
@@ -55,11 +63,12 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     }
 
     public static Expenditure createDummyExpenditure() {
+        Random random = new SecureRandom();
         return new ExpenditureBuilder()
-                .setAmountSpent(Math.abs(new Random().nextInt()))
-                .setCategory(new ExpenditureCategory("category", Math.abs(new Random().nextLong())))
-                .setDescription("spending")
-                .setLocation("location")
+                .setAmountSpent((int) Math.abs(random.nextDouble() * (9999 - 100) + 100))
+                .setCategory(new ExpenditureCategory("Food", 10000))
+                .setDescription("Burger")
+                .setLocation("McDonalds, Sandton City Shopping Center")
                 .setTime(System.currentTimeMillis())
                 .createExpenditure();
     }
@@ -89,7 +98,7 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
         assert screen != null;
         updateRecords();
         this.records.addChangeListener(listener);
-        screen.showExpenses(records);
+        updateUi();
     }
 
     @Override
@@ -114,8 +123,13 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     public void onChangeExpenditureRange(int position) {
         range = getRange(position);
         updateRecords();
+        updateUi();
+    }
+
+    private void updateUi() {
+        // TODO: 4/13/17 optimize away unnecessary calls
         if (screen != null) {
-            screen.showExpenses(records);
+            screen.refreshDisplay(records, FORMAT.format(totalExpenditure), FORMAT.format(totalBudget));
         }
     }
 

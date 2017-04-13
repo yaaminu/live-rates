@@ -27,4 +27,8 @@
     <color name="white">@android:color/white</color>
     <color name="transparent">#00000000</color>
     <color name="black">#000000</color>
+    <color name="cream">#fbe9e7</color>
+    <color name="dark_violet">#ff0b0825</color>
+    <color name="light_violet">#201b48</color>
+    <color name="faint_voilet">#7d7a9b</color>
 </resources>

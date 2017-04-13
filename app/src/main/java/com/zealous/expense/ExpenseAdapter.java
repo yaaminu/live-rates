@@ -1,5 +1,6 @@
 package com.zealous.expense;
 
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -18,7 +19,14 @@ public class ExpenseAdapter extends BaseAdapter<ExpenseItemHolder, Expenditure> 
 
     @Override
     protected void doBindHolder(ExpenseItemHolder holder, int position) {
-        holder.expeditureDescription.setText(getItem(position).toString());
+        final Expenditure item = getItem(position);
+        holder.expeditureDescription.setText(item.getDescription());
+        holder.expenditureTime.setText(DateUtils.getRelativeDateTimeString(delegate.context(),
+                item.getExpenditureTime().getTime(), System.currentTimeMillis(),
+                DateUtils.DAY_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL));
+        holder.expenseLocation.setText(String.valueOf(" " + item.getLocation()));
+        holder.categoryIcon.setImageResource(item.getCategory().getIcon(delegate.context()));
+        holder.expenditureAmount.setText(delegate.context().getString(R.string.amount_format, item.getNormalizedAmount()));
     }
 
     @Override

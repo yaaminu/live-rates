@@ -9,5 +9,5 @@ import java.util.List;
  */
 
 public interface ExpenseListScreen extends Screen {
-    void showExpenses(List<Expenditure> expenditures);
+    void refreshDisplay(List<Expenditure> expenditures, String totalExpenditure, String totalBudget);
 }

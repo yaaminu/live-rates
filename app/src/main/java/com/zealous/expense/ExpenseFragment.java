@@ -4,10 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.zealous.R;
 import com.zealous.ui.BaseFragment;
@@ -38,6 +37,11 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
 
     @Bind(R.id.recycler_view)
     RecyclerView expenseList;
+
+    @Bind(R.id.total_expenditure)
+    TextView totalExpenditure;
+    @Bind(R.id.monthly_budget)
+    TextView totalBudget;
 
     @Override
     protected int getLayout() {
@@ -75,9 +79,11 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     }
 
     @Override
-    public void showExpenses(@NonNull List<Expenditure> expenditures) {
+    public void refreshDisplay(@NonNull List<Expenditure> expenditures, String totalExpenditure, String totalBudget) {
         GenericUtils.ensureNotNull(expenditures);
         delegate.refreshDataSet(expenditures, adapter);
+        this.totalBudget.setText(getString(R.string.total_budget, totalBudget));
+        this.totalExpenditure.setText(getString(R.string.total_expenditire, totalExpenditure));
     }
 
 
@@ -85,12 +91,5 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     public boolean onOptionsItemSelected(MenuItem item) {
         return expenditureScreenPresenter.onMenuItemClicked(item.getItemId())
                 || super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(1, R.id.action_clear, 100, "clear");
-        menu.add(1, R.id.action_add, 100, "add");
-        super.onCreateOptionsMenu(menu, inflater);
     }
 }

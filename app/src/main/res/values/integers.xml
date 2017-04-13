@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="currency_name_max">10</integer>
+    <integer name="expenditure_description_lines">1</integer>
 </resources>
