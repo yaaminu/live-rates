@@ -83,9 +83,9 @@ public class Expenditure extends RealmObject {
         return category;
     }
 
-    @Nullable
+    @NonNull
     public String getLocation() {
-        return location;
+        return location == null ? "" : location;
     }
 
     public String getDescription() {
