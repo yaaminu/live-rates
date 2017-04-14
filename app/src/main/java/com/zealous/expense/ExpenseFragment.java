@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -44,9 +46,10 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     TextView totalExpenditure;
     @Bind(R.id.monthly_budget)
     TextView totalBudget;
-
     @Bind(R.id.expenditure_range_text)
     TextView rangeText;
+    @Bind(R.id.today_s_date)
+    TextView todaysDate;
 
     private String[] expenseRange;
 
@@ -74,10 +77,11 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         expenseList.setLayoutManager(layoutManager);
         expenseList.setAdapter(adapter);
         rangeText.setText(expenseRange[0]);
+        todaysDate.setText(DateUtils.formatDateTime(getContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
     }
 
     @OnClick(R.id.expenditure_range)
-    void onClick() {
+    void changeRange() {
         new AlertDialog.Builder(getContext())
                 .setItems(expenseRange, new DialogInterface.OnClickListener() {
                     @Override
@@ -86,6 +90,25 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
                         expenditureScreenPresenter.onChangeExpenditureRange(which);
                     }
                 }).create().show();
+    }
+
+    @OnClick(R.id.options)
+    void onMenuClicked(View anchor) {
+        PopupMenu popupMenu = new PopupMenu(getContext(), anchor);
+        popupMenu.inflate(R.menu.expense_menu);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return expenditureScreenPresenter.onMenuItemClicked(item.getItemId());
+            }
+        });
+        popupMenu.show();
+    }
+
+
+    @OnClick(R.id.fab)
+    void addExpenditure() {
+        expenditureScreenPresenter.onAddExpenditureFabClicked();
     }
 
     @Nullable

@@ -5,7 +5,7 @@
     <color name="colorPrimary">@color/expenseColorPrimary</color>
     <color name="colorPrimaryDark">@color/expenseColorPrimaryDark</color>
     <color name="dark_blue">#ff1f2f38</color>
-    <color name="dark_brown">#ff8e1212</color>
+    <color name="business_news_color_primary_dark">#ff8e1212</color>
     <color name="otherRatesPrimaryDark">#ffca6105</color>
     <color name="exchangeRatePrimaryDark">#ff10685f</color>
     <color name="expenseColorPrimaryDark">#ff0d47a1</color>
@@ -16,7 +16,7 @@
     <color name="green">#ff00ff00</color>
     <color name="lemon">#ff8bc34a</color>
     <color name="light_blue">#ff37474f</color>
-    <color name="light_brown">#ffc62828</color>
+    <color name="business_news_color_primary">#ffc62828</color>
     <color name="otherRatesPrimary">#fff57f17</color>
     <color name="bankRatesPrimary">#ff26a69a</color>
     <color name="bankRatesPrimaryDark">#167970</color>

@@ -23,8 +23,10 @@ import java.util.List;
 
 import butterknife.Bind;
 
-public class ToolsActivity extends BaseZealousActivity {
-
+/**
+ * Created by yaaminu on 4/14/17.
+ */
+public class ToolsFragment extends BaseFragment {
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
     private List<Tuple> items;
@@ -36,7 +38,7 @@ public class ToolsActivity extends BaseZealousActivity {
 
         @Override
         public Context context() {
-            return ToolsActivity.this;
+            return getContext();
         }
 
         @Override
@@ -72,24 +74,24 @@ public class ToolsActivity extends BaseZealousActivity {
     };
 
     @Override
-    protected void doCreate(@Nullable Bundle savedInstanceState) {
-        super.doCreate(savedInstanceState);
+    protected int getLayout() {
+        return R.layout.fragment_tools;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         items = new ArrayList<>(3);
         items.add(new Tuple(getString(R.string.exchange_rate_calculator), getString(R.string.exchange_rate_calc_description)));
         items.add(new Tuple(getString(R.string.interest_calc), getString(R.string.interest_calc_des)));
         items.add(new Tuple(getString(R.string.tax_calc), getString(R.string.tax_calc_des)));
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new ToolsRecyclerViewAdapter(delegate));
-    }
-
-    @Override
-    protected int getLayout() {
-        return R.layout.activity_tools;
-    }
-
-    @Override
-    protected boolean hasParent() {
-        return true;
     }
 
     static class ToolsRecyclerViewAdapter extends SimpleRecyclerViewAdapter<Tuple> {

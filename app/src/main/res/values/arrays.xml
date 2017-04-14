@@ -19,6 +19,6 @@
         <item>This Week</item>
         <item>This Month</item>
         <item>This Year</item>
-        <item>Custom Range</item>
+        <item>Custom Date</item>
     </string-array>
 </resources>

@@ -2,4 +2,7 @@
 <resources>
     <item name="action_clear" type="id" />
     <item name="action_add" type="id" />
+    <item name="tab_exchange_rates" type="id" />
+    <item name="tab_expenses" type="id" />
+    <item name="tab_tools" type="id" />
 </resources>

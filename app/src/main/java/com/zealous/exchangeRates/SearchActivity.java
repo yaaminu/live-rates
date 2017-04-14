@@ -25,10 +25,13 @@ import butterknife.OnTextChanged;
  */
 public abstract class SearchActivity extends BaseZealousActivity {
 
+    @Nullable
     @Bind(R.id.search_et)
     EditText searchEt;
+    @Nullable
     @Bind(R.id.clear_search)
     ImageButton clearSearch;
+    @Nullable
     @Bind(R.id.search_view)
     View searchView;
 
@@ -40,8 +43,12 @@ public abstract class SearchActivity extends BaseZealousActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_search).setVisible(!ViewUtils.isViewVisible(searchView));
+        menu.findItem(R.id.action_search).setVisible(showSearch() && !ViewUtils.isViewVisible(searchView));
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    protected boolean showSearch() {
+        return true;
     }
 
     @Override

@@ -13,6 +13,7 @@
     <string name="live_exchange_rates">Live Exchange Rates</string>
     <string name="bank_rates">Bank Rates</string>
     <string name="other_rates">Other Rates</string>
+    <string name="tools">Tools</string>
     <string name="calculators">Rate &amp; Tax Calculators</string>
     <string name="home_expense_tracker_pie_char_description">Your expenses this month by category</string>
     <string name="start_tracking">Start Tracking</string>
@@ -65,12 +66,17 @@
     <string name="drop_down_icon">Drop down icon</string>
     <string name="calendar">Calendar</string>
     <string name="go_back">Go back</string>
+    <string name="news">News</string>
+    <string name="expenses">Expenses</string>
+    <string name="live_rates">Live Rates</string>
     <string name="category">Category</string>
     <string name="amount_format">- $%s</string>
     <string name="clear">Clear</string>
     <string name="add">Add</string>
     <string name="total_budget">Total Budget\nGH₵%s</string>
     <string name="total_expenditire">Total Expenditure\nGH₵%s</string>
+    <string name="assistant">Assistant</string>
+    <string name="view_budget">View Budget</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

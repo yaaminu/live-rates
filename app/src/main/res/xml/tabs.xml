@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        barColorWhenSelected="@color/light_violet"
+        icon="@drawable/ic_expenses_white_24dp"
+        id="@+id/tab_expenses"
+        title="@string/expenses" />
+    <tab
+        barColorWhenSelected="@color/exchangeRatePrimary"
+        icon="@drawable/ic_exchange_rates_black_24dp"
+        id="@+id/tab_exchange_rates"
+        title="@string/live_rates" />
+
+    <tab
+        barColorWhenSelected="@color/business_news_color_primary"
+        icon="@drawable/ic_business_news_black_24dp"
+        id="@+id/tab_business_news"
+        title="@string/news" />
+    <tab
+        barColorWhenSelected="@color/calculatorsPrimary"
+        icon="@drawable/ic_tools_black_24dp"
+        id="@+id/tab_tools"
+        title="@string/tools" />
+</tabs>

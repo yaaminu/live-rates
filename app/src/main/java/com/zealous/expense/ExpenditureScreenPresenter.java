@@ -130,11 +130,11 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     @Override
     public boolean onMenuItemClicked(int itemId) {
         switch (itemId) {
-            case R.id.action_clear:
-                expenditureDataSource.clear();
+            case R.id.action_assistant:
+//                expenditureDataSource.clear();
                 return true;
-            case R.id.action_add:
-                expenditureDataSource.addOrUpdateExpenditure(createDummyExpenditure());
+            case R.id.action_view_budget:
+//                expenditureDataSource.addOrUpdateExpenditure(createDummyExpenditure());
                 return true;
 
         }
@@ -243,4 +243,7 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
         return range;
     }
 
+    public void onAddExpenditureFabClicked() {
+        expenditureDataSource.addOrUpdateExpenditure(createDummyExpenditure());
+    }
 }
