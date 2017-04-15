@@ -13,10 +13,17 @@
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
-        <DatePicker
-            android:id="@+id/date_picker"
+        <EditText
+            android:id="@+id/edit_location"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:hint="@string/location"
+            android:inputType="text" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/default_gap" />
 
         <Button
             android:id="@+id/done"

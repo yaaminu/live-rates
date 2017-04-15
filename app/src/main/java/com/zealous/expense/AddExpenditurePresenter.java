@@ -47,7 +47,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
 
     public AddExpenditurePresenter(ExpenditureDataSource dataSource) {
         this.dataSource = dataSource;
-        this.location = getString(R.string.unknown);
+        this.location = getString(R.string.unspecified_location);
         this.time = System.currentTimeMillis();
         currency = "GH₵";
     }
@@ -132,6 +132,33 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                                 AddExpenditurePresenter.this.time = date.getTime();
                                 updateUI();
                             }
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    public void editLocation(FragmentManager fm) {
+        final EditLocationFragment fragment = new EditLocationFragment();
+        if (!location.equals(getString(R.string.unspecified_location))) {
+            Bundle bundle = new Bundle(1);
+            bundle.putString(EditLocationFragment.LOCATION, location);
+            fragment.setArguments(bundle);
+        }
+        fragment.show(fm, "editLocation");
+        TaskManager.executeOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                fragment.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        String location = fragment.getLocation();
+                        if (GenericUtils.isEmpty(location)) {
+                            Toast.makeText(fragment.getContext(), R.string.no_location_provided, Toast.LENGTH_SHORT).show();
+                        } else {
+                            AddExpenditurePresenter.this.location = location;
+                            updateUI();
                         }
                     }
                 });

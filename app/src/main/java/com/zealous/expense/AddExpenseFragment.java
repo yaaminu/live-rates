@@ -142,8 +142,8 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
                 addExpenditurePresenter.editDate(getFragmentManager());
                 break;
             case R.id.edit_location:
-//                addExpenditurePresenter.editLocation();
-//                break;
+                addExpenditurePresenter.editLocation(getFragmentManager());
+                break;
             default:
                 throw new AssertionError();
         }

@@ -17,6 +17,7 @@ import com.zealous.utils.ThreadUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,7 +76,15 @@ public class SetupActivity extends AppCompatActivity {
             JSONArray categories = new JSONArray(IOUtils.toString(inputStream));
             if (realm.where(ExpenditureCategory.class).count() < categories.length()) {
                 realm.beginTransaction();
-                realm.createOrUpdateAllFromJson(ExpenditureCategory.class, categories);
+                for (int i = 0; i < categories.length(); i++) {
+
+                    JSONObject category = categories.getJSONObject(i);
+                    ExpenditureCategory tmp = realm.where(ExpenditureCategory.class).equalTo(ExpenditureCategory.FIELD_NAME, category.getString(ExpenditureCategory.FIELD_NAME))
+                            .findFirst();
+                    if (tmp == null) { //don't overwrite
+                        realm.createOrUpdateObjectFromJson(ExpenditureCategory.class, category);
+                    }
+                }
                 realm.commitTransaction();
             }
         } catch (IOException e) {

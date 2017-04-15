@@ -99,6 +99,9 @@
     <string name="edit">Edit</string>
     <string name="choose_date">Choose Date</string>
     <string name="date_in_future">Date is in the future</string>
+    <string name="unspecified_location">Location unspecified</string>
+    <string name="no_location_provided">No location provided</string>
+    <string name="enter_location">Enter location</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
