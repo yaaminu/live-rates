@@ -77,6 +77,15 @@
     <string name="total_expenditire">Total Expenditure\nGH₵%s</string>
     <string name="assistant">Assistant</string>
     <string name="view_budget">View Budget</string>
+    <string name="amount_spent">Amount Spent</string>
+    <string name="description">Description</string>
+    <string name="location">Location</string>
+    <string name="unknown">Unknown</string>
+    <string name="add_expenditure">Add Expenditure</string>
+    <string name="no_description">No description</string>
+    <string name="invalid_amount">Invalid Amount</string>
+    <string name="no_category_error">No category selected</string>
+    <string name="error">Error!!</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

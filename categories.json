@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Bills",
+    "budget": 0,
+    "budgetDuration": 3
+  },
+  {
+    "name": "Food",
+    "budget": 0,
+    "budgetDuration": 3
+  },
+  {
+    "name": "Communication",
+    "budget": 0,
+    "budgetDuration": 3
+  },
+  {
+    "name": "Clothing",
+    "budget": 0,
+    "budgetDuration": 3
+  },
+  {
+    "name": "Health",
+    "budget": 0,
+    "budgetDuration": 3
+  },
+  {
+    "name": "Entertainment",
+    "budget": 0,
+    "budgetDuration": 3
+  },
+  {
+    "name": "Transport",
+    "budget": 0,
+    "budgetDuration": 3
+  },
+  {
+    "name": "Donations",
+    "budget": 0,
+    "budgetDuration": 3
+  }
+]

@@ -9,8 +9,17 @@ import com.zealous.BuildConfig;
 import com.zealous.R;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.exchangeRates.ExchangeRateManager;
+import com.zealous.expense.BaseExpenditureProvider;
+import com.zealous.expense.ExpenditureCategory;
 import com.zealous.utils.TaskManager;
 import com.zealous.utils.ThreadUtils;
+
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,19 +46,48 @@ public class SetupActivity extends AppCompatActivity {
                 if (ThreadUtils.isMainThread()) {
                     gotoMainActivity();
                 } else {
-                    Realm realm = ExchangeRate.Realm(SetupActivity.this);
-                    try {
-                        if (realm.where(ExchangeRate.class).count() < 120) {
-                            ExchangeRateManager.initialiseRates(SetupActivity.this, realm);
-                        }
-                        runOnUiThread(this);
-                    } finally {
-                        realm.close();
-                    }
+                    setupRates();
+                    setupExpenditureCategories();
                     runOnUiThread(this);
                 }
             }
+
+            private void setupRates() {
+                Realm realm = ExchangeRate.Realm(SetupActivity.this);
+                try {
+                    if (realm.where(ExchangeRate.class).count() < 120) {
+                        ExchangeRateManager.initialiseRates(SetupActivity.this, realm);
+                    }
+                    runOnUiThread(this);
+                } finally {
+                    realm.close();
+                }
+            }
         }, false);
+    }
+
+    private void setupExpenditureCategories() {
+        BaseExpenditureProvider provider = new BaseExpenditureProvider();
+        Realm realm = provider.getExpenditureRealm(provider.getConfiguration());
+        InputStream inputStream = null;
+        try {
+            inputStream = getAssets().open("categories.json");
+            JSONArray categories = new JSONArray(IOUtils.toString(inputStream));
+            if (realm.where(ExpenditureCategory.class).count() < categories.length()) {
+                realm.beginTransaction();
+                realm.createOrUpdateAllFromJson(ExpenditureCategory.class, categories);
+                realm.commitTransaction();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        } finally {
+            realm.close();
+            if (inputStream != null) {
+                IOUtils.closeQuietly(inputStream);
+            }
+        }
     }
 
     private void gotoMainActivity() {
