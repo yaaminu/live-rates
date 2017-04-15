@@ -88,6 +88,14 @@
     <string name="error">Error!!</string>
     <string name="category_icon">Category Icon</string>
     <string name="_0_00">0.00</string>
+    <string name="add_new_category">Add New Category</string>
+    <string name="name">Name</string>
+    <string name="budget">Budget</string>
+    <string name="add_category">Add Category</string>
+    <string name="name_too_short">Name too short</string>
+    <string name="no_budget_warning">No budget set, are you sure you want to continue?</string>
+    <string name="attach_file">Attach</string>
+    <string name="done">Done</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
@@ -96,9 +104,10 @@
         <item>@string/calculators</item>
     </array>
     <array name="duration_types">
-        <item>Day</item>
-        <item>Month</item>
-        <item>Year</item>
+        <item>Daily</item>
+        <item>weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
     </array>
     <array name="interest_type">
         <item>Simple Interest</item>

@@ -191,4 +191,9 @@ public class ExpenditureDataSource implements Closeable {
         GenericUtils.ensureConditionTrue(!realm.isClosed(), "can't use a closed datasource");
     }
 
+    public void addOrUpdateCategory(ExpenditureCategory category) {
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(category);
+        realm.commitTransaction();
+    }
 }

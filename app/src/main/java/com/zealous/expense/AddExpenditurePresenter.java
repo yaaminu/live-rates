@@ -3,6 +3,8 @@ package com.zealous.expense;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 
 import com.zealous.R;
 import com.zealous.ui.BasePresenter;
@@ -98,5 +100,11 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
             screen.showValidationError(GenericUtils.getString(R.string.invalid_amount));
             return false;
         }
+    }
+
+    public void onAddCustomCategory(FragmentManager fm) {
+//        DialogFragment dialogFragment = new Dial
+        DialogFragment fragment = new AddNewCategoryDialogFragment();
+        fragment.show(fm, "addCategory");
     }
 }

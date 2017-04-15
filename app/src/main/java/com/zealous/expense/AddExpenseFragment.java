@@ -8,6 +8,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,7 +26,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 
 /**
  * Created by yaaminu on 4/14/17.
@@ -61,11 +63,15 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
 
         @Override
         public void onItemClick(BaseAdapter<CategoryHolder, ExpenditureCategory> adapter, View view, int position, long id) {
-            int previousPosition = selectedItem;
-            selectedItem = position;
-            adapter.notifyItemChanged(position);
-            if (previousPosition != INVALID_POSITION) {
-                adapter.notifyItemChanged(previousPosition);
+            //whatever be the case, clear the current selection
+            if (selectedItem != INVALID_POSITION) {
+                adapter.notifyItemChanged(selectedItem);
+            }
+            if (adapter.getItem(position) == ExpenditureCategory.DUMMY_EXPENDITURE_CATEGORY) {
+                addExpenditurePresenter.onAddCustomCategory(getFragmentManager());
+            } else {
+                selectedItem = position;
+                adapter.notifyItemChanged(position);
             }
         }
 
@@ -94,10 +100,31 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         DaggerAddExpenditureComponent.builder()
                 .addExpenseFragmentProvider(new AddExpenseFragmentProvider(this, delegate))
                 .build().inject(this);
         addExpenditurePresenter.onCreate(savedInstanceState, this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_expenditure_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_done:
+                addNewExpenditure();
+                break;
+            case R.id.action_attach:
+                //fall through
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     @Override
@@ -127,7 +154,6 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
                 .create().show();
     }
 
-    @OnClick(R.id.add_new_expense)
     void addNewExpenditure() {
         // TODO: 4/15/17 validate input
         if (addExpenditurePresenter

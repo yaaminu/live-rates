@@ -20,13 +20,31 @@ public class ExpenditureCategoryAdapter extends BaseAdapter<CategoryHolder, Expe
     }
 
     @Override
+    public int getItemCount() {
+        return super.getItemCount() + 1;
+    }
+
+    @Override
+    public ExpenditureCategory getItem(int position) {
+        if (position == getItemCount() - 1) {
+            return ExpenditureCategory.DUMMY_EXPENDITURE_CATEGORY;
+        }
+        return super.getItem(position);
+    }
+
+    @Override
     protected void doBindHolder(CategoryHolder holder, int position) {
         final ExpenditureCategory item = getItem(position);
-        holder.name.setText(item.getName());
-        final Drawable drawable = delegate.context().getResources().getDrawable(item.getIcon(delegate.context()));
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(delegate.context(), R.color.light_violet));
-        holder.categoryIcon.setImageDrawable(drawable);
-        holder.itemView.setSelected(position == delegate.getSelectedItemPosition());
+        if (item == ExpenditureCategory.DUMMY_EXPENDITURE_CATEGORY) {
+            holder.name.setText(R.string.add_new_category);
+            holder.categoryIcon.setImageResource(R.drawable.ic_add_violet_24dp);
+        } else {
+            holder.name.setText(item.getName());
+            final Drawable drawable = delegate.context().getResources().getDrawable(item.getIcon(delegate.context()));
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(delegate.context(), R.color.light_violet));
+            holder.categoryIcon.setImageDrawable(drawable);
+            holder.itemView.setSelected(position == delegate.getSelectedItemPosition());
+        }
     }
 
     @Override

@@ -108,13 +108,4 @@
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
         app:spanCount="3"
         tools:listitem="@layout/category_list_item" />
-
-    <Button
-        android:id="@+id/add_new_expense"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_violet"
-        android:gravity="center"
-        android:text="@string/add_expenditure"
-        android:textColor="@color/white" />
 </LinearLayout>

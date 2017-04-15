@@ -19,7 +19,10 @@ public class ExpenditureCategory extends RealmObject {
     public static final String FIELD_NAME = "name";
     public static final String FIELD_BUDGET = "budget";
     public static final String FIELD_BUDGET_DURATION = "budgetDuration";
-    public static final int DAILY = 1, WEEKLY = 2, MONTHLY = 3, YEARLY = 4;
+    public static final int DAILY = 0, WEEKLY = 1, MONTHLY = 2, YEARLY = 5;
+
+    public static final ExpenditureCategory DUMMY_EXPENDITURE_CATEGORY =
+            new ExpenditureCategory("Add", 100, MONTHLY);
     @PrimaryKey
     private String name;
     @BudgetDuration
@@ -31,7 +34,7 @@ public class ExpenditureCategory extends RealmObject {
     public ExpenditureCategory(String name, long budget, @BudgetDuration int budgetDuration) {
         GenericUtils.ensureNotEmpty(name);
         GenericUtils.ensureConditionTrue(budget >= 0, "budget can't be negative");
-        GenericUtils.ensureConditionTrue(budgetDuration >= 1 && budgetDuration <= 4, "budget can't be negative");
+        GenericUtils.ensureConditionTrue(budgetDuration >= 0 && budgetDuration <= 3, "budget can't be negative");
         this.name = name;
         this.budget = budget;
         this.budgetDuration = budgetDuration;
