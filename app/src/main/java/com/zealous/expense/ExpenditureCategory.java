@@ -7,6 +7,8 @@ import android.support.annotation.IntDef;
 import com.zealous.R;
 import com.zealous.utils.GenericUtils;
 
+import java.util.Locale;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -62,11 +64,26 @@ public class ExpenditureCategory extends RealmObject {
      * drawable for this resources.
      */
     @DrawableRes
-    public int getIcon(Context context) {
-        String resName = this.name.replaceAll("[^A-Za-z]*", "_") + "_violet";
-        int drawable = context.getResources().getIdentifier(resName, "drawable", context.getPackageName());
+    public int getIconWhite(Context context) {
+        String resName = this.name.replaceAll("[\\W]+", "_") + "_white";
+        int drawable = context.getResources().getIdentifier(resName.toLowerCase(Locale.US), "drawable", context.getPackageName());
         if (drawable == 0) {
             drawable = R.drawable.expense_category_custom_icon;
+        }
+        return drawable;
+    }
+
+    /**
+     * @param context context for retrieving resources
+     * @return the resource identifier corresponding to the
+     * drawable for this resources.
+     */
+    @DrawableRes
+    public int getIconViolet(Context context) {
+        String resName = this.name.replaceAll("[\\W]+", "_") + "_violet";
+        int drawable = context.getResources().getIdentifier(resName.toLowerCase(Locale.US), "drawable", context.getPackageName());
+        if (drawable == 0) {
+            drawable = R.drawable.expense_category_custom_icon_violet;
         }
         return drawable;
     }

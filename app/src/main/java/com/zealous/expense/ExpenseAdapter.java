@@ -29,7 +29,7 @@ public class ExpenseAdapter extends BaseAdapter<ExpenseItemHolder, Expenditure> 
                 item.getExpenditureTime().getTime(), System.currentTimeMillis(),
                 DateUtils.DAY_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL));
         holder.expenseLocation.setText(String.valueOf(" " + item.getLocation()));
-        holder.categoryIcon.setImageResource(item.getCategory().getIcon(delegate.context()));
+        holder.categoryIcon.setImageResource(item.getCategory().getIconWhite(delegate.context()));
         holder.expenditureAmount.setText(delegate.context().getString(R.string.amount_format, item.getNormalizedAmount()));
         holder.optionsView.setVisibility(delegate.getSelectedItem() == position ? View.VISIBLE : View.GONE);
         holder.itemView.setTag(position);

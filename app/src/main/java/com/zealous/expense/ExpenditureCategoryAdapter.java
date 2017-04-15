@@ -1,8 +1,6 @@
 package com.zealous.expense;
 
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.ViewGroup;
 
 import com.zealous.R;
@@ -40,8 +38,7 @@ public class ExpenditureCategoryAdapter extends BaseAdapter<CategoryHolder, Expe
             holder.categoryIcon.setImageResource(R.drawable.ic_add_violet_24dp);
         } else {
             holder.name.setText(item.getName());
-            final Drawable drawable = delegate.context().getResources().getDrawable(item.getIcon(delegate.context()));
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(delegate.context(), R.color.light_violet));
+            final Drawable drawable = delegate.context().getResources().getDrawable(item.getIconViolet(delegate.context()));
             holder.categoryIcon.setImageDrawable(drawable);
             holder.itemView.setSelected(position == delegate.getSelectedItemPosition());
         }

@@ -1,6 +1,6 @@
 #!/usr/local/bin/node
 
-var names = ['Bills', 'Food', 'Communication', 'Clothing', 'Health', 'Entertainment', 'Transport', 'Donations']
+var names = ['Bills','Accommodation' ,'Food', 'Communication', 'Clothing', 'Health', 'Entertainment', 'Transport', 'Donations']
 
 
 names = names.map(name => {

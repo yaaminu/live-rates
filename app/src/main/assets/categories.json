@@ -5,6 +5,11 @@
     "budgetDuration": 2
   },
   {
+    "name": "Accommodation",
+    "budget": 0,
+    "budgetDuration": 2
+  },
+  {
     "name": "Food",
     "budget": 0,
     "budgetDuration": 2
