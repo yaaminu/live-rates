@@ -86,6 +86,8 @@
     <string name="invalid_amount">Invalid Amount</string>
     <string name="no_category_error">No category selected</string>
     <string name="error">Error!!</string>
+    <string name="category_icon">Category Icon</string>
+    <string name="_0_00">0.00</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

@@ -4,20 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/et_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/amount_spent"
-            android:textColor="@color/white" />
-    </LinearLayout>
-
 
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
@@ -25,10 +13,13 @@
 
     <TextView
         android:id="@+id/tv_date"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         tools:text="14-04-2017, 11:30pm" />
+
 
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
@@ -36,18 +27,78 @@
 
     <TextView
         android:id="@+id/tv_location"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:drawableLeft="@drawable/ic_place_black_24dp"
+        android:gravity="center_horizontal"
         android:text="@string/unknown"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        tools:text="TrustWorths, Accra Mall" />
+        tools:ignore="RtlHardcoded"
+        tools:text=" TrustWorths, Accra Mall" />
+
+
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/default_gap" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/faint_voilet"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="@dimen/default_gap"
+            android:clickable="true"
+            android:padding="@dimen/default_gap"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+            android:textColor="@color/light_violet"
+            tools:text="GH₵ " />
+
+        <EditText
+            android:id="@+id/et_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_gap"
+            android:background="@color/transparent"
+            android:gravity="center_horizontal"
+            android:hint="@string/_0_00"
+            android:inputType="numberDecimal|numberSigned"
+            android:padding="@dimen/default_gap"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textColor="@color/dark_violet"
+            android:textColorHint="@color/light_violet" />
+    </LinearLayout>
+
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/default_gap" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/default_gap" />
 
     <EditText
         android:id="@+id/et_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/description"
-        android:textColor="@color/white" />
+        android:maxLength="50"
+        android:padding="@dimen/default_gap"
+        android:textColor="@color/light_violet" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/default_gap" />
+
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/default_gap" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -55,12 +106,15 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:spanCount="3" />
+        app:spanCount="3"
+        tools:listitem="@layout/category_list_item" />
 
     <Button
         android:id="@+id/add_new_expense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_violet"
         android:gravity="center"
-        android:text="@string/add_expenditure" />
+        android:text="@string/add_expenditure"
+        android:textColor="@color/white" />
 </LinearLayout>

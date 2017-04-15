@@ -1,7 +1,9 @@
 package com.zealous.expense;
 
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
@@ -19,15 +21,17 @@ public class ExpenditureCategoryAdapter extends BaseAdapter<CategoryHolder, Expe
 
     @Override
     protected void doBindHolder(CategoryHolder holder, int position) {
-        ((TextView) holder.itemView).setText(getItem(position).getName());
-        ((TextView) holder.itemView).setTextColor(delegate.context().getResources()
-                .getColor(delegate.getSelectedItemPosition() == position ?
-                        R.color.business_news_color_primary : R.color.black));
+        final ExpenditureCategory item = getItem(position);
+        holder.name.setText(item.getName());
+        final Drawable drawable = delegate.context().getResources().getDrawable(item.getIcon(delegate.context()));
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(delegate.context(), R.color.light_violet));
+        holder.categoryIcon.setImageDrawable(drawable);
+        holder.itemView.setSelected(position == delegate.getSelectedItemPosition());
     }
 
     @Override
     public CategoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new CategoryHolder(inflater.inflate(android.R.layout.simple_list_item_1, parent, false));
+        return new CategoryHolder(inflater.inflate(R.layout.category_list_item, parent, false));
     }
 
     public interface Delegate extends BaseAdapter.Delegate<CategoryHolder, ExpenditureCategory> {

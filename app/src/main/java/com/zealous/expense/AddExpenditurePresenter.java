@@ -28,6 +28,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     private AddExpenseFragment screen;
     private String location;
     private long time;
+    private String currency;
     private RealmResults<ExpenditureCategory> categories;
     private final RealmChangeListener<Realm> realmRealmChangeListener = new RealmChangeListener<Realm>() {
         @Override
@@ -42,6 +43,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
         this.dataSource = dataSource;
         this.location = getString(R.string.unknown);
         this.time = System.currentTimeMillis();
+        currency = "GH₵";
     }
 
     @Override
@@ -66,7 +68,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     private void updateUI() {
         categories = dataSource.makeExpenditureCategoryQuery()
                 .findAllSorted(ExpenditureCategory.FIELD_NAME);
-        this.screen.refreshDisplay(categories, time, location);
+        this.screen.refreshDisplay(categories, time, location, currency);
     }
 
     @Override

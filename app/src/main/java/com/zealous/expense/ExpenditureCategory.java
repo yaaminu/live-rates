@@ -52,7 +52,7 @@ public class ExpenditureCategory extends RealmObject {
      */
     @DrawableRes
     public int getIcon(Context context) {
-        String resName = this.name.replaceAll("[^A-Za-z]*", "_");
+        String resName = this.name.replaceAll("[^A-Za-z]*", "_") + "_violet";
         int drawable = context.getResources().getIdentifier(resName, "drawable", context.getPackageName());
         if (drawable == 0) {
             drawable = R.drawable.expense_category_custom_icon;

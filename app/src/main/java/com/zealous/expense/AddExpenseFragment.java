@@ -48,6 +48,9 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     EditText note;
     @Bind(R.id.et_amount)
     EditText amount;
+    @Bind(R.id.currency)
+    TextView currency;
+
     int selectedItem = INVALID_POSITION;
     private List<ExpenditureCategory> categories = Collections.emptyList();
     private ExpenditureCategoryAdapter.Delegate delegate = new ExpenditureCategoryAdapter.Delegate() {
@@ -105,13 +108,14 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     }
 
     @Override
-    public void refreshDisplay(List<ExpenditureCategory> categories, long time, String location) {
+    public void refreshDisplay(List<ExpenditureCategory> categories, long time, String location, String currency) {
         this.categories = categories;
         // TODO: 4/15/17 set date and location appropriately
         date.setText(DateUtils.formatDateTime(getContext(), time,
                 DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_YEAR));
         this.location.setText(location);
         adapter.notifyDataChanged("");
+        this.currency.setText(currency);
     }
 
     @Override
