@@ -48,77 +48,8 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     EditText note;
     @Bind(R.id.et_amount)
     EditText amount;
-    private List<ExpenditureCategory> categories = Collections.emptyList();
-
-    @Override
-    protected int getLayout() {
-        return R.layout.layout_add_expense;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        DaggerAddExpenditureComponent.builder()
-                .addExpenseFragmentProvider(new AddExpenseFragmentProvider(this, delegate))
-                .build().inject(this);
-        addExpenditurePresenter.onCreate(savedInstanceState, this);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-    }
-
-
-    @Override
-    public void refreshDisplay(List<ExpenditureCategory> categories, long time, String location) {
-        this.categories = categories;
-        // TODO: 4/15/17 set date and location appropriately
-        date.setText(DateUtils.formatDateTime(getContext(), time,
-                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_YEAR));
-        this.location.setText(location);
-        adapter.notifyDataChanged("");
-    }
-
-    @Override
-    public void showValidationError(String errorMessage) {
-        new AlertDialog.Builder(getContext())
-                .setMessage(errorMessage)
-                .setPositiveButton(android.R.string.ok, null)
-                .setTitle(R.string.error)
-                .create().show();
-    }
-
-    @OnClick(R.id.add_new_expense)
-    void addNewExpenditure() {
-        // TODO: 4/15/17 validate input
-        if (addExpenditurePresenter
-                .onAddExpenditure(amount.getText().toString(),
-                        note.getText().toString(), selectedItem)) {
-            getActivity().finish();
-        }
-    }
-
     int selectedItem = INVALID_POSITION;
-
-    @OnClick(R.id.add_new_expense)
-    void addNewExpenditure() {
-        // TODO: 4/15/17 validate input
-        if (addExpenditurePresenter
-                .onAddExpenditure(amount.getText().toString(),
-                        note.getText().toString(), selectedItem)) {
-            getActivity().finish();
-        }
-    }
-
-    @Nullable
-    @Override
-    protected BasePresenter<?> getBasePresenter() {
-        return addExpenditurePresenter;
-    }
-
+    private List<ExpenditureCategory> categories = Collections.emptyList();
     private ExpenditureCategoryAdapter.Delegate delegate = new ExpenditureCategoryAdapter.Delegate() {
         @Override
         public Context context() {
@@ -151,4 +82,60 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
             return selectedItem;
         }
     };
+
+    @Override
+    protected int getLayout() {
+        return R.layout.layout_add_expense;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        DaggerAddExpenditureComponent.builder()
+                .addExpenseFragmentProvider(new AddExpenseFragmentProvider(this, delegate))
+                .build().inject(this);
+        addExpenditurePresenter.onCreate(savedInstanceState, this);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void refreshDisplay(List<ExpenditureCategory> categories, long time, String location) {
+        this.categories = categories;
+        // TODO: 4/15/17 set date and location appropriately
+        date.setText(DateUtils.formatDateTime(getContext(), time,
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_YEAR));
+        this.location.setText(location);
+        adapter.notifyDataChanged("");
+    }
+
+    @Override
+    public void showValidationError(String errorMessage) {
+        new AlertDialog.Builder(getContext())
+                .setMessage(errorMessage)
+                .setPositiveButton(android.R.string.ok, null)
+                .setTitle(R.string.error)
+                .create().show();
+    }
+
+    @OnClick(R.id.add_new_expense)
+    void addNewExpenditure() {
+        // TODO: 4/15/17 validate input
+        if (addExpenditurePresenter
+                .onAddExpenditure(amount.getText().toString(),
+                        note.getText().toString(), selectedItem)) {
+            getActivity().finish();
+        }
+    }
+
+    @Nullable
+    @Override
+    protected BasePresenter<?> getBasePresenter() {
+        return addExpenditurePresenter;
+    }
 }
