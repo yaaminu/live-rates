@@ -13,12 +13,21 @@ import com.zealous.ui.BaseZealousActivity;
 
 public class AddExpenditureActivity extends BaseZealousActivity {
 
+    public static final String EXTRA_EXPENDITURE_ID = "expenditureId";
+
     @Override
     protected void doCreate(@Nullable Bundle savedInstanceState) {
         super.doCreate(savedInstanceState);
         setUpStatusBarColor(R.color.dark_violet);
         assert toolbar != null;
         toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.light_violet));
+        AddExpenseFragment fragment = new AddExpenseFragment();
+        Bundle bundle = new Bundle(1);
+        bundle.putString(AddExpenseFragment.EXPENDITURE_ID, getIntent().getStringExtra(EXTRA_EXPENDITURE_ID));
+        fragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment, "addExpenditure")
+                .commit();
     }
 
     @Override

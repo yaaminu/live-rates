@@ -36,8 +36,16 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     private AddExpenseFragment screen;
     private String location;
     private long time;
-    private String currency;
+    private String currency, amount;
     private RealmResults<ExpenditureCategory> categories;
+    private String expenditureCategoryName;
+
+    @Nullable
+    private String expenditureID;
+    @Nullable
+    private String description;
+
+
     private final RealmChangeListener<Realm> realmRealmChangeListener = new RealmChangeListener<Realm>() {
         @Override
         public void onChange(Realm element) {
@@ -46,12 +54,14 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     };
 
     @Inject
-
     public AddExpenditurePresenter(ExpenditureDataSource dataSource) {
         this.dataSource = dataSource;
         this.location = getString(R.string.unspecified_location);
         this.time = System.currentTimeMillis();
         currency = "GH₵";
+        amount = "0.00";
+        expenditureCategoryName = "";
+        description = "";
     }
 
     @Override
@@ -63,6 +73,16 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     public void onStart() {
         super.onStart();
         // TODO: 4/15/17 use proper location
+        if (!GenericUtils.isEmpty(expenditureID)) {
+            Expenditure expenditure = dataSource.makeQuery().equalTo(Expenditure.FIELD_ID, expenditureID).findFirst();
+            if (expenditure != null) {
+                amount = expenditure.getNormalizedAmount();
+                location = expenditure.getLocation();
+                time = expenditure.getExpenditureTime().getTime();
+                expenditureCategoryName = expenditure.getCategory().getName();
+                description = expenditure.getDescription();
+            }
+        }
         updateUI();
         dataSource.listenForChanges(realmRealmChangeListener);
     }
@@ -76,7 +96,14 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     private void updateUI() {
         categories = dataSource.makeExpenditureCategoryQuery()
                 .findAllSorted(ExpenditureCategory.FIELD_NAME);
-        this.screen.refreshDisplay(categories, time, location, currency);
+        this.screen.refreshDisplay(categories, time, location,
+                currency, amount, expenditureCategoryName, description);
+    }
+
+    public void updateData(String amount, String expenditureCategoryName, String description) {
+        this.amount = amount;
+        this.expenditureCategoryName = expenditureCategoryName;
+        this.description = description;
     }
 
     @Override
@@ -96,12 +123,21 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
         try {
             double tmp = Double.parseDouble(amount);
             long actualAmount = BigDecimal.valueOf(tmp).multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue();
-            dataSource.addOrUpdateExpenditure(new ExpenditureBuilder()
-                    .setLocation(location).setTime(time)
-                    .setAmountSpent(actualAmount)
-                    .setCategory(categories.get(selectedItemPosition))
-                    .setDescription(description).createExpenditure());
-            return true;
+            if (actualAmount <= 0) {
+                screen.showValidationError(GenericUtils.getString(R.string.invalid_amount));
+                return false;
+            } else {
+                final Expenditure expenditure = new ExpenditureBuilder()
+                        .setLocation(location).setTime(time)
+                        .setAmountSpent(actualAmount)
+                        .setCategory(categories.get(selectedItemPosition))
+                        .setDescription(description).createExpenditure();
+                if (!GenericUtils.isEmpty(expenditureID)) {
+                    expenditure.setId(expenditureID);
+                }
+                dataSource.addOrUpdateExpenditure(expenditure);
+                return true;
+            }
         } catch (NumberFormatException e) {
             screen.showValidationError(GenericUtils.getString(R.string.invalid_amount));
             return false;
@@ -195,5 +231,9 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
             default:
                 throw new AssertionError();
         }
+    }
+
+    public void startWith(@NonNull String expenditureID) {
+        this.expenditureID = expenditureID;
     }
 }

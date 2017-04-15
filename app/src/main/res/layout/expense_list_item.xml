@@ -4,62 +4,79 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/default_gap"
-    android:background="@drawable/light_violet_bg"
     android:gravity="center_vertical"
     android:orientation="horizontal">
-
-    <ImageButton
-        android:id="@+id/category_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/transparent"
-        android:contentDescription="@string/category"
-        tools:src="@drawable/ic_category_food" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/default_gap"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:background="@drawable/light_violet_bg"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_expense_amount"
+        <ImageButton
+            android:id="@+id/category_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
-            android:textColor="@color/otherRatesPrimary"
-            tools:text="-$52.29" />
+            android:background="@color/transparent"
+            android:contentDescription="@string/category"
+            tools:src="@drawable/ic_category_food" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_gap"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            tools:ignore="NestedWeights,RtlHardcoded">
+
+            <TextView
+                android:id="@+id/tv_expense_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+                android:textColor="@color/otherRatesPrimary"
+                tools:text="-$52.29" />
+
+            <TextView
+                android:id="@+id/expense_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:lines="@integer/expenditure_description_lines"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/white"
+                tools:text="Expenditure will appear here" />
+
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_place_black_24dp"
+                android:ellipsize="middle"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:paddingTop="@dimen/default_gap"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="@color/faint_voilet"
+                tools:ignore="RtlHardcoded"
+                tools:text=" Mr Price, Accra Mall" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/expense_description"
+            android:id="@+id/expenditure_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:lines="@integer/expenditure_description_lines"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/white"
-            tools:text="Expenditure will appear here" />
-
-        <TextView
-            android:id="@+id/tv_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_place_black_24dp"
-            android:gravity="center_vertical"
-            android:paddingTop="@dimen/default_gap"
+            android:ellipsize="middle"
+            android:lines="1"
+            android:padding="@dimen/activity_horizontal_margin"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="@color/faint_voilet"
-            tools:ignore="RtlHardcoded"
-            tools:text=" Mr Price, Accra Mall" />
+            tools:text="11:30 pm" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/expenditure_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/activity_horizontal_margin"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:textColor="@color/faint_voilet"
-        tools:text="11:30 pm" />
-
+    <include
+        layout="@layout/expense_options"
+        android:visibility="gone"
+        tools:visibility="visible" />
 </LinearLayout>

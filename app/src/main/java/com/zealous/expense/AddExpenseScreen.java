@@ -9,7 +9,8 @@ import java.util.List;
  */
 
 public interface AddExpenseScreen extends Screen {
-    void refreshDisplay(List<ExpenditureCategory> categories, long time, String location, String currency);
+    void refreshDisplay(List<ExpenditureCategory> categories, long time,
+                        String location, String currency, String amount, String categoryName, String description);
 
     void showValidationError(String errorMessage);
 }

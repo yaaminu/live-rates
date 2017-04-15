@@ -1,7 +1,6 @@
 package com.zealous.expense;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -109,8 +108,7 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
 
     @OnClick(R.id.fab)
     void addExpenditure() {
-        Intent intent = new Intent(getContext(), AddExpenditureActivity.class);
-        startActivity(intent);
+        expenditureScreenPresenter.onAddNewExpenditure(getContext());
     }
 
     @Nullable

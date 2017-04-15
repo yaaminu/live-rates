@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
+import com.zealous.utils.GenericUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +37,7 @@ import butterknife.OnClick;
 
 public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen {
     public static final int INVALID_POSITION = -1;
+    public static final String EXPENDITURE_ID = "expenditureID";
     @Inject
     AddExpenditurePresenter addExpenditurePresenter;
     @Inject
@@ -122,6 +125,13 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
                 .addExpenseFragmentProvider(new AddExpenseFragmentProvider(this, delegate))
                 .build().inject(this);
         addExpenditurePresenter.onCreate(savedInstanceState, this);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String id = bundle.getString(EXPENDITURE_ID);
+            if (id != null) {
+                addExpenditurePresenter.startWith(id);
+            }
+        }
     }
 
     @Override
@@ -153,6 +163,10 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
 
     @OnClick({R.id.edit_date, R.id.edit_location})
     void onClick(View view) {
+        final int position = delegate.getSelectedItemPosition();
+        addExpenditurePresenter.updateData(amount.getText().toString().trim(),
+                position == AdapterView.INVALID_POSITION ? ""
+                        : categories.get(position).getName(), note.getText().toString().trim());
         switch (view.getId()) {
             case R.id.edit_date:
                 addExpenditurePresenter.editDate(getFragmentManager());
@@ -166,13 +180,25 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     }
 
     @Override
-    public void refreshDisplay(List<ExpenditureCategory> categories, long time, String location, String currency) {
+    public void refreshDisplay(List<ExpenditureCategory> categories,
+                               long time, String location,
+                               String currency, String amount, String categoryName, String description) {
         this.categories = categories;
-        // TODO: 4/15/17 set date and location appropriately
         date.setText(DateUtils.formatDateTime(getContext(), time,
                 DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_YEAR));
         this.location.setText(location);
+        if (!GenericUtils.isEmpty(categoryName)) {
+            for (int i = 0; i < categories.size(); i++) {
+                if (categories.get(i).getName().equals(categoryName)) {
+                    selectedItem = i;
+                    break;
+                }
+            }
+        }
         adapter.notifyDataChanged("");
+        this.note.setText(description);
+        this.amount.setText(amount);
+        this.amount.setSelection(amount.length());
         this.currency.setText(currency);
     }
 

@@ -37,8 +37,8 @@ public class ExpenseFragmentProvider {
 
     @Provides
     @Singleton
-    public ExpenseAdapterDelegateImpl getDelegate() {
-        return new ExpenseAdapterDelegateImpl(fragment.getContext());
+    public ExpenseAdapterDelegateImpl getDelegate(@NonNull ExpenditureScreenPresenter presenter) {
+        return new ExpenseAdapterDelegateImpl(fragment.getContext(), presenter);
     }
 
     @Provides

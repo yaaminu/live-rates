@@ -104,6 +104,8 @@
     <string name="enter_location">Enter location</string>
     <string name="category_already_attached">This category is associated with some expenditures and can\'t be removed</string>
     <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="expenditure_removed_success">Expenditure removed successfully</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

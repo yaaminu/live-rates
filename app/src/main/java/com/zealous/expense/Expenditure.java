@@ -97,4 +97,14 @@ public class Expenditure extends RealmObject {
     public String getDescription() {
         return description;
     }
+
+    public String getId() {
+        return expenditureID;
+    }
+
+    void setId(@NonNull String id) {
+        GenericUtils.ensureNotEmpty(id);
+        GenericUtils.ensureConditionTrue(id.length() > 10, "id too short");
+        this.expenditureID = id;
+    }
 }

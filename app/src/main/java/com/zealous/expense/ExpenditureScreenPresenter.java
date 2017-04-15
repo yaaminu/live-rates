@@ -1,8 +1,11 @@
 package com.zealous.expense;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.zealous.R;
 import com.zealous.ui.BasePresenter;
@@ -11,9 +14,7 @@ import com.zealous.utils.PLog;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.security.SecureRandom;
 import java.util.Calendar;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -61,16 +62,16 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
         range = getRange(RANGE_TODAY);
     }
 
-    public static Expenditure createDummyExpenditure() {
-        Random random = new SecureRandom();
-        return new ExpenditureBuilder()
-                .setAmountSpent((int) Math.abs(random.nextDouble() * (9999 - 100) + 100))
-                .setCategory(new ExpenditureCategory("Food", 10000, ExpenditureCategory.MONTHLY))
-                .setDescription("Burger")
-                .setLocation("McDonalds, Sandton City Shopping Center")
-                .setTime(System.currentTimeMillis())
-                .createExpenditure();
-    }
+//    public static Expenditure createDummyExpenditure() {
+//        Random random = new SecureRandom();
+//        return new ExpenditureBuilder()
+//                .setAmountSpent((int) Math.abs(random.nextDouble() * (9999 - 100) + 100))
+//                .setCategory(new ExpenditureCategory("Food", 10000, ExpenditureCategory.MONTHLY))
+//                .setDescription("Burger")
+//                .setLocation("McDonalds, Sandton City Shopping Center")
+//                .setTime(System.currentTimeMillis())
+//                .createExpenditure();
+//    }
 
     private BigDecimal calculateTotalBudget() {
         BigDecimal tmp;
@@ -243,7 +244,21 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
         return range;
     }
 
-    public void onAddExpenditureFabClicked() {
-        expenditureDataSource.addOrUpdateExpenditure(createDummyExpenditure());
+    public void deleteItem(Context context, Expenditure expenditure) {
+        if (expenditureDataSource.removeExpenditure(expenditure.getId())) {
+            Toast.makeText(context, R.string.expenditure_removed_success, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void editItem(Context context, @Nullable Expenditure expenditure) {
+        Intent intent = new Intent(context, AddExpenditureActivity.class);
+        if (expenditure != null) {
+            intent.putExtra(AddExpenditureActivity.EXTRA_EXPENDITURE_ID, expenditure.getId());
+        }
+        context.startActivity(intent);
+    }
+
+    public void onAddNewExpenditure(Context context) {
+        editItem(context, null);
     }
 }
