@@ -1,7 +1,10 @@
 package com.zealous.expense;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.zealous.R;
+import com.zealous.errors.ZealousException;
 import com.zealous.utils.GenericUtils;
 
 import java.io.Closeable;
@@ -27,6 +30,7 @@ import io.realm.Sort;
 
 public class ExpenditureDataSource implements Closeable {
 
+    private static final String TAG = "ExpenditureDataSource";
     private final Realm realm;
 
     /**
@@ -146,10 +150,12 @@ public class ExpenditureDataSource implements Closeable {
      * @return all categories for expenditures
      */
     public RealmResults<ExpenditureCategory> findCategories() {
+        ensureNotClosed();
         return realm.where(ExpenditureCategory.class).findAllSorted(ExpenditureCategory.FIELD_NAME, Sort.ASCENDING);
     }
 
     public RealmQuery<ExpenditureCategory> makeExpenditureCategoryQuery() {
+        ensureNotClosed();
         return realm.where(ExpenditureCategory.class);
     }
 
@@ -191,9 +197,43 @@ public class ExpenditureDataSource implements Closeable {
         GenericUtils.ensureConditionTrue(!realm.isClosed(), "can't use a closed datasource");
     }
 
-    public void addOrUpdateCategory(ExpenditureCategory category) {
+    public void addOrUpdateCategory(@Nullable final String previousName, ExpenditureCategory category) {
+        ensureNotClosed();
         realm.beginTransaction();
-        realm.copyToRealmOrUpdate(category);
+        category = realm.copyToRealmOrUpdate(category);
+        if (!GenericUtils.isEmpty(previousName) && !category.getName().equals(previousName)) {
+            //different categories, delete previous one to emulate overwriting it.
+            RealmResults<Expenditure> matched = realm.where(Expenditure.class)
+                    .equalTo(Expenditure.FIELD_CATEGORY + "." + ExpenditureCategory.FIELD_NAME, previousName).findAll();
+            for (Expenditure expenditure : matched) {
+                expenditure.setCategory(category);
+            }
+            ExpenditureCategory live = realm.where(ExpenditureCategory.class).equalTo(ExpenditureCategory.FIELD_NAME, previousName).findFirst();
+            if (live != null) {
+                live.deleteFromRealm();
+            }
+        }
+        realm.commitTransaction();
+    }
+
+
+    public void removeCategory(@NonNull ExpenditureCategory category) throws ZealousException {
+        GenericUtils.ensureNotNull(category);
+        realm.beginTransaction();
+        long matched = realm.where(Expenditure.class).equalTo(Expenditure.FIELD_CATEGORY + "." + ExpenditureCategory.FIELD_NAME, category.getName()).count();
+        if (matched == 0) {
+            if (category.isManaged()) {
+                category.deleteFromRealm();
+            } else {
+                category = realm.where(ExpenditureCategory.class).equalTo(ExpenditureCategory.FIELD_NAME, category.getName()).findFirst();
+                if (category != null) {
+                    category.deleteFromRealm();
+                }
+            }
+        } else {
+            realm.cancelTransaction();
+            throw new ZealousException(GenericUtils.getString(R.string.category_already_attached));
+        }
         realm.commitTransaction();
     }
 }

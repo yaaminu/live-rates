@@ -2,41 +2,41 @@
   {
     "name": "Bills",
     "budget": 0,
-    "budgetDuration": 3
+    "budgetDuration": 2
   },
   {
     "name": "Food",
     "budget": 0,
-    "budgetDuration": 3
+    "budgetDuration": 2
   },
   {
     "name": "Communication",
     "budget": 0,
-    "budgetDuration": 3
+    "budgetDuration": 2
   },
   {
     "name": "Clothing",
     "budget": 0,
-    "budgetDuration": 3
+    "budgetDuration": 2
   },
   {
     "name": "Health",
     "budget": 0,
-    "budgetDuration": 3
+    "budgetDuration": 2
   },
   {
     "name": "Entertainment",
     "budget": 0,
-    "budgetDuration": 3
+    "budgetDuration": 2
   },
   {
     "name": "Transport",
     "budget": 0,
-    "budgetDuration": 3
+    "budgetDuration": 2
   },
   {
     "name": "Donations",
     "budget": 0,
-    "budgetDuration": 3
+    "budgetDuration": 2
   }
 ]

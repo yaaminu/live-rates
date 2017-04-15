@@ -26,6 +26,7 @@ public class Expenditure extends RealmObject {
     public static final String FIELD_ID = "expenditureID";
     public static final String FIELD_TIME = "time";
     public static final String FIELD_AMOUNT = "amountSpent";
+    public static final String FIELD_CATEGORY = "category";
     @Index
     private long amountSpent;
     @Required
@@ -81,6 +82,11 @@ public class Expenditure extends RealmObject {
 
     public ExpenditureCategory getCategory() {
         return category;
+    }
+
+    void setCategory(@NonNull ExpenditureCategory category) {
+        GenericUtils.ensureNotNull(category);
+        this.category = category;
     }
 
     @NonNull

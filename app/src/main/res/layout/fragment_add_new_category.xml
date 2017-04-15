@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:hint="@string/budget"
-                android:inputType="numberDecimal|numberSigned" />
+                android:inputType="numberDecimal" />
 
             <android.support.v4.widget.Space
                 android:layout_width="@dimen/default_gap"
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_violet"
-            android:text="@string/add_category"
+            android:text="@string/add"
             android:textColor="@color/white" />
     </LinearLayout>
 </FrameLayout>

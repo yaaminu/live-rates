@@ -1,6 +1,7 @@
 package com.zealous.expense;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -78,7 +79,12 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
 
         @Override
         public boolean onItemLongClick(BaseAdapter<CategoryHolder, ExpenditureCategory> adapter, View view, int position, long id) {
-            return false;
+            final ExpenditureCategory item = adapter.getItem(position);
+            if (item == ExpenditureCategory.DUMMY_EXPENDITURE_CATEGORY) {
+                return false;
+            }
+            showUpdateDeleteDialog(item);
+            return true;
         }
 
         @NonNull
@@ -92,6 +98,16 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
             return selectedItem;
         }
     };
+
+    private void showUpdateDeleteDialog(final ExpenditureCategory category) {
+        new AlertDialog.Builder(getContext())
+                .setItems(R.array.category_long_click_context_menu, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        addExpenditurePresenter.onCategoryContextMenuAction(getFragmentManager(), category, which);
+                    }
+                }).create().show();
+    }
 
     @Override
     protected int getLayout() {

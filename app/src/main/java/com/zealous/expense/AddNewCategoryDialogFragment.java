@@ -8,10 +8,12 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.zealous.R;
+import com.zealous.utils.GenericUtils;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -25,13 +27,18 @@ import butterknife.OnClick;
  */
 
 public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
+    public static final String CATEGORY_NAME = "name", CATEGORY_BUDGET = "budget",
+            CATEGORY_BUDGET_TYPE = "budgetType";
+    @Nullable
+    public String originalName;
     @Bind(R.id.et_category_name)
     EditText categoryName;
     @Bind(R.id.et_budget)
     EditText budget;
     @Bind(R.id.sp_budget_type)
     Spinner budgetType;
-
+    @Bind(R.id.bt_add)
+    Button btAdd;
     ExpenditureDataSource dataSource;
 
     @Nullable
@@ -49,7 +56,17 @@ public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        budgetType.setSelection(2);//defaults to monthly
+        Bundle args = getArguments();
+        if (args != null) {
+            budget.setText(args.getString(CATEGORY_BUDGET));
+            budget.setSelection(budget.getText().length());
+            budgetType.setSelection(args.getInt(CATEGORY_BUDGET_TYPE, 2));
+            categoryName.setText(args.getString(CATEGORY_NAME));
+            categoryName.setSelection(categoryName.getText().length());
+            originalName = args.getString(CATEGORY_NAME);
+            GenericUtils.ensureNotNull(originalName);
+            btAdd.setText(R.string.update);
+        }
     }
 
     @OnClick(R.id.bt_add)
@@ -87,7 +104,7 @@ public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
     }
 
     private void doAddNewCategory(String name, double budget, int budgetType) {
-        dataSource.addOrUpdateCategory(new ExpenditureCategory(name,
+        dataSource.addOrUpdateCategory(originalName, new ExpenditureCategory(name,
                 BigDecimal.valueOf(budget).multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue(), budgetType));
         getDialog().dismiss();
     }

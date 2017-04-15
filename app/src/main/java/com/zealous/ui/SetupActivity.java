@@ -74,16 +74,11 @@ public class SetupActivity extends AppCompatActivity {
         try {
             inputStream = getAssets().open("categories.json");
             JSONArray categories = new JSONArray(IOUtils.toString(inputStream));
-            if (realm.where(ExpenditureCategory.class).count() < categories.length()) {
+            if (realm.where(ExpenditureCategory.class).count() == 0) {
                 realm.beginTransaction();
                 for (int i = 0; i < categories.length(); i++) {
-
                     JSONObject category = categories.getJSONObject(i);
-                    ExpenditureCategory tmp = realm.where(ExpenditureCategory.class).equalTo(ExpenditureCategory.FIELD_NAME, category.getString(ExpenditureCategory.FIELD_NAME))
-                            .findFirst();
-                    if (tmp == null) { //don't overwrite
-                        realm.createOrUpdateObjectFromJson(ExpenditureCategory.class, category);
-                    }
+                    realm.createOrUpdateObjectFromJson(ExpenditureCategory.class, category);
                 }
                 realm.commitTransaction();
             }

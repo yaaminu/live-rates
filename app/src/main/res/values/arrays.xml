@@ -21,4 +21,8 @@
         <item>This Year</item>
         <item>Custom Date</item>
     </string-array>
+    <string-array name="category_long_click_context_menu">
+        <item>Update</item>
+        <item>Remove</item>
+    </string-array>
 </resources>

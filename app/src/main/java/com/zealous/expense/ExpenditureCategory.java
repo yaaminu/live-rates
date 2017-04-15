@@ -48,6 +48,14 @@ public class ExpenditureCategory extends RealmObject {
         return name;
     }
 
+    long getBudget() {
+        return budget;
+    }
+
+    int getBudgetDuration() {
+        return budgetDuration;
+    }
+
     /**
      * @param context context for retrieving resources
      * @return the resource identifier corresponding to the

@@ -102,6 +102,8 @@
     <string name="unspecified_location">Location unspecified</string>
     <string name="no_location_provided">No location provided</string>
     <string name="enter_location">Enter location</string>
+    <string name="category_already_attached">This category is associated with some expenditures and can\'t be removed</string>
+    <string name="update">Update</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

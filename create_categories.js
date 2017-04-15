@@ -4,8 +4,8 @@ var names = ['Bills', 'Food', 'Communication', 'Clothing', 'Health', 'Entertainm
 
 
 names = names.map(name => {
-    return { name: name, budget: 0, budgetDuration: 3 }
+    return { name: name, budget: 0, budgetDuration: 2 }
 })
 
 require('fs')
-    .writeFileSync('./categories.json', JSON.stringify(names))
+    .writeFileSync('./app/src/main/assets/categories.json', JSON.stringify(names))

@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
 import com.zealous.R;
+import com.zealous.errors.ZealousException;
+import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.TaskManager;
@@ -106,9 +108,21 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
         }
     }
 
-    public void onAddCustomCategory(FragmentManager fm) {
-//        DialogFragment dialogFragment = new Dial
+    public void onAddCustomCategory(@NonNull FragmentManager fm) {
+        doAddCustomCategory(fm, null);
+    }
+
+    private void doAddCustomCategory(@NonNull FragmentManager fm, @Nullable ExpenditureCategory category) {
         DialogFragment fragment = new AddNewCategoryDialogFragment();
+        if (category != null) {
+            Bundle bundle = new Bundle(3);
+            bundle.putString(AddNewCategoryDialogFragment.CATEGORY_NAME, category.getName());
+            bundle.putString(AddNewCategoryDialogFragment.CATEGORY_BUDGET,
+                    ExchangeRate.FORMAT.format(BigDecimal.valueOf(category.getBudget())
+                            .divide(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue()));
+            bundle.putInt(AddNewCategoryDialogFragment.CATEGORY_BUDGET_TYPE, category.getBudgetDuration());
+            fragment.setArguments(bundle);
+        }
         fragment.show(fm, "addCategory");
     }
 
@@ -164,5 +178,22 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                 });
             }
         });
+    }
+
+    public void onCategoryContextMenuAction(FragmentManager manager, ExpenditureCategory category, int position) {
+        switch (position) {
+            case 0:
+                doAddCustomCategory(manager, category);
+                break;
+            case 1:
+                try {
+                    dataSource.removeCategory(category);
+                } catch (ZealousException e) {
+                    screen.showValidationError(e.getMessage());
+                }
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 }
