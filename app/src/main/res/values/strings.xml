@@ -96,6 +96,9 @@
     <string name="no_budget_warning">No budget set, are you sure you want to continue?</string>
     <string name="attach_file">Attach</string>
     <string name="done">Done</string>
+    <string name="edit">Edit</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="date_in_future">Date is in the future</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

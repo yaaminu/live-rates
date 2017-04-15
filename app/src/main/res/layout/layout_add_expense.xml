@@ -7,40 +7,66 @@
     android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical">
 
-    <android.support.v4.widget.Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/default_gap" />
 
-    <TextView
-        android:id="@+id/tv_date"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        tools:text="14-04-2017, 11:30pm" />
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/default_gap"
+            android:paddingBottom="@dimen/default_gap"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            app:layout_columnWeight="1"
+            app:layout_gravity="center_horizontal"
+            tools:text="14-04-2017, 11:30pm" />
+
+        <TextView
+            android:id="@+id/edit_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/default_gap"
+            android:text="@string/edit"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+            android:textColor="@color/colorAccent"
+            app:layout_columnWeight="1" />
+
+    </LinearLayout>
 
 
-    <android.support.v4.widget.Space
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/default_gap" />
-
-    <TextView
-        android:id="@+id/tv_location"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:drawableLeft="@drawable/ic_place_black_24dp"
-        android:gravity="center_horizontal"
-        android:text="@string/unknown"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        tools:ignore="RtlHardcoded"
-        tools:text=" TrustWorths, Accra Mall" />
+        android:gravity="center_horizontal">
+        <!--suppress AndroidUnknownAttribute -->
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_place_black_24dp"
+            android:padding="@dimen/default_gap"
+            android:text="@string/unknown"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            app:layout_gravity="center_horizontal"
+            tools:ignore="RtlHardcoded"
+            tools:text=" TrustWorths, Accra Mall" />
 
+        <TextView
+            android:id="@+id/edit_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/default_gap"
+            android:text="@string/edit"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+            android:textColor="@color/colorAccent"
+            app:layout_columnWeight="1" />
+    </LinearLayout>
 
-    <android.support.v4.widget.Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/default_gap" />
 
     <LinearLayout
         android:layout_width="match_parent"

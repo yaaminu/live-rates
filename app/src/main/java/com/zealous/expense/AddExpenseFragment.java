@@ -26,6 +26,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * Created by yaaminu on 4/14/17.
@@ -132,6 +133,20 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         super.onViewCreated(view, savedInstanceState);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+    }
+
+    @OnClick({R.id.edit_date, R.id.edit_location})
+    void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.edit_date:
+                addExpenditurePresenter.editDate(getFragmentManager());
+                break;
+            case R.id.edit_location:
+//                addExpenditurePresenter.editLocation();
+//                break;
+            default:
+                throw new AssertionError();
+        }
     }
 
     @Override

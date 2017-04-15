@@ -1,17 +1,21 @@
 package com.zealous.expense;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.widget.Toast;
 
 import com.zealous.R;
 import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
+import com.zealous.utils.TaskManager;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -106,5 +110,32 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
 //        DialogFragment dialogFragment = new Dial
         DialogFragment fragment = new AddNewCategoryDialogFragment();
         fragment.show(fm, "addCategory");
+    }
+
+    public void editDate(FragmentManager fm) {
+        final EditDateFragment fragment = new EditDateFragment();
+        Bundle bundle = new Bundle(1);
+        bundle.putLong(EditDateFragment.DATE, time);
+        fragment.setArguments(bundle);
+        fragment.show(fm, "editDate");
+        TaskManager.executeOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                fragment.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        Date date = fragment.getTime();
+                        if (date != null) {
+                            if (date.getTime() > System.currentTimeMillis()) {
+                                Toast.makeText(fragment.getContext(), R.string.date_in_future, Toast.LENGTH_SHORT).show();
+                            } else {
+                                AddExpenditurePresenter.this.time = date.getTime();
+                                updateUI();
+                            }
+                        }
+                    }
+                });
+            }
+        });
     }
 }
