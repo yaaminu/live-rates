@@ -12,7 +12,7 @@
         android:id="@+id/bt_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/transparent"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/delete"
         android:padding="@dimen/default_gap"
         android:src="@drawable/ic_edit_black_24dp" />
@@ -26,7 +26,7 @@
         android:id="@+id/bt_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/transparent"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/delete"
         android:padding="@dimen/default_gap"
         android:src="@drawable/ic_delete_white_24dp" />
