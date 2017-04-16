@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.util.SparseArray;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -35,9 +36,12 @@ public class MainActivity extends SearchActivity {
     BottomBar bottomBar;
     EventBus bus;
 
+    private SparseArray<BaseFragment> fragmentCache;
+
     @Override
     protected void doCreate(@Nullable Bundle savedInstanceState) {
         super.doCreate(savedInstanceState);
+        fragmentCache = new SparseArray<>(3);
         bus = EventBus.builder()
                 .build();
         bus.register(this);
@@ -115,8 +119,7 @@ public class MainActivity extends SearchActivity {
     }
 
     private Fragment getFragment(int tabId) {
-        Fragment fragment = getSupportFragmentManager()
-                .findFragmentByTag(String.valueOf(tabId));
+        BaseFragment fragment = fragmentCache.get(tabId);
         if (fragment == null) {
             switch (tabId) {
                 case R.id.tab_exchange_rates:
@@ -134,6 +137,7 @@ public class MainActivity extends SearchActivity {
                 default:
                     throw new AssertionError();
             }
+            fragmentCache.put(tabId, fragment);
         }
         return fragment;
     }
