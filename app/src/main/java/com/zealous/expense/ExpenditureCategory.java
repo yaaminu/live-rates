@@ -21,7 +21,7 @@ public class ExpenditureCategory extends RealmObject {
     public static final String FIELD_NAME = "name";
     public static final String FIELD_BUDGET = "budget";
     public static final String FIELD_BUDGET_DURATION = "budgetDuration";
-    public static final int DAILY = 0, WEEKLY = 1, MONTHLY = 2, YEARLY = 5;
+    public static final int DAILY = 0, WEEKLY = 1, MONTHLY = 2, YEARLY = 3;
 
     public static final ExpenditureCategory DUMMY_EXPENDITURE_CATEGORY =
             new ExpenditureCategory("Add", 100, MONTHLY);
