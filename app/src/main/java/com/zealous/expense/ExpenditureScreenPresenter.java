@@ -15,6 +15,8 @@ import com.zealous.utils.PLog;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -33,12 +35,16 @@ import static com.zealous.expense.Expenditure.FIELD_TIME;
 
 public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen> {
 
-    public static final int RANGE_TODAY = 0, RANGE_THIS_WEEK = 1,
-            RANGE_THIS_MONTH = 2, RANGE_THIS_YEAR = 3, RANGE_CUSTOM = 4,
-            RANGE_INVALID = -1;
+    public static final int RANGE_TODAY = 0;
+    public static final int RANGE_THIS_WEEK = 1;
+    public static final int RANGE_THIS_MONTH = 2;
+    public static final int RANGE_THIS_YEAR = 3;
+    public static final int RANGE_CUSTOM = 4;
+    public static final int RANGE_INVALID = -1;
+    public static final String STATE_RANGE_POS = "state_range_pos";
     private static final String TAG = "ExpenditureScreenPresenter";
     private final ExpenditureDataSource expenditureDataSource;
-    @NonNull
+    private final String[] expenseRange;
     private NonNullTuple<Long, Long> range;
     private int rangePos = RANGE_INVALID;
     @Nullable
@@ -57,21 +63,10 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
 
     @Inject
     public ExpenditureScreenPresenter(@NonNull ExpenditureDataSource
-                                              expenditureDataSource) {
+                                              expenditureDataSource, String[] expenseRange) {
         this.expenditureDataSource = expenditureDataSource;
-        range = getRange(RANGE_TODAY);
+        this.expenseRange = expenseRange;
     }
-
-//    public static Expenditure createDummyExpenditure() {
-//        Random random = new SecureRandom();
-//        return new ExpenditureBuilder()
-//                .setAmountSpent((int) Math.abs(random.nextDouble() * (9999 - 100) + 100))
-//                .setCategory(new ExpenditureCategory("Food", 10000, ExpenditureCategory.MONTHLY))
-//                .setDescription("Burger")
-//                .setLocation("McDonalds, Sandton City Shopping Center")
-//                .setTime(System.currentTimeMillis())
-//                .createExpenditure();
-//    }
 
     private BigDecimal calculateTotalBudget() {
         BigDecimal tmp;
@@ -104,17 +99,17 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     public void onCreate(@Nullable Bundle bundle, @NonNull ExpenseListScreen screen) {
         //this will create a circular reference but it's ok since we free it in onDestroy
         this.screen = screen;
-        // TODO: 4/9/17 restore state if possible
-    }
-
-    @Override
-    public void saveState(@NonNull Bundle bundle) {
-        // TODO: 4/9/17 save state
-        throw new UnsupportedOperationException();
+        final Map<String, ?> savedState = getSavedState(screen.getCurrentActivity());
+        Object tmp = savedState.get(STATE_RANGE_POS);
+        int tmpRange = tmp != null ? ((Integer) tmp) : RANGE_TODAY;
+        range = getRange(tmpRange);
+        rangePos = tmpRange;
     }
 
     @Override
     public void onDestroy() {
+        assert screen != null;
+        saveState(screen.getCurrentActivity(), Collections.singletonMap(STATE_RANGE_POS, rangePos));
         screen = null;
         this.expenditureDataSource.close();
     }
@@ -156,7 +151,7 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     private void updateUi() {
         // TODO: 4/13/17 optimize away unnecessary calls
         if (screen != null) {
-            screen.refreshDisplay(records, FORMAT.format(totalExpenditure), FORMAT.format(totalBudget));
+            screen.refreshDisplay(records, FORMAT.format(totalExpenditure), FORMAT.format(totalBudget), expenseRange[rangePos]);
         }
     }
 
@@ -260,5 +255,9 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
 
     public void onAddNewExpenditure(Context context) {
         editItem(context, null);
+    }
+
+    public String[] getRangNames() {
+        return expenseRange;
     }
 }

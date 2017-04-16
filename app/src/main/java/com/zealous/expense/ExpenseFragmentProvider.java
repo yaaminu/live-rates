@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.zealous.R;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -17,16 +19,18 @@ import dagger.Provides;
 @Module
 public class ExpenseFragmentProvider {
     private final ExpenseFragment fragment;
+    private final String[] rangeNames;
 
     public ExpenseFragmentProvider(@NonNull ExpenseFragment fragment) {
         this.fragment = fragment;
+        rangeNames = fragment.getResources().getStringArray(R.array.expense_range);
     }
 
 
     @Provides
     @Singleton
     public ExpenditureScreenPresenter createPresenter(@NonNull ExpenditureDataSource dataSource) {
-        return new ExpenditureScreenPresenter(dataSource);
+        return new ExpenditureScreenPresenter(dataSource, rangeNames);
     }
 
     @Provides

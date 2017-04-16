@@ -1,5 +1,6 @@
 package com.zealous.expense;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -51,8 +52,6 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     @Bind(R.id.today_s_date)
     TextView todaysDate;
 
-    private String[] expenseRange;
-
     @Override
     protected int getLayout() {
         return R.layout.fragment_expenses;
@@ -67,7 +66,6 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
                 .expenseFragmentProvider(new ExpenseFragmentProvider(this))
                 .build()
                 .inject(this);
-        expenseRange = getResources().getStringArray(R.array.expense_range);
         expenditureScreenPresenter.onCreate(savedInstanceState, this);
     }
 
@@ -76,17 +74,15 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         super.onViewCreated(view, savedInstanceState);
         expenseList.setLayoutManager(layoutManager);
         expenseList.setAdapter(adapter);
-        rangeText.setText(expenseRange[0]);
         todaysDate.setText(DateUtils.formatDateTime(getContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
     }
 
     @OnClick(R.id.expenditure_range)
     void changeRange() {
         new AlertDialog.Builder(getContext())
-                .setItems(expenseRange, new DialogInterface.OnClickListener() {
+                .setItems(expenditureScreenPresenter.getRangNames(), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        rangeText.setText(expenseRange[which]);
                         expenditureScreenPresenter.onChangeExpenditureRange(which);
                     }
                 }).create().show();
@@ -118,16 +114,23 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     }
 
     @Override
-    public void refreshDisplay(@NonNull List<Expenditure> expenditures, String totalExpenditure, String totalBudget) {
+    public void refreshDisplay(@NonNull List<Expenditure> expenditures,
+                               String totalExpenditure, String totalBudget, String rangeName) {
         GenericUtils.ensureNotNull(expenditures);
         delegate.refreshDataSet(expenditures, adapter);
         this.totalBudget.setText(getString(R.string.total_budget, totalBudget));
         this.totalExpenditure.setText(getString(R.string.total_expenditire, totalExpenditure));
+        rangeText.setText(rangeName);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return expenditureScreenPresenter.onMenuItemClicked(item.getItemId())
                 || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Activity getCurrentActivity() {
+        return getActivity();
     }
 }

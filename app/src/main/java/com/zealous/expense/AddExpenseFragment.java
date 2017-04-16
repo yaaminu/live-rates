@@ -1,5 +1,6 @@
 package com.zealous.expense;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -224,5 +225,10 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     @Override
     protected BasePresenter<?> getBasePresenter() {
         return addExpenditurePresenter;
+    }
+
+    @Override
+    public Activity getCurrentActivity() {
+        return getActivity();
     }
 }
