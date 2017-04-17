@@ -47,27 +47,28 @@ public class SetupActivity extends AppCompatActivity {
                 if (ThreadUtils.isMainThread()) {
                     gotoMainActivity();
                 } else {
-                    setupRates();
+                    setupRates(this);
                     setupExpenditureCategories();
                     runOnUiThread(this);
                 }
             }
 
-            private void setupRates() {
-                Realm realm = ExchangeRate.Realm(SetupActivity.this);
-                try {
-                    if (realm.where(ExchangeRate.class).count() < 120) {
-                        ExchangeRateManager.initialiseRates(SetupActivity.this, realm);
-                    }
-                    runOnUiThread(this);
-                } finally {
-                    realm.close();
-                }
-            }
         }, false);
     }
 
-    private void setupExpenditureCategories() {
+    void setupRates(Runnable target) {
+        Realm realm = ExchangeRate.Realm(SetupActivity.this);
+        try {
+            if (realm.where(ExchangeRate.class).count() < 120) {
+                ExchangeRateManager.initialiseRates(SetupActivity.this, realm);
+            }
+            runOnUiThread(target);
+        } finally {
+            realm.close();
+        }
+    }
+
+    void setupExpenditureCategories() {
         BaseExpenditureProvider provider = new BaseExpenditureProvider();
         Realm realm = provider.getExpenditureRealm(provider.getConfiguration());
         InputStream inputStream = null;
