@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 import static com.zealous.exchangeRates.ExchangeRateListActivity.SEARCH;
 
@@ -31,6 +32,12 @@ public class ExchangeRateFragment extends BaseFragment {
     EventBus bus;
 
     ExchangeRatesListAdapter adapter;
+    private final RealmChangeListener<Realm> changeListener = new RealmChangeListener<Realm>() {
+        @Override
+        public void onChange(Realm element) {
+            adapter.notifyDataChanged("");
+        }
+    };
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
     @Bind(R.id.empty_view_no_internet)
@@ -53,15 +60,31 @@ public class ExchangeRateFragment extends BaseFragment {
         realm = ExchangeRate.Realm(getContext());
         adapter = new ExchangeRatesListAdapter(new ExchangeRateAdapterDelegateImpl(this, realm));
         bus.register(this);
+        new ExchangeRateManager(bus).loadRates();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        realm.addChangeListener(changeListener);
+    }
+
+    @Override
+    public void onPause() {
+        realm.removeChangeListener(changeListener);
+        super.onPause();
     }
 
     @Subscribe
     public void onEvent(Object event) {
         if (event instanceof Map && ((Map) event).containsKey(SEARCH)) {
-            adapter.notifyDataChanged((String) ((Map) event).get(SEARCH));
+            refreshDisplay(((String) ((Map) event).get(SEARCH)));
         }
     }
 
+    private void refreshDisplay(String filter) {
+        adapter.notifyDataChanged(filter);
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

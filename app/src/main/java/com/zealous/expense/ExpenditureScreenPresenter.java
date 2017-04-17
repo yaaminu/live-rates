@@ -1,5 +1,6 @@
 package com.zealous.expense;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 
 import com.zealous.R;
 import com.zealous.ui.BasePresenter;
+import com.zealous.ui.BudgetActivity;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
 
@@ -131,7 +133,9 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
 //                expenditureDataSource.clear();
                 return true;
             case R.id.action_view_budget:
-//                expenditureDataSource.addOrUpdateExpenditure(createDummyExpenditure());
+                assert screen != null;
+                final Activity currentActivity = screen.getCurrentActivity();
+                currentActivity.startActivity(new Intent(currentActivity, BudgetActivity.class));
                 return true;
 
         }
