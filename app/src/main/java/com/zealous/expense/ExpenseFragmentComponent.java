@@ -11,7 +11,8 @@ import dagger.Component;
 @Singleton
 @Component(modules = {
         BaseExpenditureProvider.class,
-        ExpenseFragmentProvider.class
+        ExpenseFragmentProvider.class,
+        MainActivityEventBusProvider.class
 })
 public interface ExpenseFragmentComponent {
     void inject(ExpenseFragment expenditureComponent);

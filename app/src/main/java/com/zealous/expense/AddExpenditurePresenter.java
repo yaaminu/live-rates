@@ -25,8 +25,6 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
-import static com.zealous.utils.GenericUtils.getString;
-
 /**
  * Created by yaaminu on 4/14/17.
  */
@@ -56,7 +54,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     @Inject
     public AddExpenditurePresenter(ExpenditureDataSource dataSource) {
         this.dataSource = dataSource;
-        this.location = getString(R.string.unspecified_location);
+        this.location = "";
         this.time = System.currentTimeMillis();
         currency = "GH₵";
         amount = "0.00";
@@ -118,7 +116,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
             return false;
         }
         if (GenericUtils.isEmpty(description)) {
-            description = GenericUtils.getString(R.string.no_description);
+            description = "";
         }
         try {
             double tmp = Double.parseDouble(amount);
@@ -191,7 +189,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
 
     public void editLocation(FragmentManager fm) {
         final EditLocationFragment fragment = new EditLocationFragment();
-        if (!location.equals(getString(R.string.unspecified_location))) {
+        if (!GenericUtils.isEmpty(location)) {
             Bundle bundle = new Bundle(1);
             bundle.putString(EditLocationFragment.LOCATION, location);
             fragment.setArguments(bundle);

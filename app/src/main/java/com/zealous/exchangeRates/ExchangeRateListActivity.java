@@ -12,6 +12,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 public class ExchangeRateListActivity extends SearchActivity {
 
     public static final String EXTRA_PICK_CURRENCY = "pick_currrency";
@@ -19,6 +21,7 @@ public class ExchangeRateListActivity extends SearchActivity {
     public static final String SEARCH = "search";
     public static final String EVENT_RATE_SELECTED = "event_rate_selected";
 
+    @Inject
     EventBus bus;
 
     @Override
@@ -34,12 +37,12 @@ public class ExchangeRateListActivity extends SearchActivity {
     @Override
     protected void doCreate(@Nullable Bundle savedInstanceState) {
         super.doCreate(savedInstanceState);
-        bus = EventBus.builder()
-                .build();
+        DaggerExchangeRateListActivityComponent.create()
+                .inject(this);
         bus.register(this);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container, ExchangeRateFragment.create(bus), "exchangeRates")
+                .replace(R.id.container, new ExchangeRateFragment(), "exchangeRates")
                 .commit();
     }
 

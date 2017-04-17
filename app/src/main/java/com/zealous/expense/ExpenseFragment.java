@@ -14,11 +14,18 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.zealous.R;
+import com.zealous.exchangeRates.ExchangeRateListActivity;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
+import com.zealous.utils.PLog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -31,6 +38,8 @@ import butterknife.OnClick;
 
 public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
 
+    private static final String TAG = "ExpenseFragment";
+
     @Inject
     ExpenditureScreenPresenter expenditureScreenPresenter;
     @Inject
@@ -39,6 +48,9 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     ExpenseAdapterDelegateImpl delegate;
     @Inject
     RecyclerView.LayoutManager layoutManager;
+
+    @Inject
+    EventBus eventBus;
 
     @Bind(R.id.recycler_view)
     RecyclerView expenseList;
@@ -67,6 +79,30 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
                 .build()
                 .inject(this);
         expenditureScreenPresenter.onCreate(savedInstanceState, this);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Object event) {
+        PLog.d(TAG, "received event %s", event);
+        if (event instanceof Map) {
+            String value = ((Map<String, String>) event).get(ExchangeRateListActivity.SEARCH);
+            if (value != null) {
+                expenditureScreenPresenter.search(value);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        eventBus.register(this);
+    }
+
+    @Override
+    public void onPause() {
+        eventBus.unregister(this);
+        super.onPause();
     }
 
     @Override

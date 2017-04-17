@@ -3,6 +3,7 @@ package com.zealous.expense;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.zealous.R;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.utils.GenericUtils;
 
@@ -16,6 +17,8 @@ import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
+import static com.zealous.utils.GenericUtils.getString;
+
 /**
  * Created by yaaminu on 3/26/17.
  */
@@ -27,6 +30,8 @@ public class Expenditure extends RealmObject {
     public static final String FIELD_TIME = "time";
     public static final String FIELD_AMOUNT = "amountSpent";
     public static final String FIELD_CATEGORY = "category";
+    public static final String FIELD_DESCRIPTION = "description";
+    public static final String FIELD_LOCATION = "location";
     @Index
     private long amountSpent;
     @Required
@@ -51,8 +56,8 @@ public class Expenditure extends RealmObject {
 
     Expenditure(@NonNull String id, @NonNull String description, long amountSpent,
                 ExpenditureCategory category, long time, @Nullable String location) {
-        GenericUtils.ensureNotEmpty(description, id);
-        GenericUtils.ensureNotNull(category);
+        GenericUtils.ensureNotEmpty(id);
+        GenericUtils.ensureNotNull(category, description);
         GenericUtils.ensureConditionTrue(amountSpent > 0, "amount must be greater than 0");
         GenericUtils.ensureConditionTrue(time > 0, "time is invalid");
         this.expenditureID = id;
@@ -91,7 +96,7 @@ public class Expenditure extends RealmObject {
 
     @NonNull
     public String getLocation() {
-        return location == null ? "" : location;
+        return location == null ? getString(R.string.unspecified_location) : location;
     }
 
     public String getDescription() {

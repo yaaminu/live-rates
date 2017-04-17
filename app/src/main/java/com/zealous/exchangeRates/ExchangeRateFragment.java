@@ -15,6 +15,8 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import io.realm.Realm;
 
@@ -25,6 +27,9 @@ import static com.zealous.exchangeRates.ExchangeRateListActivity.SEARCH;
  */
 public class ExchangeRateFragment extends BaseFragment {
 
+    @Inject
+    EventBus bus;
+
     ExchangeRatesListAdapter adapter;
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -33,14 +38,7 @@ public class ExchangeRateFragment extends BaseFragment {
     @Bind(R.id.tv_last_updated)
     TextView tvLastUpdated;
     String filter;
-    EventBus bus;
     private Realm realm;
-
-    public static ExchangeRateFragment create(EventBus bus) {
-        ExchangeRateFragment fragment = new ExchangeRateFragment();
-        fragment.bus = bus;
-        return fragment;
-    }
 
     @Override
     protected int getLayout() {
@@ -50,6 +48,8 @@ public class ExchangeRateFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerExchangeRateFragmentComponent.create()
+                .inject(this);
         realm = ExchangeRate.Realm(getContext());
         adapter = new ExchangeRatesListAdapter(new ExchangeRateAdapterDelegateImpl(this, realm));
         bus.register(this);

@@ -8,11 +8,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.util.SparseArray;
 
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.zealous.R;
+import com.zealous.exchangeRates.DaggerMainActivityComponent;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.exchangeRates.ExchangeRateDetailActivity;
 import com.zealous.exchangeRates.ExchangeRateFragment;
@@ -25,7 +25,10 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
+import dagger.Lazy;
 
 import static com.zealous.exchangeRates.ExchangeRateListActivity.EVENT_RATE_SELECTED;
 import static com.zealous.exchangeRates.ExchangeRateListActivity.SEARCH;
@@ -34,16 +37,24 @@ public class MainActivity extends SearchActivity {
 
     @Bind(R.id.bottomBar)
     BottomBar bottomBar;
+
+    @Inject
     EventBus bus;
 
-    private SparseArray<BaseFragment> fragmentCache;
+    @Inject
+    Lazy<ExchangeRateFragment> exchangeRateFragmentLazy;
+    @Inject
+    Lazy<ExpenseFragment> expenseFragmentLazy;
+    @Inject
+    Lazy<ToolsFragment> toolsFragmentLazy;
+    @Inject
+    Lazy<BusinessNewsFragment> businessNewsFragmentLazy;
 
     @Override
     protected void doCreate(@Nullable Bundle savedInstanceState) {
         super.doCreate(savedInstanceState);
-        fragmentCache = new SparseArray<>(3);
-        bus = EventBus.builder()
-                .build();
+        DaggerMainActivityComponent.create()
+                .inject(this);
         bus.register(this);
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -60,18 +71,12 @@ public class MainActivity extends SearchActivity {
 
     private void updateToolbar(@IdRes int id) {
         final ActionBar supportActionBar = getSupportActionBar();
-        if (id == R.id.tab_expenses) {
+        if (toolbar != null) {
             if (supportActionBar != null) {
-                supportActionBar.hide();
+                supportActionBar.show();
             }
-        } else {
-            if (toolbar != null) {
-                if (supportActionBar != null) {
-                    supportActionBar.show();
-                }
-                toolbar.setNavigationIcon(R.drawable.ic_home_black_24dp);
-                toolbar.setBackgroundColor(ContextCompat.getColor(this, getToolBarColor(id)));
-            }
+            closeSearch();
+            toolbar.setBackgroundColor(ContextCompat.getColor(this, getToolBarColor(id)));
         }
         setUpStatusBarColor(getStatusBarColor(id));
     }
@@ -110,7 +115,13 @@ public class MainActivity extends SearchActivity {
 
     @Override
     protected boolean showSearch() {
-        return bottomBar.getCurrentTabId() == R.id.tab_exchange_rates;
+        switch (bottomBar.getCurrentTabId()) {
+            case R.id.tab_exchange_rates:
+            case R.id.tab_expenses:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -119,27 +130,18 @@ public class MainActivity extends SearchActivity {
     }
 
     private Fragment getFragment(int tabId) {
-        BaseFragment fragment = fragmentCache.get(tabId);
-        if (fragment == null) {
-            switch (tabId) {
-                case R.id.tab_exchange_rates:
-                    fragment = ExchangeRateFragment.create(bus);
-                    break;
-                case R.id.tab_expenses:
-                    fragment = new ExpenseFragment();
-                    break;
-                case R.id.tab_tools:
-                    fragment = new ToolsFragment();
-                    break;
-                case R.id.tab_business_news:
-                    fragment = new BusinessNewsFragment();
-                    break;
-                default:
-                    throw new AssertionError();
-            }
-            fragmentCache.put(tabId, fragment);
+        switch (tabId) {
+            case R.id.tab_exchange_rates:
+                return exchangeRateFragmentLazy.get();
+            case R.id.tab_expenses:
+                return expenseFragmentLazy.get();
+            case R.id.tab_tools:
+                return toolsFragmentLazy.get();
+            case R.id.tab_business_news:
+                return businessNewsFragmentLazy.get();
+            default:
+                throw new AssertionError();
         }
-        return fragment;
     }
 
     @Subscribe

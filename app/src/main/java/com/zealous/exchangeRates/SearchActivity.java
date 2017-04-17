@@ -72,6 +72,9 @@ public abstract class SearchActivity extends BaseZealousActivity {
         // TODO: 1/3/17 show the keyboard
         searchEt.setText("");
         searchEt.requestFocus();
+        if (toolbar != null) {
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        }
         ViewUtils.showViews(searchView);
         supportInvalidateOptionsMenu();
     }
@@ -108,8 +111,11 @@ public abstract class SearchActivity extends BaseZealousActivity {
         }
     }
 
-    private void closeSearch() {
+    protected void closeSearch() {
         searchEt.setText("");
+        if (toolbar != null) {
+            toolbar.setNavigationIcon(R.drawable.ic_home_black_24dp);
+        }
         ViewUtils.hideViews(searchView);
         supportInvalidateOptionsMenu();
     }

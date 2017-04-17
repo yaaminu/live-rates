@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.realm.Case;
 import io.realm.RealmChangeListener;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -118,7 +119,7 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     public void onStart() {
         GenericUtils.ensureNotNull(screen, "screen == null");
         assert screen != null;
-        updateRecords();
+        updateRecords("");
         this.records.addChangeListener(listener);
         updateUi();
     }
@@ -144,7 +145,7 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
 
     public void onChangeExpenditureRange(int position) {
         range = getRange(position);
-        updateRecords();
+        updateRecords("");
         updateUi();
     }
 
@@ -155,11 +156,16 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
         }
     }
 
-    private void updateRecords() {
+    private void updateRecords(String filter) {
         // TODO: 4/9/17 optimize away unnecessary calls
         final RealmQuery<Expenditure> query = expenditureDataSource.makeQuery();
         query.greaterThanOrEqualTo(FIELD_TIME, range.first)
-                .lessThan(FIELD_TIME, range.second);
+                .lessThan(FIELD_TIME, range.second)
+                .beginGroup()
+                .contains(Expenditure.FIELD_DESCRIPTION, filter, Case.INSENSITIVE)
+                .or()
+                .contains(Expenditure.FIELD_LOCATION, filter, Case.INSENSITIVE)
+                .endGroup();
         records = query.findAllSortedAsync(FIELD_TIME, Sort.DESCENDING);
         records.addChangeListener(listener);
     }
@@ -259,5 +265,9 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
 
     public String[] getRangNames() {
         return expenseRange;
+    }
+
+    public void search(String filter) {
+        updateRecords(filter);
     }
 }
