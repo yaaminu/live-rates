@@ -7,9 +7,9 @@
     <color name="dark_blue">#ff1f2f38</color>
     <color name="business_news_color_primary_dark">#ff8e1212</color>
     <color name="otherRatesPrimaryDark">#ffca6105</color>
-    <color name="exchangeRatePrimaryDark">#ff10685f</color>
+    <color name="exchangeRatePrimaryDark">#073631</color>
     <color name="expenseColorPrimaryDark">#ff0d47a1</color>
-    <color name="calculatorsPrimaryDark">#ff71099e</color>
+    <color name="calculatorsPrimaryDark">#ff3e044b</color>
     <color name="graph_background">#ff263238</color>
     <color name="gray_dark">#ff7c7c7c</color>
     <color name="gray_light">#559e9e9e</color>
