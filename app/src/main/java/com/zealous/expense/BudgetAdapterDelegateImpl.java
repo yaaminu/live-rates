@@ -39,7 +39,7 @@ public class BudgetAdapterDelegateImpl implements BudgetAdapter.Delegate {
 
     @Override
     public void onItemClick(BaseAdapter<BudgetViewHolder, ExpenditureCategory> adapter, View view, int position, long id) {
-
+        fragment.addCustomCategory(fragment.getFragmentManager(), adapter.getItem(position));
     }
 
     @Override

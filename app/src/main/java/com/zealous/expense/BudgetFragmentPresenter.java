@@ -78,4 +78,8 @@ public class BudgetFragmentPresenter extends BasePresenter<BudgetScreen> {
     public String[] getDurations(Context context) {
         return context.getResources().getStringArray(R.array.duration_types);
     }
+
+    void onAddCategory(){
+
+    }
 }

@@ -1,22 +1,29 @@
 package com.zealous.expense;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.zealous.R;
+import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 /**
  * Created by yaaminu on 4/17/17.
@@ -86,5 +93,24 @@ public class BudgetFragment extends BaseFragment implements BudgetScreen {
     @Override
     protected BasePresenter<?> getBasePresenter() {
         return presenter;
+    }
+
+    @OnClick(R.id.fab)
+    void onclick() {
+        addCustomCategory(getFragmentManager(), null);
+    }
+
+    void addCustomCategory(@NonNull FragmentManager fm, @Nullable ExpenditureCategory category) {
+        DialogFragment fragment = new AddNewCategoryDialogFragment();
+        if (category != null) {
+            Bundle bundle = new Bundle(3);
+            bundle.putString(AddNewCategoryDialogFragment.CATEGORY_NAME, category.getName());
+            bundle.putString(AddNewCategoryDialogFragment.CATEGORY_BUDGET,
+                    ExchangeRate.FORMAT.format(BigDecimal.valueOf(category.getBudget())
+                            .divide(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue()));
+            bundle.putInt(AddNewCategoryDialogFragment.CATEGORY_BUDGET_TYPE, category.getBudgetDuration());
+            fragment.setArguments(bundle);
+        }
+        fragment.show(fm, "addCategory");
     }
 }
