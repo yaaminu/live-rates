@@ -9,6 +9,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -23,7 +25,9 @@ import com.zealous.utils.PLog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.w3c.dom.Text;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +37,7 @@ import butterknife.Bind;
 import butterknife.OnClick;
 
 /**
- * Created by yaaminu on 4/8/17.
+ * @author by yaaminu on 4/8/17.
  */
 
 public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
@@ -63,6 +67,8 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     TextView rangeText;
     @Bind(R.id.today_s_date)
     TextView todaysDate;
+    @Bind(R.id.year)
+    TextView year;
 
     @Override
     protected int getLayout() {
@@ -94,6 +100,12 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.expense_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         eventBus.register(this);
@@ -110,6 +122,7 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         super.onViewCreated(view, savedInstanceState);
         expenseList.setLayoutManager(layoutManager);
         expenseList.setAdapter(adapter);
+        year.setText(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
         todaysDate.setText(DateUtils.formatDateTime(getContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
     }
 
@@ -123,20 +136,6 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
                     }
                 }).create().show();
     }
-
-    @OnClick(R.id.options)
-    void onMenuClicked(View anchor) {
-        PopupMenu popupMenu = new PopupMenu(getContext(), anchor);
-        popupMenu.inflate(R.menu.expense_menu);
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return expenditureScreenPresenter.onMenuItemClicked(item.getItemId());
-            }
-        });
-        popupMenu.show();
-    }
-
 
     @OnClick(R.id.fab)
     void addExpenditure() {

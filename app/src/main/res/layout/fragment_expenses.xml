@@ -93,8 +93,8 @@
         tools:ignore="RtlHardcoded"
         tools:listitem="@layout/expense_list_item" />
 
-    <ImageButton
-        android:id="@+id/options"
+    <TextView
+        android:id="@+id/year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -103,9 +103,13 @@
         android:layout_marginRight="@dimen/default_gap"
         android:layout_marginTop="@dimen/default_gap"
         android:background="@color/transparent"
-        android:contentDescription="@string/add"
-        android:src="@drawable/ic_more_vert_white_24dp"
-        tools:ignore="RtlHardcoded,RtlSymmetry" />
+        android:gravity="center_vertical"
+        android:maxLength="5"
+        android:paddingTop="@dimen/default_gap"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        tools:ignore="RtlHardcoded,RtlSymmetry"
+        tools:text="2017" />
 
     <TextView
         android:id="@+id/today_s_date"
