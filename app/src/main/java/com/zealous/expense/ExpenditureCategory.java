@@ -7,10 +7,14 @@ import android.support.annotation.IntDef;
 import com.zealous.R;
 import com.zealous.utils.GenericUtils;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Locale;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+
+import static com.zealous.exchangeRates.ExchangeRate.FORMAT;
 
 /**
  * Created by yaaminu on 3/26/17.
@@ -86,6 +90,16 @@ public class ExpenditureCategory extends RealmObject {
             drawable = R.drawable.expense_category_custom_icon_violet;
         }
         return drawable;
+    }
+
+    public String getNormalizedBudget() {
+        return FORMAT.format(BigDecimal.valueOf(getBudget()).divide(BigDecimal.valueOf(100), MathContext.DECIMAL128));
+    }
+
+    public BigDecimal getExpenditure(ExpenditureDataSource dataSource) {
+        return BigDecimal
+                .valueOf(dataSource.makeQuery().equalTo(Expenditure.FIELD_CATEGORY + "." + FIELD_NAME, getName())
+                        .sum(Expenditure.FIELD_AMOUNT).longValue()).divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
     }
 
     @IntDef({DAILY, WEEKLY, MONTHLY, YEARLY})

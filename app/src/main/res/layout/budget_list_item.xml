@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1dp"
+    android:orientation="horizontal"
+    android:weightSum="6"
+    tools:ignore="rtlHardcoded">
+
+    <TextView
+        android:id="@+id/category_name"
+        style="@style/light_violet"
+        android:layout_weight="2"
+        tools:text="Category Name" />
+
+
+    <TextView
+        android:id="@+id/duration_type"
+        style="@style/faint_violet"
+        android:layout_weight="1"
+        tools:text="Weekly" />
+
+    <TextView
+        android:id="@+id/budget"
+        style="@style/light_violet"
+        android:layout_weight="1"
+        tools:text="12.00" />
+
+    <TextView
+        android:id="@+id/expenditure"
+        style="@style/faint_violet"
+        android:layout_weight="1"
+        tools:text="8.00" />
+
+    <TextView
+        android:id="@+id/deficit"
+        style="@style/light_violet"
+        android:layout_weight="1"
+        tools:text="0.00" />
+</LinearLayout>
