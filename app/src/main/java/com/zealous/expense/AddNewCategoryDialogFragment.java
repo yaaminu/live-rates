@@ -80,7 +80,7 @@ public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
         }
         double actualBudget = 0;
         try {
-            actualBudget = Math.abs(Double.parseDouble(budget));
+            actualBudget = Math.abs(Double.parseDouble(budget.replaceAll("[^\\d\\.]+", "")));
             if (actualBudget == 0) {
                 warnBudgetAndContinue(name, budgetType);
             } else {
