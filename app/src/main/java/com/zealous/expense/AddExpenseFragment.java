@@ -70,6 +70,8 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     GridLayoutManager layoutManager;
     @Inject
     AttachmentAdapter attachmentAdapter;
+    @Inject
+    ProgressDialog progressDialog;
 
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -152,11 +154,12 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
 
         @Override
         public void onItemClick(BaseAdapter<AttachmentHolder, Attachment> adapter, View view, int position, long id) {
-
+            addExpenditurePresenter.viewAttachment(adapter.getItem(position));
         }
 
         @Override
         public boolean onItemLongClick(BaseAdapter<AttachmentHolder, Attachment> adapter, View view, int position, long id) {
+            showOptions(adapter.getItem(position));
             return false;
         }
 
@@ -166,6 +169,25 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
             return attachments;
         }
     };
+
+    private void showOptions(final Attachment item) {
+        new AlertDialog.Builder(getContext())
+                .setItems(R.array.attach_click_options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                addExpenditurePresenter.viewAttachment(item);
+                                break;
+                            case 1:
+                                addExpenditurePresenter.removeAttachment(item);
+                                break;
+                            default:
+                                throw new RuntimeException();
+                        }
+                    }
+                }).create().show();
+    }
 
     @Override
     protected int getLayout() {
@@ -360,12 +382,17 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     }
 
     @Override
-    public void showValidationError(String errorMessage) {
-        new AlertDialog.Builder(getContext())
-                .setMessage(errorMessage)
-                .setPositiveButton(android.R.string.ok, null)
-                .setTitle(R.string.error)
-                .create().show();
+    public void showValidationError(final String errorMessage) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new AlertDialog.Builder(getContext())
+                        .setMessage(errorMessage)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .setTitle(R.string.error)
+                        .create().show();
+            }
+        });
     }
 
     void addNewExpenditure() {
@@ -386,5 +413,33 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     @Override
     public Activity getCurrentActivity() {
         return getActivity();
+    }
+
+    @Override
+    public void showProgressDialog(boolean cancellable) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage(GenericUtils.getString(R.string.loading));
+                progressDialog.show();
+            }
+        });
+    }
+
+    @Override
+    public void dismissProgressDialog() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
+        });
     }
 }

@@ -1,6 +1,8 @@
 package com.zealous.expense;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +15,7 @@ import com.zealous.R;
 import com.zealous.errors.ZealousException;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.ui.BasePresenter;
+import com.zealous.utils.Config;
 import com.zealous.utils.FileUtils;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
@@ -98,12 +101,19 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                 time = expenditure.getExpenditureTime().getTime();
                 expenditureCategoryName = expenditure.getCategory().getName();
                 description = expenditure.getDescription();
-                attachments = expenditure.getAttachments();
+                List<Attachment> tmp = expenditure.getAttachments();
+                for (Attachment attachment : tmp) {
+                    if (!attachments.contains(attachment)) {
+                        attachments.add(attachment);
+                    }
+                }
+
                 Map<String, ?> state = getSavedState(screen.getContext());
                 String s = (String) state.get(KEY_OUTPUT_URI);
                 if (!GenericUtils.isEmpty(s)) {
                     cameraOutputUri = Uri.parse(s);
                 }
+                saveState(screen.getCurrentActivity(), Collections.singletonMap(KEY_OUTPUT_URI, ""));
             }
         }
         updateUI();
@@ -314,5 +324,45 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
 
     public void setCameraOutputUri(@Nullable Uri uri) {
         cameraOutputUri = uri;
+    }
+
+    public void viewAttachment(final Attachment item) {
+        screen.showProgressDialog(false);
+        final String sha1Sum = item.getSha1Sum();
+        final byte[] buffer = item.getBlob();
+        final String mimeType = item.getMimeType();
+        TaskManager.executeNow(new Runnable() {
+            @Override
+            public void run() {
+                File dest = new File(Config.getTempDir(), sha1Sum);
+                if (!dest.exists()) {
+                    try {
+                        org.apache.commons.io.FileUtils.writeByteArrayToFile(dest, buffer);
+                    } catch (IOException e) {
+                        screen.showValidationError(e.getMessage());
+                        return;
+                    }
+                }
+                doView(dest, mimeType);
+                screen.dismissProgressDialog();
+            }
+        }, false);
+    }
+
+    private void doView(final File data, final String mimeType) {
+        TaskManager.executeOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(data), mimeType);
+                screen.getCurrentActivity().startActivity(intent);
+            }
+        });
+    }
+
+    public void removeAttachment(Attachment item) {
+        if (attachments.remove(item)) {
+            updateUI();
+        }
     }
 }

@@ -30,4 +30,8 @@
         <item>Take Picture</item>
         <item>Document</item>
     </string-array>
+    <string-array name="attach_click_options">
+        <item>Preview</item>
+        <item>Delete</item>
+    </string-array>
 </resources>

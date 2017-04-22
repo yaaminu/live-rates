@@ -16,4 +16,8 @@ public interface AddExpenseScreen extends Screen {
                         String description, List<Attachment> attachments);
 
     void showValidationError(String errorMessage);
+
+    void showProgressDialog(boolean cancellable);
+
+    void dismissProgressDialog();
 }

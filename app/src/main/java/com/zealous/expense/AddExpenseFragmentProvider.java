@@ -1,5 +1,6 @@
 package com.zealous.expense;
 
+import android.app.ProgressDialog;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,12 @@ public class AddExpenseFragmentProvider extends BaseExpenditureProvider {
         this.fragment = fragment;
         this.delegate = delegate;
         this.attachementAdapterDelegate = attachementAdapterDelegate;
+    }
+
+    @Singleton
+    @Provides
+    public ProgressDialog progressDialog() {
+        return new ProgressDialog(fragment.getContext());
     }
 
     @Provides

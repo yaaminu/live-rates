@@ -1,7 +1,9 @@
 package com.zealous.expense;
 
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 
+import com.zealous.R;
 import com.zealous.utils.FileUtils;
 import com.zealous.utils.GenericUtils;
 
@@ -73,5 +75,16 @@ public class Attachment extends RealmObject {
     @Override
     public int hashCode() {
         return sha1Sum.hashCode();
+    }
+
+    @DrawableRes
+    public int getPlaceHolderIcon() {
+        if (mimeType.startsWith("image/")) {
+            return R.drawable.picture_preview;
+        } else if (mimeType.equals("application/pdf")) {
+            return R.drawable.pdf_preview;
+        } else {
+            return R.drawable.preview_unknown;
+        }
     }
 }

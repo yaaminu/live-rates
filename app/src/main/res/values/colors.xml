@@ -30,4 +30,5 @@
     <color name="dark_violet">#ff0b0825</color>
     <color name="light_violet">#201b48</color>
     <color name="faint_voilet">#7d7a9b</color>
+    <color name="black_transparent">#b000</color>
 </resources>
