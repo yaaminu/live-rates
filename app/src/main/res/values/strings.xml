@@ -106,6 +106,10 @@
     <string name="update">Update</string>
     <string name="delete">Delete</string>
     <string name="expenditure_removed_success">Expenditure removed successfully</string>
+    <string name="budget_amount_template" formatted="false">GH₵%s  %s</string>
+    <string name="spent">Spent: GH₵%s</string>
+    <string name="left">Left: GH₵%s</string>
+    <string name="budget_deficit">Deficit: GH₵%s</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

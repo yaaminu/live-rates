@@ -85,21 +85,4 @@
     <style name="widget_row_text_style">
         <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
-
-    <style name="base_budget_list_entry_style">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:lines">2</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:padding">@dimen/default_gap</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="light_violet" parent="base_budget_list_entry_style">
-        <item name="android:background">@color/light_violet</item>
-    </style>
-
-    <style name="faint_violet" parent="base_budget_list_entry_style">
-        <item name="android:background">@color/faint_voilet</item>
-    </style>
 </resources>
