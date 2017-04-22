@@ -9,4 +9,5 @@ import java.util.List;
  */
 public interface BudgetScreen extends Screen {
     void refreshDisplay(List<ExpenditureCategory> budget);
+    void showValidationError(String errorMessage);
 }

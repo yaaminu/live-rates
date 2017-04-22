@@ -1,9 +1,12 @@
 package com.zealous.expense;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 
+import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 
 import java.math.BigDecimal;
@@ -39,12 +42,30 @@ public class BudgetAdapterDelegateImpl implements BudgetAdapter.Delegate {
 
     @Override
     public void onItemClick(BaseAdapter<BudgetViewHolder, ExpenditureCategory> adapter, View view, int position, long id) {
-        fragment.addCustomCategory(fragment.getFragmentManager(), adapter.getItem(position));
+        fragment.update(adapter.getItem(position));
     }
 
     @Override
     public boolean onItemLongClick(BaseAdapter<BudgetViewHolder, ExpenditureCategory> adapter, View view, int position, long id) {
-        return false;
+
+        final ExpenditureCategory category = adapter.getItem(position);
+        new AlertDialog.Builder(fragment.getContext())
+                .setItems(R.array.category_long_click_context_menu, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                fragment.update(category);
+                                break;
+                            case 1:
+                                fragment.remove(category);
+                                break;
+                            default:
+                                throw new AssertionError();
+                        }
+                    }
+                }).create().show();
+        return true;
     }
 
     @NonNull

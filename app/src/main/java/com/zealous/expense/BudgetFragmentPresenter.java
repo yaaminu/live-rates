@@ -4,12 +4,18 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 
 import com.zealous.R;
+import com.zealous.errors.ZealousException;
+import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
+import com.zealous.utils.PLog;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 import javax.inject.Inject;
 
@@ -22,6 +28,7 @@ import io.realm.RealmResults;
 
 public class BudgetFragmentPresenter extends BasePresenter<BudgetScreen> {
 
+    private static final String TAG = "BudgetFragmentPresenter";
     private final ExpenditureDataSource dataSource;
     private RealmResults<ExpenditureCategory> budget;
     private BudgetScreen screen;
@@ -79,7 +86,26 @@ public class BudgetFragmentPresenter extends BasePresenter<BudgetScreen> {
         return context.getResources().getStringArray(R.array.duration_types);
     }
 
-    void onAddCategory(){
+    void onAddCategory(FragmentManager fragmentManager, ExpenditureCategory category) {
+        DialogFragment fragment = new AddNewCategoryDialogFragment();
+        if (category != null) {
+            Bundle bundle = new Bundle(3);
+            bundle.putString(AddNewCategoryDialogFragment.CATEGORY_NAME, category.getName());
+            bundle.putString(AddNewCategoryDialogFragment.CATEGORY_BUDGET,
+                    ExchangeRate.FORMAT.format(BigDecimal.valueOf(category.getBudget())
+                            .divide(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue()));
+            bundle.putInt(AddNewCategoryDialogFragment.CATEGORY_BUDGET_TYPE, category.getBudgetDuration());
+            fragment.setArguments(bundle);
+        }
+        fragment.show(fragmentManager, "addCategory");
+    }
 
+    public void removeCategory(ExpenditureCategory category) {
+        try {
+            dataSource.removeCategory(category);
+        } catch (ZealousException e) {
+            PLog.d(TAG, e.getMessage(), e);
+            screen.showValidationError(e.getMessage());
+        }
     }
 }

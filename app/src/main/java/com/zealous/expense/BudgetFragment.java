@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -97,20 +98,23 @@ public class BudgetFragment extends BaseFragment implements BudgetScreen {
 
     @OnClick(R.id.fab)
     void onclick() {
-        addCustomCategory(getFragmentManager(), null);
+        presenter.onAddCategory(getFragmentManager(), null);
     }
 
-    void addCustomCategory(@NonNull FragmentManager fm, @Nullable ExpenditureCategory category) {
-        DialogFragment fragment = new AddNewCategoryDialogFragment();
-        if (category != null) {
-            Bundle bundle = new Bundle(3);
-            bundle.putString(AddNewCategoryDialogFragment.CATEGORY_NAME, category.getName());
-            bundle.putString(AddNewCategoryDialogFragment.CATEGORY_BUDGET,
-                    ExchangeRate.FORMAT.format(BigDecimal.valueOf(category.getBudget())
-                            .divide(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue()));
-            bundle.putInt(AddNewCategoryDialogFragment.CATEGORY_BUDGET_TYPE, category.getBudgetDuration());
-            fragment.setArguments(bundle);
-        }
-        fragment.show(fm, "addCategory");
+    public void update(ExpenditureCategory category) {
+        presenter.onAddCategory(getFragmentManager(), category);
+    }
+
+    public void remove(ExpenditureCategory category) {
+        presenter.removeCategory(category);
+    }
+
+    @Override
+    public void showValidationError(String errorMessage) {
+        new AlertDialog.Builder(getContext())
+                .setMessage(errorMessage)
+                .setPositiveButton(android.R.string.ok, null)
+                .setTitle(R.string.error)
+                .create().show();
     }
 }
