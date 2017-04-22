@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.zealous.R;
 import com.zealous.errors.ZealousException;
 import com.zealous.utils.GenericUtils;
+import com.zealous.utils.PLog;
 
 import java.io.Closeable;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import javax.inject.Inject;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -63,7 +65,6 @@ public class ExpenditureDataSource implements Closeable {
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(expenditure);
         realm.commitTransaction();
-        // TODO: 3/26/17 append this operation to a backup log
     }
 
     /**
@@ -236,4 +237,10 @@ public class ExpenditureDataSource implements Closeable {
         }
         realm.commitTransaction();
     }
+
+    public <T extends RealmObject> T datach(T obj) {
+        ensureNotClosed();
+        return realm.copyFromRealm(obj);
+    }
+
 }

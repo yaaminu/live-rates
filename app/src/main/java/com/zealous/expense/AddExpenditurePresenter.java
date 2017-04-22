@@ -1,6 +1,7 @@
 package com.zealous.expense;
 
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,12 +13,21 @@ import com.zealous.R;
 import com.zealous.errors.ZealousException;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.ui.BasePresenter;
+import com.zealous.utils.FileUtils;
 import com.zealous.utils.GenericUtils;
+import com.zealous.utils.PLog;
 import com.zealous.utils.TaskManager;
+import com.zealous.utils.ThreadUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -30,6 +40,8 @@ import io.realm.RealmResults;
  */
 
 public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
+    private static final String TAG = "AddExpenditurePresenter";
+    public static final String KEY_OUTPUT_URI = "key_output_uri";
     private final ExpenditureDataSource dataSource;
     private AddExpenseFragment screen;
     private String location;
@@ -37,6 +49,12 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     private String currency, amount;
     private RealmResults<ExpenditureCategory> categories;
     private String expenditureCategoryName;
+
+    @Nullable
+    private Uri cameraOutputUri;
+
+    @NonNull
+    private List<Attachment> attachments;
 
     @Nullable
     private String expenditureID;
@@ -60,6 +78,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
         amount = "0.00";
         expenditureCategoryName = "";
         description = "";
+        this.attachments = new ArrayList<>(1);
     }
 
     @Override
@@ -79,6 +98,12 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                 time = expenditure.getExpenditureTime().getTime();
                 expenditureCategoryName = expenditure.getCategory().getName();
                 description = expenditure.getDescription();
+                attachments = expenditure.getAttachments();
+                Map<String, ?> state = getSavedState(screen.getContext());
+                String s = (String) state.get(KEY_OUTPUT_URI);
+                if (!GenericUtils.isEmpty(s)) {
+                    cameraOutputUri = Uri.parse(s);
+                }
             }
         }
         updateUI();
@@ -89,13 +114,33 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     public void onStop() {
         super.onStop();
         dataSource.stopListeningForChanges(realmRealmChangeListener);
+        if (cameraOutputUri != null) {
+            saveState(screen.getCurrentActivity(),
+                    Collections.singletonMap(KEY_OUTPUT_URI, cameraOutputUri.toString()));
+        }
+    }
+
+    @Nullable
+    public Uri getCameraOutputUri() {
+        return cameraOutputUri;
     }
 
     private void updateUI() {
-        categories = dataSource.makeExpenditureCategoryQuery()
-                .findAllSorted(ExpenditureCategory.FIELD_NAME);
-        this.screen.refreshDisplay(categories, time, location,
-                currency, amount, expenditureCategoryName, description);
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                categories = dataSource.makeExpenditureCategoryQuery()
+                        .findAllSorted(ExpenditureCategory.FIELD_NAME);
+                AddExpenditurePresenter.this.screen.refreshDisplay(categories, time, location,
+                        currency, amount, expenditureCategoryName, description, attachments);
+            }
+        };
+
+        if (ThreadUtils.isMainThread()) {
+            task.run();
+        } else {
+            TaskManager.executeOnMainThread(task);
+        }
     }
 
     public void updateData(String amount, String expenditureCategoryName, String description) {
@@ -125,21 +170,36 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                 screen.showValidationError(GenericUtils.getString(R.string.invalid_amount));
                 return false;
             } else {
-                final Expenditure expenditure = new ExpenditureBuilder()
-                        .setLocation(location).setTime(time)
-                        .setAmountSpent(actualAmount)
-                        .setCategory(categories.get(selectedItemPosition))
-                        .setDescription(description).createExpenditure();
-                if (!GenericUtils.isEmpty(expenditureID)) {
-                    expenditure.setId(expenditureID);
-                }
-                dataSource.addOrUpdateExpenditure(expenditure);
+                doFinallyAdd(description, selectedItemPosition, actualAmount);
                 return true;
             }
         } catch (NumberFormatException e) {
             screen.showValidationError(GenericUtils.getString(R.string.invalid_amount));
             return false;
         }
+    }
+
+    private void doFinallyAdd(@NonNull final String description,
+                              final int selectedItemPosition, final long actualAmount) {
+        final ExpenditureCategory category = categories.get(selectedItemPosition);
+        final Expenditure expenditure = new ExpenditureBuilder()
+                .setLocation(location).setTime(time)
+                .setAmountSpent(actualAmount)
+                .setCategory(category)
+                .setDescription(description).createExpenditure();
+        if (!GenericUtils.isEmpty(expenditureID)) {
+            expenditure.setId(expenditureID);
+        }
+        for (Attachment attachment : attachments) {
+            try {
+                expenditure.addAttachment(attachment);
+            } catch (ZealousException e) {
+                PLog.e(TAG, e.getMessage(), e);
+                screen.showValidationError(e.getMessage());
+                return;
+            }
+        }
+        dataSource.addOrUpdateExpenditure(expenditure);
     }
 
     public void onAddCustomCategory(@NonNull FragmentManager fm) {
@@ -233,5 +293,26 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
 
     public void startWith(@NonNull String expenditureID) {
         this.expenditureID = expenditureID;
+    }
+
+    public synchronized void addAttachment(@NonNull String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            screen.showValidationError(screen.getCurrentActivity().getString(R.string.path_not_found, path));
+        } else {
+            try {
+                attachments.add(
+                        new Attachment(file.getName(),
+                                org.apache.commons.io.FileUtils.readFileToByteArray(file),
+                                FileUtils.getMimeType(file.getAbsolutePath())));
+                updateUI();
+            } catch (IOException e) {
+                screen.showValidationError(e.getMessage());
+            }
+        }
+    }
+
+    public void setCameraOutputUri(@Nullable Uri uri) {
+        cameraOutputUri = uri;
     }
 }

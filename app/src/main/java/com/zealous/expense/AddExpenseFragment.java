@@ -1,13 +1,18 @@
 package com.zealous.expense;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.Menu;
@@ -18,36 +23,58 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.zealous.BuildConfig;
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
+import com.zealous.errors.ZealousException;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
+import com.zealous.utils.Config;
 import com.zealous.utils.GenericUtils;
+import com.zealous.utils.PLog;
+import com.zealous.utils.TaskManager;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 
+import static com.zealous.utils.FileUtils.resolveContentUriToFilePath;
+
 /**
  * Created by yaaminu on 4/14/17.
  */
 
 public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen {
+    private static final String TAG = "AddExpenseFragment";
     public static final int INVALID_POSITION = -1;
     public static final String EXPENDITURE_ID = "expenditureID";
+    public static final int REQUEST_CODE_TAKE_PIC = 1001;
+    private static final int REQUEST_CODE_PICK_DOCUMENT = 1002;
+    private static final int REQUEST_CODE_PICK_PICTURE = 1003;
+
+    private static final SimpleDateFormat secondsPrecissionFormatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+
     @Inject
     AddExpenditurePresenter addExpenditurePresenter;
     @Inject
     ExpenditureCategoryAdapter adapter;
     @Inject
     GridLayoutManager layoutManager;
+    @Inject
+    AttachmentAdapter attachmentAdapter;
 
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
+    @Bind(R.id.attachments)
+    RecyclerView attachmentRv;
     @Bind(R.id.tv_date)
     TextView date;
     @Bind(R.id.tv_location)
@@ -59,8 +86,11 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     @Bind(R.id.currency)
     TextView currency;
 
+
     int selectedItem = INVALID_POSITION;
     private List<ExpenditureCategory> categories = Collections.emptyList();
+    private List<Attachment> attachments = Collections.emptyList();
+
     private ExpenditureCategoryAdapter.Delegate delegate = new ExpenditureCategoryAdapter.Delegate() {
         @Override
         public Context context() {
@@ -103,6 +133,7 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         }
     };
 
+
     private void showUpdateDeleteDialog(final ExpenditureCategory category) {
         new AlertDialog.Builder(getContext())
                 .setItems(R.array.category_long_click_context_menu, new DialogInterface.OnClickListener() {
@@ -112,6 +143,29 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
                     }
                 }).create().show();
     }
+
+    private final AttachmentAdapterDelegate attachmentAdapterDelegate = new AttachmentAdapterDelegate() {
+        @Override
+        public Context context() {
+            return getContext();
+        }
+
+        @Override
+        public void onItemClick(BaseAdapter<AttachmentHolder, Attachment> adapter, View view, int position, long id) {
+
+        }
+
+        @Override
+        public boolean onItemLongClick(BaseAdapter<AttachmentHolder, Attachment> adapter, View view, int position, long id) {
+            return false;
+        }
+
+        @NonNull
+        @Override
+        public List<Attachment> dataSet(String constrain) {
+            return attachments;
+        }
+    };
 
     @Override
     protected int getLayout() {
@@ -123,7 +177,7 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         DaggerAddExpenditureComponent.builder()
-                .addExpenseFragmentProvider(new AddExpenseFragmentProvider(this, delegate))
+                .addExpenseFragmentProvider(new AddExpenseFragmentProvider(this, delegate, attachmentAdapterDelegate))
                 .build().inject(this);
         addExpenditurePresenter.onCreate(savedInstanceState, this);
         Bundle bundle = getArguments();
@@ -148,11 +202,107 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
                 addNewExpenditure();
                 break;
             case R.id.action_attach:
-                //fall through
+                attachFileToExpenditure();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+
+    private void attachFileToExpenditure() {
+        new AlertDialog.Builder(getContext())
+                .setItems(R.array.attach_options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        handleAttachItem(which);
+                    }
+                }).create().show();
+    }
+
+
+    private void handleAttachItem(int which) {
+        Intent intent;
+        switch (which) {
+            case 0:
+                intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent, REQUEST_CODE_PICK_PICTURE);
+                break;
+            case 1:
+                addExpenditurePresenter.setCameraOutputUri(Uri.fromFile(new File(Config.getTempDir(),
+                        secondsPrecissionFormatter.format(new Date()) + ".jpg")));
+                takePhoto(getActivity(),
+                        addExpenditurePresenter.getCameraOutputUri(),
+                        REQUEST_CODE_TAKE_PIC);
+                break;
+            case 2:
+                intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("application/pdf");
+                startActivityForResult(intent, REQUEST_CODE_PICK_DOCUMENT);
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (addExpenditurePresenter.getCameraOutputUri() != null) {
+            handleResults(REQUEST_CODE_TAKE_PIC, addExpenditurePresenter.getCameraOutputUri());
+        }
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, int resultCode, final Intent data) {
+
+        if (requestCode == REQUEST_CODE_PICK_DOCUMENT || requestCode == REQUEST_CODE_PICK_PICTURE || requestCode == REQUEST_CODE_TAKE_PIC) {
+            if (resultCode == Activity.RESULT_OK) {
+                TaskManager.executeNow(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleResults(requestCode, data.getData());
+                    }
+                }, false);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void handleResults(int requestCode, Uri data) {
+        switch (requestCode) {
+            case REQUEST_CODE_PICK_DOCUMENT:
+                addExpenditurePresenter.addAttachment(resolveContentUriToFilePath(data, true));
+                break;
+            case REQUEST_CODE_PICK_PICTURE:
+                addExpenditurePresenter.addAttachment(resolveContentUriToFilePath(data, true));
+                break;
+            case REQUEST_CODE_TAKE_PIC:
+                if (data != null) {
+                    addExpenditurePresenter.addAttachment(resolveContentUriToFilePath(data));
+                    addExpenditurePresenter.setCameraOutputUri(null);
+                }
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+
+    public static void takePhoto(Activity context, Uri outPutUri, int requestCode) {
+        try {
+            Intent attachIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            attachIntent.putExtra(MediaStore.EXTRA_OUTPUT, outPutUri);
+            context.startActivityForResult(attachIntent, requestCode);
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG) {
+                PLog.e(TAG, e.getMessage(), e.getCause());
+                throw new RuntimeException(e.getCause());
+            }
+            PLog.e(TAG, e.getMessage());
+        }
     }
 
     @Override
@@ -160,6 +310,8 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         super.onViewCreated(view, savedInstanceState);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+        attachmentRv.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
+        attachmentRv.setAdapter(attachmentAdapter);
     }
 
     @OnClick({R.id.edit_date, R.id.edit_location})
@@ -183,8 +335,10 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     @Override
     public void refreshDisplay(List<ExpenditureCategory> categories,
                                long time, String location,
-                               String currency, String amount, String categoryName, String description) {
+                               String currency, String amount, String categoryName,
+                               String description, List<Attachment> attachments) {
         this.categories = categories;
+        this.attachments = attachments;
         date.setText(DateUtils.formatDateTime(getContext(), time,
                 DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_YEAR));
         this.location.setText(location);
@@ -201,6 +355,8 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         this.amount.setText(amount);
         this.amount.setSelection(amount.length());
         this.currency.setText(currency);
+        // TODO: 4/22/17 show attachments in a list view
+        attachmentAdapter.notifyDataChanged("");
     }
 
     @Override
@@ -213,12 +369,12 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     }
 
     void addNewExpenditure() {
-        // TODO: 4/15/17 validate input
         if (addExpenditurePresenter
                 .onAddExpenditure(amount.getText().toString(),
                         note.getText().toString(), selectedItem)) {
             getActivity().finish();
         }
+
     }
 
     @Nullable

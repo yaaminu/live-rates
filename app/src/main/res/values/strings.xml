@@ -110,6 +110,11 @@
     <string name="spent">Spent: GH₵%s</string>
     <string name="left">Left: GH₵%s</string>
     <string name="budget_deficit">Deficit: GH₵%s</string>
+    <string name="path_not_found">%s does not exist</string>
+    <string name="too_many_attachments">Can\'t attach more than 5 attachments</string>
+    <string name="attachment_too_large">Attachment too large</string>
+    <string name="save_error">Unknown error while saving expenditure</string>
+    <string name="saving_expnditure">Saving expenditure</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

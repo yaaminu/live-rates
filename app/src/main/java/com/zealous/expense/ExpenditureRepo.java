@@ -6,7 +6,7 @@ package com.zealous.expense;
 
 
 @io.realm.annotations.RealmModule(classes = {
-        Expenditure.class, ExpenditureCategory.class
+        Expenditure.class, ExpenditureCategory.class, Attachment.class
 })
 public class ExpenditureRepo {
 }

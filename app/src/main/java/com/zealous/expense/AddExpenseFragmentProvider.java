@@ -19,10 +19,13 @@ import dagger.Provides;
 public class AddExpenseFragmentProvider extends BaseExpenditureProvider {
     private final BaseFragment fragment;
     private final ExpenditureCategoryAdapter.Delegate delegate;
+    private final AttachmentAdapterDelegate attachementAdapterDelegate;
 
-    public AddExpenseFragmentProvider(@NonNull BaseFragment fragment, ExpenditureCategoryAdapter.Delegate delegate) {
+    public AddExpenseFragmentProvider(@NonNull BaseFragment fragment,
+                                      ExpenditureCategoryAdapter.Delegate delegate, AttachmentAdapterDelegate attachementAdapterDelegate) {
         this.fragment = fragment;
         this.delegate = delegate;
+        this.attachementAdapterDelegate = attachementAdapterDelegate;
     }
 
     @Provides
@@ -41,5 +44,11 @@ public class AddExpenseFragmentProvider extends BaseExpenditureProvider {
     @Singleton
     public ExpenditureCategoryAdapter getExpenditureCategoryAdapter() {
         return new ExpenditureCategoryAdapter(delegate);
+    }
+
+    @Provides
+    @Singleton
+    public AttachmentAdapter getAdapter() {
+        return new AttachmentAdapter(attachementAdapterDelegate);
     }
 }

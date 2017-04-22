@@ -4,13 +4,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.zealous.R;
+import com.zealous.errors.ZealousException;
 import com.zealous.exchangeRates.ExchangeRate;
+import com.zealous.utils.Config;
+import com.zealous.utils.FileUtils;
 import com.zealous.utils.GenericUtils;
+import com.zealous.utils.PLog;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.Index;
@@ -25,13 +35,14 @@ import static com.zealous.utils.GenericUtils.getString;
 
 public class Expenditure extends RealmObject {
 
-
+    private static final String TAG = "Expenditure";
     public static final String FIELD_ID = "expenditureID";
     public static final String FIELD_TIME = "time";
     public static final String FIELD_AMOUNT = "amountSpent";
     public static final String FIELD_CATEGORY = "category";
     public static final String FIELD_DESCRIPTION = "description";
     public static final String FIELD_LOCATION = "location";
+    public static final String FEILD_ATTACHMENTS = "attachments";
     @Index
     private long amountSpent;
     @Required
@@ -45,6 +56,11 @@ public class Expenditure extends RealmObject {
     @SuppressWarnings("unused")
     @PrimaryKey
     private String expenditureID;
+
+    private boolean backedUp;
+
+    @Nullable
+    RealmList<Attachment> attachments;
 
     @Nullable
     @Ignore
@@ -66,6 +82,11 @@ public class Expenditure extends RealmObject {
         this.category = category;
         this.time = time;
         this.location = location;
+        this.backedUp = false;
+    }
+
+    void setBackedUp(boolean backedUp) {
+        this.backedUp = backedUp;
     }
 
     @NonNull
@@ -111,5 +132,40 @@ public class Expenditure extends RealmObject {
         GenericUtils.ensureNotEmpty(id);
         GenericUtils.ensureConditionTrue(id.length() > 10, "id too short");
         this.expenditureID = id;
+    }
+
+    void addAttachment(@NonNull Attachment attachment) throws ZealousException {
+        GenericUtils.ensureNotNull(attachment);
+        if (attachments == null) {
+            attachments = new RealmList<>();
+        }
+        if (attachments.size() >= 5) {
+            throw new ZealousException(GenericUtils.getString(R.string.too_many_attachments));
+        }
+        if (attachment.getBlob().length > FileUtils.ONE_MB * 3) {
+            throw new ZealousException(GenericUtils.getString(R.string.attachment_too_large));
+        }
+        attachments.add(attachment);
+    }
+
+    public boolean removeAttachment(Attachment attachment) {
+        if (attachment == null) return false;
+        if (attachments == null || attachments.isEmpty()) return false;
+
+        for (int i = 0; i < attachments.size(); i++) {
+            Attachment toRemove = attachments.get(i);
+            if (attachment.equals(toRemove)) {
+                return attachments.remove(i) != null;
+            }
+        }
+        return false;
+    }
+
+    public List<Attachment> getAttachments() {
+        // TODO: 4/22/17 disallow ui thread calls
+        if (attachments == null) {
+            return Collections.emptyList();
+        }
+        return attachments;
     }
 }
