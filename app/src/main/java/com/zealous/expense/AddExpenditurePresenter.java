@@ -88,12 +88,18 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     @Override
     public void onCreate(@Nullable Bundle savedState, @NonNull AddExpenseFragment screen) {
         this.screen = screen;
+        updateState();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         // TODO: 4/15/17 use proper location
+        updateUI();
+        dataSource.listenForChanges(realmRealmChangeListener);
+    }
+
+    private void updateState() {
         if (!GenericUtils.isEmpty(expenditureID)) {
             Expenditure expenditure = dataSource.makeQuery().equalTo(Expenditure.FIELD_ID, expenditureID).findFirst();
             if (expenditure != null) {
@@ -117,8 +123,6 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                 saveState(screen.getCurrentActivity(), Collections.singletonMap(KEY_OUTPUT_URI, ""));
             }
         }
-        updateUI();
-        dataSource.listenForChanges(realmRealmChangeListener);
     }
 
     @Override
@@ -304,6 +308,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
 
     public void startWith(@NonNull String expenditureID) {
         this.expenditureID = expenditureID;
+        updateState();
     }
 
     public synchronized void addAttachment(@NonNull String path) {
