@@ -367,6 +367,15 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
 
     public void removeAttachment(Attachment item) {
         if (attachments.remove(item)) {
+            File cachedFile = new File(Config.getTempDir(), item.getSha1Sum());
+            if (cachedFile.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                if (cachedFile.delete()) {
+                    PLog.d(TAG, "removed disk cache for attachment: %s", item);
+                } else {
+                    PLog.w(TAG, "failed to remove disk cache for %s", item);
+                }
+            }
             updateUI();
         }
     }
