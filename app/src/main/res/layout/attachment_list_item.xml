@@ -29,9 +29,10 @@
         android:clickable="false"
         android:ellipsize="middle"
         android:gravity="center_horizontal"
-        android:lines="1"
+        android:maxLines="2"
         android:maxLength="30"
         android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@color/white"
         tools:text="preview.pdf" />
 </FrameLayout>
