@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical">
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +18,6 @@
             android:clickable="true"
             android:gravity="center_horizontal"
             android:padding="@dimen/default_gap"
-            android:paddingBottom="@dimen/default_gap"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_columnWeight="1"
             app:layout_gravity="center_horizontal"
@@ -122,15 +119,34 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/default_gap" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/attachments"
+    <LinearLayout
+        android:id="@+id/attachments_pane"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layoutManager="GridLayoutManager"
-        app:spanCount="1">
+        android:orientation="vertical">
 
-    </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:id="@+id/attachments_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:text="@string/attachments" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/default_gap"
+            android:background="@color/gray_light" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/attachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layoutManager="GridLayoutManager"
+            app:spanCount="1"
+            tools:listitem="@layout/attachment_list_item" />
+    </LinearLayout>
 
     <android.support.v4.widget.Space
         android:layout_width="match_parent"

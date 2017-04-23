@@ -4,6 +4,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 
 import com.zealous.R;
+import com.zealous.errors.ZealousException;
 import com.zealous.utils.FileUtils;
 import com.zealous.utils.GenericUtils;
 
@@ -31,16 +32,20 @@ public class Attachment extends RealmObject {
         blob = new byte[]{};
     }
 
-    public Attachment(@NonNull String title, @NonNull byte[] blob, String mimeType) {
+    public Attachment(@NonNull String title, @NonNull byte[] blob, String mimeType) throws ZealousException {
         GenericUtils.ensureNotEmpty(title, mimeType);
         //noinspection ConstantConditions
         GenericUtils.ensureConditionTrue(blob != null && blob.length > 0, "invalid data");
+        if (Expenditure.isTooLarge(blob)) {
+            throw new ZealousException(GenericUtils.getString(R.string.attachment_too_large));
+        }
         this.title = title;
         this.blob = blob;
 
         this.mimeType = mimeType;
         this.sha1Sum = FileUtils.sha1(blob);
     }
+
 
     @NonNull
     public byte[] getBlob() {

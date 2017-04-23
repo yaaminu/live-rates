@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ViewUtils;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,6 +46,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.zealous.utils.FileUtils.resolveContentUriToFilePath;
@@ -377,8 +380,16 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         this.amount.setText(amount);
         this.amount.setSelection(amount.length());
         this.currency.setText(currency);
-        // TODO: 4/22/17 show attachments in a list view
-        attachmentAdapter.notifyDataChanged("");
+        if (attachments.isEmpty()) {
+            View view = getView();
+            assert view != null;
+            com.zealous.utils.ViewUtils.hideViews(ButterKnife.findById(view, R.id.attachments_pane));
+        } else {
+            View view = getView();
+            assert view != null;
+            com.zealous.utils.ViewUtils.showViews(ButterKnife.findById(view, R.id.attachments_pane));
+            attachmentAdapter.notifyDataChanged("");
+        }
     }
 
     @Override
@@ -393,6 +404,11 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
                         .create().show();
             }
         });
+    }
+
+    @Override
+    public void showValidationError(@StringRes int errorMessage) {
+        showValidationError(getString(errorMessage));
     }
 
     void addNewExpenditure() {

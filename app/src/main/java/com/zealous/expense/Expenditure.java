@@ -142,10 +142,14 @@ public class Expenditure extends RealmObject {
         if (attachments.size() >= 5) {
             throw new ZealousException(GenericUtils.getString(R.string.too_many_attachments));
         }
-        if (attachment.getBlob().length > FileUtils.ONE_MB * 3) {
+        if (isTooLarge(attachment.getBlob())) {
             throw new ZealousException(GenericUtils.getString(R.string.attachment_too_large));
         }
         attachments.add(attachment);
+    }
+
+    static boolean isTooLarge(byte[] blob) {
+        return blob.length > FileUtils.ONE_MB * 3;
     }
 
     public boolean removeAttachment(Attachment attachment) {

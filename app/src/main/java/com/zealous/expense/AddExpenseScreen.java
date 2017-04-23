@@ -1,5 +1,7 @@
 package com.zealous.expense;
 
+import android.support.annotation.StringRes;
+
 import com.zealous.ui.Screen;
 import com.zealous.utils.FileUtils;
 
@@ -16,6 +18,8 @@ public interface AddExpenseScreen extends Screen {
                         String description, List<Attachment> attachments);
 
     void showValidationError(String errorMessage);
+
+    void showValidationError(@StringRes int errorMessage);
 
     void showProgressDialog(boolean cancellable);
 

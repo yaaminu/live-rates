@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="120dp"
-    android:layout_height="120dp"
-    android:background="?attr/selectableItemBackground"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:layout_marginRight="@dimen/default_gap"
+    android:background="@color/gray_light"
     android:orientation="vertical">
 
     <ImageView
@@ -12,11 +13,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:adjustViewBounds="true"
-        android:background="@color/gray_light"
         android:clickable="false"
         android:contentDescription="@string/attachment_preview"
-        android:maxHeight="100dp"
-        android:maxWidth="100dp"
+        android:maxHeight="72dp"
+        android:maxWidth="72dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/pdf_preview" />
 
     <TextView

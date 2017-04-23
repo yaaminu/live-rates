@@ -1,6 +1,7 @@
 package com.zealous.expense;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -180,8 +181,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                 screen.showValidationError(GenericUtils.getString(R.string.invalid_amount));
                 return false;
             } else {
-                doFinallyAdd(description, selectedItemPosition, actualAmount);
-                return true;
+                return doFinallyAdd(description, selectedItemPosition, actualAmount);
             }
         } catch (NumberFormatException e) {
             screen.showValidationError(GenericUtils.getString(R.string.invalid_amount));
@@ -189,8 +189,8 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
         }
     }
 
-    private void doFinallyAdd(@NonNull final String description,
-                              final int selectedItemPosition, final long actualAmount) {
+    private boolean doFinallyAdd(@NonNull final String description,
+                                 final int selectedItemPosition, final long actualAmount) {
         final ExpenditureCategory category = categories.get(selectedItemPosition);
         final Expenditure expenditure = new ExpenditureBuilder()
                 .setLocation(location).setTime(time)
@@ -206,10 +206,11 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
             } catch (ZealousException e) {
                 PLog.e(TAG, e.getMessage(), e);
                 screen.showValidationError(e.getMessage());
-                return;
+                return false;
             }
         }
         dataSource.addOrUpdateExpenditure(expenditure);
+        return true;
     }
 
     public void onAddCustomCategory(@NonNull FragmentManager fm) {
@@ -316,7 +317,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                                 org.apache.commons.io.FileUtils.readFileToByteArray(file),
                                 FileUtils.getMimeType(file.getAbsolutePath())));
                 updateUI();
-            } catch (IOException e) {
+            } catch (IOException | ZealousException e) {
                 screen.showValidationError(e.getMessage());
             }
         }
@@ -355,7 +356,11 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
             public void run() {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(data), mimeType);
-                screen.getCurrentActivity().startActivity(intent);
+                try {
+                    screen.getCurrentActivity().startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    screen.showValidationError(R.string.no_app_for_viewing_pdf_files);
+                }
             }
         });
     }

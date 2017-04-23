@@ -29,13 +29,21 @@ public class AttachmentAdapter extends BaseAdapter<AttachmentHolder, Attachment>
     protected void doBindHolder(AttachmentHolder holder, int position) {
         Attachment item = getItem(position);
         holder.title.setText(item.getTitle());
-        Bitmap bm = imageCache.get(item.getSha1Sum());
-        if (bm == null) {
-            loadImage(item, holder);
-            holder.preview.setImageResource(item.getPlaceHolderIcon());
+        if (itsImage(item)) {
+            Bitmap bm = imageCache.get(item.getSha1Sum());
+            if (bm == null) {
+                holder.preview.setImageResource(item.getPlaceHolderIcon());
+                loadImage(item, holder);
+            } else {
+                holder.preview.setImageBitmap(bm);
+            }
         } else {
-            holder.preview.setImageBitmap(bm);
+            holder.preview.setImageResource(item.getPlaceHolderIcon());
         }
+    }
+
+    private boolean itsImage(Attachment item) {
+        return item.getMimeType().startsWith("image/");
     }
 
     private void loadImage(Attachment item, final AttachmentHolder holder) {
