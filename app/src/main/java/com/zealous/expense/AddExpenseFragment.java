@@ -15,7 +15,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ViewUtils;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,7 +27,6 @@ import android.widget.TextView;
 import com.zealous.BuildConfig;
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
-import com.zealous.errors.ZealousException;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
 import com.zealous.utils.Config;
@@ -339,7 +337,7 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         attachmentRv.setAdapter(attachmentAdapter);
     }
 
-    @OnClick({R.id.edit_date, R.id.edit_location})
+    @OnClick({R.id.edit_date, R.id.edit_location, R.id.tv_location, R.id.tv_date})
     void onClick(View view) {
         final int position = delegate.getSelectedItemPosition();
         addExpenditurePresenter.updateData(amount.getText().toString().trim(),
@@ -347,9 +345,11 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
                         : categories.get(position).getName(), note.getText().toString().trim());
         switch (view.getId()) {
             case R.id.edit_date:
+            case R.id.tv_date:
                 addExpenditurePresenter.editDate(getFragmentManager());
                 break;
             case R.id.edit_location:
+            case R.id.tv_location:
                 addExpenditurePresenter.editLocation(getFragmentManager());
                 break;
             default:
@@ -366,7 +366,7 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         this.attachments = attachments;
         date.setText(DateUtils.formatDateTime(getContext(), time,
                 DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_YEAR));
-        this.location.setText(location);
+        this.location.setText(GenericUtils.isEmpty(location) ? getString(R.string.add_location) : location);
         if (!GenericUtils.isEmpty(categoryName)) {
             for (int i = 0; i < categories.size(); i++) {
                 if (categories.get(i).getName().equals(categoryName)) {

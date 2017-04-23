@@ -6,16 +6,11 @@ import android.support.annotation.Nullable;
 import com.zealous.R;
 import com.zealous.errors.ZealousException;
 import com.zealous.exchangeRates.ExchangeRate;
-import com.zealous.utils.Config;
 import com.zealous.utils.FileUtils;
 import com.zealous.utils.GenericUtils;
-import com.zealous.utils.PLog;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -117,7 +112,7 @@ public class Expenditure extends RealmObject {
 
     @NonNull
     public String getLocation() {
-        return location == null ? getString(R.string.unspecified_location) : location;
+        return GenericUtils.isEmpty(location) ? getString(R.string.unspecified_location) : location;
     }
 
     public String getDescription() {

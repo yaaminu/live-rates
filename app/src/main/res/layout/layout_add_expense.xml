@@ -1,163 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:orientation="vertical">
+    android:layout_marginRight="@dimen/activity_horizontal_margin">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/tv_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/default_gap"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            app:layout_columnWeight="1"
-            app:layout_gravity="center_horizontal"
-            tools:text="14-04-2017, 11:30pm" />
-
-        <TextView
-            android:id="@+id/edit_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:padding="@dimen/default_gap"
-            android:text="@string/edit"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
-            android:textColor="@color/colorAccent"
-            app:layout_columnWeight="1" />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/tv_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:drawableLeft="@drawable/ic_place_black_24dp"
-            android:padding="@dimen/default_gap"
-            android:text="@string/unknown"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            app:layout_gravity="center_horizontal"
-            tools:ignore="RtlHardcoded"
-            tools:text=" TrustWorths, Accra Mall" />
-
-        <TextView
-            android:id="@+id/edit_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:padding="@dimen/default_gap"
-            android:text="@string/edit"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
-            android:textColor="@color/colorAccent"
-            app:layout_columnWeight="1" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/faint_voilet"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/currency"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="@dimen/default_gap"
-            android:clickable="true"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
-            android:textColor="@color/light_violet"
-            tools:text="GH₵ " />
-
-        <EditText
-            android:id="@+id/et_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:gravity="center_horizontal"
-            android:hint="@string/_0_00"
-            android:inputType="numberDecimal"
-            android:padding="@dimen/default_gap"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:textColor="@color/dark_violet"
-            android:textColorHint="@color/light_violet" />
-    </LinearLayout>
-
-    <android.support.v4.widget.Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/default_gap" />
-
-    <EditText
-        android:id="@+id/et_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/description"
-        android:maxLength="50"
-        android:padding="@dimen/default_gap"
-        android:textColor="@color/light_violet" />
-
-    <android.support.v4.widget.Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/default_gap" />
-
-    <LinearLayout
-        android:id="@+id/attachments_pane"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/attachments_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:text="@string/attachments" />
+            android:gravity="center_horizontal">
 
-        <View
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/default_gap"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center_horizontal"
+                tools:text="14-04-2017, 11:30pm" />
+
+            <TextView
+                android:id="@+id/edit_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:padding="@dimen/default_gap"
+                android:text="@string/edit"
+                android:clickable="true"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+                android:textColor="@color/colorAccent"
+                app:layout_columnWeight="1" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="@dimen/default_gap"
-            android:background="@color/gray_light" />
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:drawableLeft="@drawable/ic_place_black_24dp"
+                android:padding="@dimen/default_gap"
+                android:text="@string/unknown"
+                android:clickable="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_gravity="center_horizontal"
+                tools:ignore="RtlHardcoded"
+                tools:text=" TrustWorths, Accra Mall" />
+
+            <TextView
+                android:id="@+id/edit_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="@dimen/default_gap"
+                android:text="@string/edit"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+                android:textColor="@color/colorAccent"
+                app:layout_columnWeight="1" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/faint_voilet"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/currency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/default_gap"
+                android:clickable="true"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+                android:textColor="@color/light_violet"
+                tools:text="GH₵ " />
+
+            <EditText
+                android:id="@+id/et_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:gravity="center_horizontal"
+                android:hint="@string/_0_00"
+                android:inputType="numberDecimal"
+                android:padding="@dimen/default_gap"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textColor="@color/dark_violet"
+                android:textColorHint="@color/light_violet" />
+        </LinearLayout>
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/default_gap" />
+
+        <EditText
+            android:id="@+id/et_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/description"
+            android:maxLength="50"
+            android:padding="@dimen/default_gap"
+            android:textColor="@color/light_violet" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/default_gap" />
+
+        <LinearLayout
+            android:id="@+id/attachments_pane"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/attachments_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:text="@string/attachments" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="@dimen/default_gap"
+                android:background="@color/gray_light" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/attachments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layoutManager="GridLayoutManager"
+                app:spanCount="1"
+                tools:listitem="@layout/attachment_list_item" />
+        </LinearLayout>
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/default_gap" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/attachments"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="GridLayoutManager"
-            app:spanCount="1"
-            tools:listitem="@layout/attachment_list_item" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:spanCount="3"
+            tools:listitem="@layout/category_list_item" />
     </LinearLayout>
-
-    <android.support.v4.widget.Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/default_gap" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:spanCount="3"
-        tools:listitem="@layout/category_list_item" />
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>
