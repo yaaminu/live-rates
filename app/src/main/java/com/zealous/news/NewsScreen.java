@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface NewsScreen extends Screen {
     void refreshDisplay(List<NewsItem> dataSet);
+
+    void showLoading(boolean loading);
 }

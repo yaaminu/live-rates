@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -32,7 +33,7 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     private NewsDataSource dataSource;
 
     @Nullable
-    private Subscription subscription;
+    private Subscription loadNewsSubscription;
 
     @Inject
     public NewsPresenter(@NonNull NewsDataSource dataSource) {
@@ -52,18 +53,28 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     @Override
     public void onStart() {
         super.onStart();
+        // TODO: 4/25/17 use makeQuery() instead of findAll()
         dataSet = dataSource.findAll();
-        udpateUi();
+        updateUi();
     }
 
-    private void udpateUi() {
+    private void updateUi() {
         GenericUtils.ensureNotNull(screen);
         assert screen != null;
         screen.refreshDisplay(dataSet);
     }
 
     private void loadNews() {
-        subscription = dataSource.loadNewsItems()
+        loadNewsSubscription = dataSource.loadNewsItems()
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        PLog.d(TAG, "loading");
+                        if (screen != null) {
+                            screen.showLoading(true);
+                        }
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
@@ -72,8 +83,8 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
 
     @Override
     public void onDestroy() {
-        if (subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
+        if (loadNewsSubscription != null && !loadNewsSubscription.isUnsubscribed()) {
+            loadNewsSubscription.unsubscribe();
         }
         dataSource.close();
     }
@@ -82,17 +93,39 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     private final Subscriber<Boolean> subscriber = new Subscriber<Boolean>() {
         @Override
         public void onCompleted() {
+            // the dataSet will actually notify us that it has changed
+            // in the change listener. So we wait till that notification and update the UI
             PLog.d(TAG, "news loading completed at %s", new Date());
+            if (screen != null) {
+                screen.showLoading(false);
+            }
+            // TODO: 4/25/17 uncomment this when we start loading news from online
+            updateUi();
         }
 
         @Override
         public void onError(Throwable e) {
             PLog.e(TAG, "loading news failed", e);
+            if (screen != null) {
+                screen.showLoading(false);
+            }
         }
 
         @Override
         public void onNext(Boolean aBoolean) {
-            PLog.d(TAG, "next loading news");
+            if (aBoolean) {
+                PLog.d(TAG, "next loading news succeeded");
+            } else {
+                PLog.w(TAG, "loading news failed");
+            }
         }
     };
+
+    public void loadNewsItems() {
+        if (loadNewsSubscription == null || loadNewsSubscription.isUnsubscribed()) {
+            loadNews();
+        } else {
+            PLog.d(TAG, "already loading");
+        }
+    }
 }

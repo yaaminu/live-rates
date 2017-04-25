@@ -1,5 +1,6 @@
 package com.zealous.news;
 
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import com.zealous.utils.GenericUtils;
@@ -48,6 +49,7 @@ public class NewsDataSource implements Closeable {
             @Override
             public Boolean call() {
                 // TODO: 4/25/17 kick of a task to load news from the internet
+                SystemClock.sleep(10000);
                 return true;
             }
         }, true));

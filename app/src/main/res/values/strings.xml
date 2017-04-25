@@ -120,6 +120,7 @@
     <string name="attachments">Attachments</string>
     <string name="no_app_for_viewing_pdf_files">No app for viewing pdf files</string>
     <string name="add_location">Add location</string>
+    <string name="loading_news_feeds">Loading news feed</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
