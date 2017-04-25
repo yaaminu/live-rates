@@ -1,9 +1,10 @@
-package com.zealous.ui;
+package com.zealous.expense;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.zealous.R;
+import com.zealous.ui.BaseZealousActivity;
 
 public class BudgetActivity extends BaseZealousActivity {
 

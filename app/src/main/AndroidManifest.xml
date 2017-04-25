@@ -49,7 +49,7 @@
                 android:value=".ui.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.BudgetActivity"
+            android:name=".expense.BudgetActivity"
             android:label="@string/budget"
             android:parentActivityName=".ui.MainActivity"
             tools:ignore="UnusedAttribute">

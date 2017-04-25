@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/gray_light"
     android:orientation="vertical"
-    tools:context="com.zealous.ui.BudgetActivity">
+    tools:context="com.zealous.expense.BudgetActivity">
 
     <include layout="@layout/toolbar" />
 
