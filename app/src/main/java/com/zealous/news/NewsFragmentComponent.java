@@ -8,7 +8,8 @@ import dagger.Component;
  * Created by yaaminu on 4/25/17.
  */
 
-@Singleton @Component(modules = NewsFragmentProvider.class)
+@Singleton
+@Component(modules = {NewsFragmentProvider.class, BaseNewsProvider.class})
 public interface NewsFragmentComponent {
     void inject(NewsFragment newsFragment);
 }

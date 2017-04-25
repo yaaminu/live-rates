@@ -5,6 +5,7 @@ public class NewsItemBuilder {
     private String url;
     private String thumbnailUrl;
     private String description;
+    private long date;
 
     public NewsItemBuilder setTitle(String title) {
         this.title = title;
@@ -26,7 +27,12 @@ public class NewsItemBuilder {
         return this;
     }
 
+    public NewsItemBuilder setDate(long date) {
+        this.date = date;
+        return this;
+    }
+
     public NewsItem createNewsItem() {
-        return new NewsItem(title, url, thumbnailUrl, description);
+        return new NewsItem(title, url, thumbnailUrl, description, date);
     }
 }

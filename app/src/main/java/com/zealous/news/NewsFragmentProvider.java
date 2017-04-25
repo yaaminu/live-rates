@@ -1,5 +1,6 @@
 package com.zealous.news;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -37,5 +38,11 @@ public class NewsFragmentProvider {
     @Singleton
     public RecyclerView.LayoutManager getLayoutManager() {
         return new LinearLayoutManager(fragment.getContext(), LinearLayoutManager.VERTICAL, false);
+    }
+
+    @Provides
+    @Singleton
+    public NewsPresenter getPresenter(@NonNull NewsDataSource dataSource) {
+        return new NewsPresenter(dataSource);
     }
 }

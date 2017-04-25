@@ -1,5 +1,6 @@
 package com.zealous.news;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -7,8 +8,9 @@ import android.view.View;
 
 import com.zealous.R;
 import com.zealous.ui.BaseFragment;
+import com.zealous.ui.BasePresenter;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,15 +21,20 @@ import butterknife.Bind;
  * Created by yaaminu on 4/24/17.
  */
 
-public class NewsFragment extends BaseFragment {
+public class NewsFragment extends BaseFragment implements NewsScreen {
     @Bind(R.id.recycler_view)
     RecyclerView newsList;
-    final List<NewsItem> newsItems = createDummyItems();
+    @Bind(R.id.empty_view)
+    View emptyView;
 
+
+    List<NewsItem> newsItems = Collections.emptyList();
     @Inject
     NewsAdapter adapter;
     @Inject
     RecyclerView.LayoutManager layoutManager;
+    @Inject
+    NewsPresenter presenter;
 
     @Override
     protected int getLayout() {
@@ -41,6 +48,7 @@ public class NewsFragment extends BaseFragment {
                 .newsFragmentProvider(new NewsFragmentProvider(this))
                 .build()
                 .inject(this);
+        presenter.onCreate(savedInstanceState, this);
     }
 
     @Override
@@ -50,16 +58,27 @@ public class NewsFragment extends BaseFragment {
         newsList.setAdapter(adapter);
     }
 
-    public static List<NewsItem> createDummyItems() {
-        List<NewsItem> items = new ArrayList<>(30);
-        for (int i = 0; i < 30; i++) {
-            items.add(new NewsItemBuilder()
-                    .setTitle("News item title " + i)
-                    .setUrl("https://example.com/newsItem" + i)
-                    .setThumbnailUrl("https://example.com/newsitem/thumnail" + i)
-                    .setDescription("some description")
-                    .createNewsItem());
+    @Override
+    public Activity getCurrentActivity() {
+        return getActivity();
+    }
+
+    @Nullable
+    @Override
+    protected BasePresenter<?> getBasePresenter() {
+        return presenter;
+    }
+
+    @Override
+    public void refreshDisplay(List<NewsItem> dataSet) {
+        this.newsItems = dataSet;
+        if (newsItems.isEmpty()) {
+            com.zealous.utils.ViewUtils.hideViews(newsList);
+            com.zealous.utils.ViewUtils.showViews(emptyView);
+        } else {
+            com.zealous.utils.ViewUtils.showViews(newsList);
+            com.zealous.utils.ViewUtils.hideViews(emptyView);
+            adapter.notifyDataChanged("");
         }
-        return items;
     }
 }
