@@ -88,7 +88,7 @@ public class TaskManager {
     }
 
     @NonNull
-    public static Future<?> execute(Callable<?> task, boolean requiresNetwork) {
+    public static <T> Future<T> execute(Callable<T> task, boolean requiresNetwork) {
         ensureInitialised();
         if (requiresNetwork) {
             return NETWORK_EXECUTOR.submit(task);
@@ -122,7 +122,7 @@ public class TaskManager {
         cachedThreadPool.execute(runnable);
     }
 
-    public static Future<?> executeNow(Callable<?> callable, boolean requiresNetwork) {
+    public static <T> Future<T> executeNow(Callable<T> callable, boolean requiresNetwork) {
         ensureInitialised();
         synchronized (expressQueueLock) {
             if (expressExecutionQueueTooLong()) {
