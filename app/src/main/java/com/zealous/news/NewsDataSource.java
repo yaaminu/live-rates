@@ -1,20 +1,19 @@
 package com.zealous.news;
 
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import com.zealous.utils.GenericUtils;
-import com.zealous.utils.TaskManager;
 
 import java.io.Closeable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmQuery;
+import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by yaaminu on 4/25/17.
@@ -24,20 +23,16 @@ public class NewsDataSource implements Closeable {
 
     @NonNull
     private final Realm realm;
+    private final NewsLoader newsLoader;
 
     @Inject
-    public NewsDataSource(@NonNull Realm realm) {
-        GenericUtils.ensureNotNull(realm);
+    public NewsDataSource(@NonNull Realm realm, NewsLoader newsLoader) {
+        GenericUtils.ensureNotNull(realm, newsLoader);
         this.realm = realm;
         ensureNotClosed();
+        this.newsLoader = newsLoader;
     }
 
-    public List<NewsItem> findAll() {
-        ensureNotClosed();
-        // FIXME: 4/25/17 use real data
-        return createDummyItems();
-//        return makeQuery().findAllSorted(NewsItem.FIELD_DATE);
-    }
 
     public RealmQuery<NewsItem> makeQuery() {
         ensureNotClosed();
@@ -45,14 +40,21 @@ public class NewsDataSource implements Closeable {
     }
 
     public rx.Observable<Boolean> loadNewsItems() {
-        return rx.Observable.from(TaskManager.execute(new Callable<Boolean>() {
+        return newsLoader.loadNews().flatMap(new Func1<List<NewsItem>, Observable<Boolean>>() {
             @Override
-            public Boolean call() {
-                // TODO: 4/25/17 kick of a task to load news from the internet
-                SystemClock.sleep(10000);
-                return true;
+            public Observable<Boolean> call(List<NewsItem> newsItems) {
+                RealmConfiguration configuration = realm.getConfiguration();
+                Realm realm = Realm.getInstance(configuration);
+                try {
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(newsItems);
+                    realm.commitTransaction();
+                } finally {
+                    realm.close();
+                }
+                return Observable.just(true);
             }
-        }, true));
+        });
     }
 
     /**
@@ -71,19 +73,5 @@ public class NewsDataSource implements Closeable {
     private void ensureNotClosed() {
         //noinspection ConstantConditions
         GenericUtils.ensureConditionTrue(!realm.isClosed(), "can't use a closed datasource");
-    }
-
-    public static List<NewsItem> createDummyItems() {
-        List<NewsItem> items = new ArrayList<>(30);
-        for (int i = 0; i < 30; i++) {
-            items.add(new NewsItemBuilder()
-                    .setTitle("News item title " + i)
-                    .setUrl("https://example.com/newsItem" + i)
-                    .setThumbnailUrl("https://example.com/newsitem/thumnail" + i)
-                    .setDescription("some description")
-                    .setDate(System.currentTimeMillis())
-                    .createNewsItem());
-        }
-        return items;
     }
 }

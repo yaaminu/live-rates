@@ -35,7 +35,13 @@ public class BaseNewsProvider {
     }
 
     @Provides
-    public NewsDataSource createDataSource(Realm realm) {
-        return new NewsDataSource(realm);
+    public NewsDataSource createDataSource(@NonNull Realm realm, @NonNull NewsLoader loader) {
+        return new NewsDataSource(realm, loader);
+    }
+
+    @Singleton
+    @Provides
+    public NewsLoader loader() {
+        return new NewsLoader();
     }
 }

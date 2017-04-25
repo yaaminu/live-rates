@@ -14,6 +14,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -54,7 +56,8 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     public void onStart() {
         super.onStart();
         // TODO: 4/25/17 use makeQuery() instead of findAll()
-        dataSet = dataSource.findAll();
+        dataSet = dataSource.makeQuery().findAllSortedAsync(NewsItem.FIELD_DATE);
+        ((RealmResults<NewsItem>) dataSet).addChangeListener(changeListener);
         updateUi();
     }
 
@@ -128,4 +131,12 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
             PLog.d(TAG, "already loading");
         }
     }
+
+
+    private final RealmChangeListener<RealmResults<NewsItem>> changeListener = new RealmChangeListener<RealmResults<NewsItem>>() {
+        @Override
+        public void onChange(RealmResults<NewsItem> element) {
+            updateUi();
+        }
+    };
 }

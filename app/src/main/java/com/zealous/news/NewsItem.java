@@ -24,7 +24,7 @@ public class NewsItem extends RealmObject {
     private String thumbnailUrl;
     @Required
     private String description;
-
+    private boolean read;
     @SuppressWarnings("unused")
     @Index
     private long date;
@@ -40,6 +40,10 @@ public class NewsItem extends RealmObject {
         this.thumbnailUrl = thumbnailUrl;
         this.description = description;
         this.date = date;
+    }
+
+    void setRead(boolean read) {
+        this.read = read;
     }
 
     @NonNull
