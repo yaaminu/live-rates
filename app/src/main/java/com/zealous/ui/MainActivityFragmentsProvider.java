@@ -2,6 +2,7 @@ package com.zealous.ui;
 
 import com.zealous.exchangeRates.ExchangeRateFragment;
 import com.zealous.expense.ExpenseFragment;
+import com.zealous.news.NewsFragment;
 
 import dagger.Module;
 import dagger.Provides;
@@ -28,7 +29,7 @@ public class MainActivityFragmentsProvider {
     }
 
     @Provides
-    public BusinessNewsFragment businessNewsFragment() {
-        return new BusinessNewsFragment();
+    public NewsFragment businessNewsFragment() {
+        return new NewsFragment();
     }
 }

@@ -18,6 +18,7 @@ import com.zealous.exchangeRates.ExchangeRateDetailActivity;
 import com.zealous.exchangeRates.ExchangeRateFragment;
 import com.zealous.exchangeRates.SearchActivity;
 import com.zealous.expense.ExpenseFragment;
+import com.zealous.news.NewsFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,7 +49,7 @@ public class MainActivity extends SearchActivity {
     @Inject
     Lazy<ToolsFragment> toolsFragmentLazy;
     @Inject
-    Lazy<BusinessNewsFragment> businessNewsFragmentLazy;
+    Lazy<NewsFragment> businessNewsFragmentLazy;
 
     @Override
     protected void doCreate(@Nullable Bundle savedInstanceState) {
