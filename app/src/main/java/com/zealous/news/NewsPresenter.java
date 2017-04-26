@@ -117,6 +117,7 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
         @Override
         public void onNext(Boolean aBoolean) {
             if (aBoolean) {
+                updateUi();
                 PLog.d(TAG, "next loading news succeeded");
             } else {
                 PLog.w(TAG, "loading news failed");
@@ -125,9 +126,11 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     };
 
     public void loadNewsItems() {
-        if (loadNewsSubscription == null || loadNewsSubscription.isUnsubscribed()) {
+        if (true || loadNewsSubscription == null || loadNewsSubscription.isUnsubscribed()) {
             loadNews();
         } else {
+            assert screen != null;
+            screen.showLoading(false);
             PLog.d(TAG, "already loading");
         }
     }

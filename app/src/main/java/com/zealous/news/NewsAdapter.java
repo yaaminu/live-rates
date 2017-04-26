@@ -16,7 +16,7 @@ public class NewsAdapter extends BaseAdapter<NewsItemHolder, NewsItem> {
 
     @Override
     protected void doBindHolder(NewsItemHolder holder, int position) {
-        holder.title.setText(getItem(position).getTitle());
+        holder.title.setText(getItem(position).toString());
     }
 
     @Override

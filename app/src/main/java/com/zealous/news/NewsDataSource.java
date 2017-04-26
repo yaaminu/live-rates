@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmQuery;
-import rx.Observable;
 import rx.functions.Func1;
 
 /**
@@ -40,9 +39,9 @@ public class NewsDataSource implements Closeable {
     }
 
     public rx.Observable<Boolean> loadNewsItems() {
-        return newsLoader.loadNews().flatMap(new Func1<List<NewsItem>, Observable<Boolean>>() {
+        return newsLoader.loadNews().map(new Func1<List<NewsItem>, Boolean>() {
             @Override
-            public Observable<Boolean> call(List<NewsItem> newsItems) {
+            public Boolean call(List<NewsItem> newsItems) {
                 RealmConfiguration configuration = realm.getConfiguration();
                 Realm realm = Realm.getInstance(configuration);
                 try {
@@ -52,7 +51,7 @@ public class NewsDataSource implements Closeable {
                 } finally {
                     realm.close();
                 }
-                return Observable.just(true);
+                return true;
             }
         });
     }

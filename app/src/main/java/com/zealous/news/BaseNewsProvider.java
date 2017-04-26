@@ -5,12 +5,17 @@ import android.support.annotation.NonNull;
 
 import com.zealous.utils.Config;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by yaaminu on 4/25/17.
@@ -41,7 +46,24 @@ public class BaseNewsProvider {
 
     @Singleton
     @Provides
-    public NewsLoader loader() {
-        return new NewsLoader();
+    public NewsLoader loader(@NonNull OkHttpClient client, @NonNull Set<String> feedSources) {
+        return new NewsLoader(client, feedSources);
+    }
+
+    @Singleton
+    @Provides
+    public Set<String> feedSources() {
+        Set<String> sources = new HashSet<>(2);
+        sources.add("https://rss.mordernghana.com/news.xml?cat_id=1&group_id=6");
+        sources.add("http://feeds.reuters.com/reuters/businessNews");
+        return sources;
+    }
+
+    @Provides
+    public OkHttpClient client() {
+        return new OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .build();
     }
 }
