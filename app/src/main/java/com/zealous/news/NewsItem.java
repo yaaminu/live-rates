@@ -1,5 +1,6 @@
 package com.zealous.news;
 
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 
 import com.zealous.utils.GenericUtils;
@@ -28,18 +29,25 @@ public class NewsItem extends RealmObject {
     @SuppressWarnings("unused")
     @Index
     private long date;
+    private String source;
+    private int publisherColor;
 
     public NewsItem() {
     }
 
-    NewsItem(@NonNull String title, @NonNull String url, @NonNull String thumbnailUrl, @NonNull String description, long date) {
-        GenericUtils.ensureNotEmpty(title, url, thumbnailUrl, description);
+    NewsItem(@NonNull String title, @NonNull String url, @NonNull String thumbnailUrl,
+             @NonNull String description,
+             long date, String source,
+             int publisherColor) {
+        GenericUtils.ensureNotEmpty(title, url, thumbnailUrl, description, source);
         GenericUtils.ensureConditionTrue(date > 0, "invalid date");
         this.title = title;
         this.url = url;
         this.thumbnailUrl = thumbnailUrl;
         this.description = description;
         this.date = date;
+        this.publisherColor = publisherColor;
+        this.source = source;
     }
 
     void setRead(boolean read) {
@@ -49,6 +57,10 @@ public class NewsItem extends RealmObject {
     @NonNull
     public String getTitle() {
         return title;
+    }
+
+    public long getDate() {
+        return date;
     }
 
     @NonNull
@@ -64,5 +76,14 @@ public class NewsItem extends RealmObject {
     @NonNull
     public String getUrl() {
         return url;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    @ColorRes
+    public int getPublisherColor() {
+        return publisherColor;
     }
 }

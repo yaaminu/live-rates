@@ -1,5 +1,6 @@
 package com.zealous.news;
 
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import com.rometools.rome.feed.synd.SyndEntry;
@@ -14,10 +15,13 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -25,6 +29,7 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import rx.Observable;
+import rx.functions.Action0;
 import rx.functions.Func1;
 
 /**
@@ -34,18 +39,29 @@ import rx.functions.Func1;
 public class NewsLoader {
 
     private static final String TAG = "NewsLoader";
-    private final Set<String> feedSources;
+    private final Map<String, Integer> feedSources;
     private final OkHttpClient client;
+    private final Map<String, Long> lastUpdated;
+    private static final long MAX_AGE = TimeUnit.MINUTES.toMillis(10);
 
     @Inject
-    public NewsLoader(@NonNull OkHttpClient client, @NonNull Set<String> feedSources) {
+    public NewsLoader(@NonNull OkHttpClient client,
+                      @NonNull Map<String, Integer> feedSources) {
         this.feedSources = feedSources;
         this.client = client;
+        lastUpdated = new ConcurrentHashMap<>(feedSources.size());
     }
 
     public Observable<List<NewsItem>> loadNews() {
         PLog.d(TAG, "load news");
-        return Observable.from(feedSources)
+        return Observable.from(feedSources.keySet())
+                .filter(new Func1<String, Boolean>() { // filter out some sites
+                    @Override
+                    public Boolean call(String s) {
+                        Long updated = lastUpdated.get(s);
+                        return updated == null || updated > MAX_AGE;
+                    }
+                })
                 .flatMap(new Func1<String, Observable<List<NewsItem>>>() {
                     @Override
                     public Observable<List<NewsItem>> call(String feedSource) {
@@ -54,7 +70,7 @@ public class NewsLoader {
                 });
     }
 
-    private Observable<List<NewsItem>> doLoad(@NonNull String feedSource) {
+    private Observable<List<NewsItem>> doLoad(@NonNull final String feedSource) {
         // TODO: 4/25/17 avoid unnecessary calls
         ThreadUtils.ensureNotMain();
         Request request = new Request.Builder()
@@ -64,12 +80,18 @@ public class NewsLoader {
         try {
             is = call.execute().body().byteStream();
             SyndFeed syndFeed = new SyndFeedInput().build(new XmlReader(is));
+            final String source = new URL(syndFeed.getLink()).getHost();
             return Observable.just(syndFeed)
                     .map(new Func1<SyndFeed, List<NewsItem>>() {
                         @Override
                         public List<NewsItem> call(SyndFeed syndFeed) {
                             PLog.d(TAG, syndFeed.getTitle());
-                            return feedToNewsItem(syndFeed.getEntries());
+                            return feedToNewsItem(source, feedSources.get(feedSource), syndFeed.getEntries());
+                        }
+                    }).doOnCompleted(new Action0() {
+                        @Override
+                        public void call() {
+                            lastUpdated.put(feedSource, SystemClock.uptimeMillis());
                         }
                     });
         } catch (FeedException e) {
@@ -85,15 +107,17 @@ public class NewsLoader {
     }
 
     @NonNull
-    private List<NewsItem> feedToNewsItem(List<SyndEntry> entries) {
+    private List<NewsItem> feedToNewsItem(String source, int publisherColor, List<SyndEntry> entries) {
         List<NewsItem> items = new ArrayList<>(entries.size());
         for (SyndEntry syndEntry : entries) {
-            PLog.d(TAG, "mapping %s to news Items", syndEntry);
+            PLog.d(TAG, "mapping %s to news Items", syndEntry.getLink());
             NewsItem newsItem = new NewsItemBuilder()
                     .setDate(syndEntry.getPublishedDate().getTime())
                     .setDescription(syndEntry.getDescription().getValue())
                     .setTitle(syndEntry.getTitle())
-                    .setUrl(syndEntry.getUri())
+                    .setUrl(syndEntry.getLink())
+                    .setPublisherColor(publisherColor)
+                    .setSource(source)
                     .setThumbnailUrl(syndEntry.getUri()).createNewsItem();
             items.add(newsItem);
         }

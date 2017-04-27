@@ -6,6 +6,8 @@ public class NewsItemBuilder {
     private String thumbnailUrl;
     private String description;
     private long date;
+    private String source;
+    private int publisherColor;
 
     public NewsItemBuilder setTitle(String title) {
         this.title = title;
@@ -27,12 +29,22 @@ public class NewsItemBuilder {
         return this;
     }
 
+    public NewsItemBuilder setSource(String source) {
+        this.source = source;
+        return this;
+    }
+
+    public NewsItemBuilder setPublisherColor(int publisherColor) {
+        this.publisherColor = publisherColor;
+        return this;
+    }
+
     public NewsItemBuilder setDate(long date) {
         this.date = date;
         return this;
     }
 
     public NewsItem createNewsItem() {
-        return new NewsItem(title, url, thumbnailUrl, description, date);
+        return new NewsItem(title, url, thumbnailUrl, description, date, source, publisherColor);
     }
 }

@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -56,7 +57,7 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     public void onStart() {
         super.onStart();
         // TODO: 4/25/17 use makeQuery() instead of findAll()
-        dataSet = dataSource.makeQuery().findAllSortedAsync(NewsItem.FIELD_DATE);
+        dataSet = dataSource.makeQuery().findAllSortedAsync(NewsItem.FIELD_DATE, Sort.DESCENDING);
         ((RealmResults<NewsItem>) dataSet).addChangeListener(changeListener);
         updateUi();
     }
@@ -126,7 +127,7 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     };
 
     public void loadNewsItems() {
-        if (true || loadNewsSubscription == null || loadNewsSubscription.isUnsubscribed()) {
+        if (loadNewsSubscription == null || loadNewsSubscription.isUnsubscribed()) {
             loadNews();
         } else {
             assert screen != null;
