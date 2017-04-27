@@ -31,4 +31,8 @@
     <color name="light_violet">#201b48</color>
     <color name="faint_voilet">#7d7a9b</color>
     <color name="black_transparent">#b000</color>
+    <color name="modern_ghana_color">#990000</color>
+    <color name="reuters_color">#333333</color>
+    <color name="my_joy_online_color">#FF0000</color>
+    <color name="bbc_color">#a91717</color>
 </resources>

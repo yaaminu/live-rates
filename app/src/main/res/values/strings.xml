@@ -121,6 +121,11 @@
     <string name="no_app_for_viewing_pdf_files">No app for viewing pdf files</string>
     <string name="add_location">Add location</string>
     <string name="loading_news_feeds">Loading news feed</string>
+    <string name="feed_thumbnail">Feed thumbnail</string>
+    <string name="share">Share</string>
+    <string name="bookmark">bookmark</string>
+    <string name="no_browser">No browser is installed on this device</string>
+    <string name="no_sharing_app">No app sharing content installed</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
