@@ -15,12 +15,13 @@
         android:paddingBottom="@dimen/default_gap">
 
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_currency_icon"
             android:layout_width="@dimen/thumbnail_width"
             android:layout_height="wrap_content"
             android:contentDescription="@string/content_descrip_currency_icon"
             android:minHeight="@dimen/thumbnail_height"
+            android:scaleType="centerCrop"
             android:src="@drawable/aed" />
 
         <android.support.v7.widget.GridLayout

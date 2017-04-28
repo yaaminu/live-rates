@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:openDrawer="right">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -68,7 +67,7 @@
                     app:layout_columnWeight="1.0"
                     tools:ignore="UseCompoundDrawables">
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/iv_currency_icon_from"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -79,6 +78,7 @@
                         android:id="@+id/tv_currency_from"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
                         android:ellipsize="end"
                         android:gravity="center"
                         android:paddingTop="2.0dip"
@@ -87,7 +87,7 @@
                         tools:text="Ghanaian Cedis" />
                 </LinearLayout>
 
-                <ImageButton
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ib_compare_arrow"
                     android:background="@color/transparent"
                     android:contentDescription="@string/arrow"
@@ -100,7 +100,7 @@
                     app:layout_columnWeight="1.0"
                     tools:ignore="UseCompoundDrawables">
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/iv_currency_icon_to"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -113,6 +113,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:gravity="center"
+                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
                         android:paddingTop="2.0dip"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         android:textSize="12.0sp"
