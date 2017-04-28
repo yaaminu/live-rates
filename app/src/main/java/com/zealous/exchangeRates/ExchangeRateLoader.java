@@ -13,12 +13,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
 
@@ -52,14 +54,15 @@ class ExchangeRateLoader {
         final URL url = new URL(BASE_URL + endPoint + APP_ID);
         json = checkCache(url);
         if (GenericUtils.isEmpty(json)) {
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            final int responseCode = connection.getResponseCode();
+            Response response = new OkHttpClient().newCall(
+                    new Request.Builder().url(url.toExternalForm())
+                            .build()).execute();
             // TODO: 3/24/17 check cache headers etc
-            if (responseCode >= 300 || responseCode < 200) {
-                PLog.d(TAG, "url %s recieved %s response code", url, responseCode);
-                throw new IOException("server responded with non-200 response code. code is: " + responseCode);
+            if (!response.isSuccessful()) {
+                PLog.d(TAG, "url %s recieved %s response code", url, response.code());
+                throw new IOException("server responded with non-200 response code. code is: " + response.code());
             }
-            InputStream in = connection.getInputStream();
+            InputStream in = response.body().byteStream();
             json = IOUtils.toString(in);
             PLog.d(TAG, "loaded %s from %s", json, url);
             PLog.d(TAG, "caching resources");
