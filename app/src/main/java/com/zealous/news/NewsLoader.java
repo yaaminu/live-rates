@@ -8,6 +8,10 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import com.zealous.R;
+import com.zealous.errors.ZealousException;
+import com.zealous.utils.ConnectionUtils;
+import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
 import com.zealous.utils.ThreadUtils;
 
@@ -61,6 +65,10 @@ public class NewsLoader {
 
     public Observable<List<NewsItem>> loadNews() {
         PLog.d(TAG, "load news");
+        if (!ConnectionUtils.isConnected()) {
+            PLog.d(TAG, "not connected to the internet");
+            return Observable.error(new ZealousException(GenericUtils.getString(R.string.no_internet_connection)));
+        }
         return Observable.from(feedSources.keySet())
                 .filter(new Func1<String, Boolean>() { // filter out some sites
                     @Override

@@ -20,6 +20,8 @@ public class NewsItem extends RealmObject {
     public static final String FIELD_SOURCE = "source";
     public static final String FIELD_TITLE = "title";
     public static final String FIELD_DESCRIPTION = "description";
+    public static final String FIELD_BOOKMARKED = "bookmarked";
+    public static final String FIELD_URL = "url";
     @Required
     private String title;
     @PrimaryKey
@@ -28,7 +30,7 @@ public class NewsItem extends RealmObject {
     private String thumbnailUrl;
     @Required
     private String description;
-    private boolean read;
+    private boolean bookmarked;
     @SuppressWarnings("unused")
     @Index
     private long date;
@@ -41,7 +43,7 @@ public class NewsItem extends RealmObject {
     NewsItem(@NonNull String title, @NonNull String url, @NonNull String thumbnailUrl,
              @NonNull String description,
              long date, String source,
-             int publisherColor) {
+             int publisherColor, boolean bookmarked) {
         GenericUtils.ensureNotEmpty(title, url, thumbnailUrl, description, source);
         GenericUtils.ensureConditionTrue(date > 0, "invalid date");
         this.title = title;
@@ -51,10 +53,11 @@ public class NewsItem extends RealmObject {
         this.date = date;
         this.publisherColor = publisherColor;
         this.source = source;
+        this.bookmarked = bookmarked;
     }
 
-    void setRead(boolean read) {
-        this.read = read;
+    void setBookmarked(boolean bookmarked) {
+        this.bookmarked = bookmarked;
     }
 
     @NonNull
@@ -88,5 +91,9 @@ public class NewsItem extends RealmObject {
     @ColorRes
     public int getPublisherColor() {
         return publisherColor;
+    }
+
+    public boolean isBookmarked() {
+        return bookmarked;
     }
 }

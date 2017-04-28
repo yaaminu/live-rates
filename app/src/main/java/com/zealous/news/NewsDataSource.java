@@ -46,6 +46,14 @@ public class NewsDataSource implements Closeable {
                 Realm realm = Realm.getInstance(configuration);
                 try {
                     realm.beginTransaction();
+                    for (NewsItem newsItem : newsItems) {
+                        NewsItem tmpLive = realm.where(NewsItem.class)
+                                .equalTo(NewsItem.FIELD_URL, newsItem.getUrl())
+                                .findFirst();
+                        if (tmpLive != null) {
+                            newsItem.setBookmarked(tmpLive.isBookmarked());
+                        }
+                    }
                     realm.copyToRealmOrUpdate(newsItems);
                     realm.commitTransaction();
                 } finally {
@@ -72,5 +80,12 @@ public class NewsDataSource implements Closeable {
     private void ensureNotClosed() {
         //noinspection ConstantConditions
         GenericUtils.ensureConditionTrue(!realm.isClosed(), "can't use a closed datasource");
+    }
+
+    public void update(NewsItem item) {
+        ensureNotClosed();
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(item);
+        realm.commitTransaction();
     }
 }

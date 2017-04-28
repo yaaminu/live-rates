@@ -19,9 +19,11 @@ import dagger.Provides;
 public class NewsFragmentProvider {
 
     private final NewsFragment fragment;
+    private final boolean bookmarked;
 
-    public NewsFragmentProvider(NewsFragment fragment) {
+    public NewsFragmentProvider(NewsFragment fragment, boolean bookmarked) {
         this.fragment = fragment;
+        this.bookmarked = bookmarked;
     }
 
     @Provides
@@ -45,6 +47,6 @@ public class NewsFragmentProvider {
     @Provides
     @Singleton
     public NewsPresenter getPresenter(@NonNull NewsDataSource dataSource, @NonNull EventBus bus) {
-        return new NewsPresenter(dataSource, bus);
+        return new NewsPresenter(dataSource, bus, bookmarked);
     }
 }

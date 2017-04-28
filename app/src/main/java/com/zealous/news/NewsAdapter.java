@@ -48,6 +48,8 @@ public class NewsAdapter extends BaseAdapter<NewsItemHolder, NewsItem> {
         } else {
             holder.description.setText(formattedDescription);
         }
+        holder.bookmarked.setImageResource(item.isBookmarked()
+                ? R.drawable.ic_favorite_24dp : R.drawable.ic_favorite_border_white_24dp);
         if (!item.getThumbnailUrl().equals(NewsLoader.BROKEN_THUMNAIL)) {
             ViewUtils.showViews(holder.thumbnail);
             Bitmap bitmap = delegate.cache().get(item.getThumbnailUrl());

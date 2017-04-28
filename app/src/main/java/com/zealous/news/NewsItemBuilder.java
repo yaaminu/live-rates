@@ -8,6 +8,7 @@ public class NewsItemBuilder {
     private long date;
     private String source;
     private int publisherColor;
+    private boolean bookmarked;
 
     public NewsItemBuilder setTitle(String title) {
         this.title = title;
@@ -44,7 +45,12 @@ public class NewsItemBuilder {
         return this;
     }
 
+    public NewsItemBuilder setBookmarked(boolean bookmarked) {
+        this.bookmarked = bookmarked;
+        return this;
+    }
+
     public NewsItem createNewsItem() {
-        return new NewsItem(title, url, thumbnailUrl, description, date, source, publisherColor);
+        return new NewsItem(title, url, thumbnailUrl, description, date, source, publisherColor,bookmarked);
     }
 }

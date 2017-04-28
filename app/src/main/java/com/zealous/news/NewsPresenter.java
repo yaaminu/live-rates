@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
+import com.zealous.utils.ThreadUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,6 +40,7 @@ import static com.zealous.exchangeRates.ExchangeRateListActivity.SEARCH;
 public class NewsPresenter extends BasePresenter<NewsScreen> {
     private static final String TAG = "NewsPresenter";
     private final EventBus bus;
+    private final boolean bookmarked;
 
     @NonNull
     private List<NewsItem> dataSet;
@@ -49,10 +51,11 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     private Subscription loadNewsSubscription;
 
     @Inject
-    public NewsPresenter(@NonNull NewsDataSource dataSource, @NonNull EventBus bus) {
+    public NewsPresenter(@NonNull NewsDataSource dataSource, @NonNull EventBus bus, boolean bookmarked) {
         this.dataSource = dataSource;
         this.dataSet = Collections.emptyList();
         this.bus = bus;
+        this.bookmarked = bookmarked;
     }
 
     @Nullable
@@ -87,11 +90,16 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
 
     private void updateRecords(String constraint) {
         RealmQuery<NewsItem> query = dataSource.makeQuery();
-        query.beginsWith(NewsItem.FIELD_SOURCE, constraint, Case.INSENSITIVE)
+        if (bookmarked) {
+            query.equalTo(NewsItem.FIELD_BOOKMARKED, true);
+        }
+        query.beginGroup()
+                .beginsWith(NewsItem.FIELD_SOURCE, constraint, Case.INSENSITIVE)
                 .or()
                 .contains(NewsItem.FIELD_TITLE, constraint, Case.INSENSITIVE)
                 .or()
-                .contains(NewsItem.FIELD_DESCRIPTION, constraint, Case.INSENSITIVE);
+                .contains(NewsItem.FIELD_DESCRIPTION, constraint, Case.INSENSITIVE)
+                .endGroup();
 
         dataSet = query.findAllSortedAsync(NewsItem.FIELD_DATE, Sort.DESCENDING);
         ((RealmResults<NewsItem>) dataSet).addChangeListener(changeListener);
@@ -100,7 +108,7 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     private void updateUi() {
         GenericUtils.ensureNotNull(screen);
         assert screen != null;
-        screen.refreshDisplay(dataSet);
+        screen.refreshDisplay(dataSet, bookmarked);
     }
 
     private void loadNews() {
@@ -163,7 +171,7 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     };
 
     public void loadNewsItems() {
-        if (loadNewsSubscription == null || loadNewsSubscription.isUnsubscribed()) {
+        if (!bookmarked && (loadNewsSubscription == null || loadNewsSubscription.isUnsubscribed())) {
             loadNews();
         } else {
             assert screen != null;
@@ -179,4 +187,15 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
             updateUi();
         }
     };
+
+    public void toggleBookmark(NewsItem item) {
+        ThreadUtils.ensureMain();
+        item = new NewsItem(item.getTitle(), item.getUrl(), item.getThumbnailUrl(), item.getDescription(),
+                item.getDate(), item.getSource(), item.getPublisherColor(), !item.isBookmarked());
+        dataSource.update(item);
+    }
+
+    public boolean isBookmarked() {
+        return bookmarked;
+    }
 }

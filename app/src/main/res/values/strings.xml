@@ -126,6 +126,14 @@
     <string name="bookmark">bookmark</string>
     <string name="no_browser">No browser is installed on this device</string>
     <string name="no_sharing_app">No app sharing content installed</string>
+    <string name="bookmark_success">Added to favorite items</string>
+    <string name="bookmark_removed_succss">Item removed from favorites</string>
+    <string name="no_news">Failed to fetch news from the internet</string>
+    <string name="try_again">Try again</string>
+    <string name="no_favorites">Your favorites list is empty</string>
+    <string name="favorites">Favorites</string>
+    <string name="home">Home</string>
+    <string name="follow_link">Follow this link to read more</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

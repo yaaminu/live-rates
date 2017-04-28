@@ -1,6 +1,7 @@
 package com.zealous.news;
 
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,6 +29,8 @@ public class NewsItemHolder extends BaseAdapter.Holder {
     View sourceBar;
     @Bind(R.id.tv_description)
     TextView description;
+    @Bind(R.id.ib_bookmark)
+    ImageButton bookmarked;
 
     public NewsItemHolder(View itemView, NewsAdapter adapter) {
         super(itemView);

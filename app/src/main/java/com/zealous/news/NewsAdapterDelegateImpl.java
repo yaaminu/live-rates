@@ -12,6 +12,7 @@ import com.squareup.picasso.Cache;
 import com.squareup.picasso.RequestCreator;
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
+import com.zealous.utils.GenericUtils;
 
 import java.util.List;
 
@@ -56,14 +57,22 @@ public class NewsAdapterDelegateImpl implements NewsAdapter.Delegate {
 
     @Override
     public void bookmark(NewsItem item) {
-        Toast.makeText(fragment.getContext(), "bookmarking " + item.getTitle(), Toast.LENGTH_LONG).show();
+        fragment.presenter.toggleBookmark(item);
+        Toast.makeText(fragment.getContext(), item.isBookmarked() ? R.string.bookmark_success : R.string.bookmark_removed_succss, Toast.LENGTH_LONG).
+                show();
     }
 
     @Override
     public void shareItem(NewsItem item) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, item.getUrl());
+        StringBuilder text = new StringBuilder(item.getUrl().length() + item.getTitle().length() + 10)
+                .append(item.getTitle())
+                .append("\n\n\n")
+                .append(GenericUtils.getString(R.string.follow_link))
+                .append("\n")
+                .append(item.getUrl());
+        intent.putExtra(Intent.EXTRA_TEXT, text.toString());
         try {
             fragment.getContext().startActivity(intent);
         } catch (ActivityNotFoundException e) {

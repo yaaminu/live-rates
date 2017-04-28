@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import com.zealous.R;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
+import com.zealous.utils.GenericUtils;
 import com.zealous.utils.ThreadUtils;
 
 import java.util.Collections;
@@ -22,6 +23,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 import static com.zealous.utils.ViewUtils.hideViews;
 import static com.zealous.utils.ViewUtils.showViews;
@@ -31,10 +33,14 @@ import static com.zealous.utils.ViewUtils.showViews;
  */
 
 public class NewsFragment extends BaseFragment implements NewsScreen {
+    public static final String
+            IS_FAVORITES = "isFavorites";
     @Bind(R.id.recycler_view)
     RecyclerView newsList;
     @Bind(R.id.empty_view)
     View emptyView;
+    @Bind(R.id.bt_try_again)
+    View tryAgain;
     @Bind(R.id.empty_text_view)
     TextView emptyOrLoadingTextView;
     @Bind(R.id.progress)
@@ -62,8 +68,10 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle arguments = getArguments();
+        GenericUtils.ensureNotNull(arguments);
         DaggerNewsFragmentComponent.builder()
-                .newsFragmentProvider(new NewsFragmentProvider(this))
+                .newsFragmentProvider(new NewsFragmentProvider(this, arguments.getBoolean(IS_FAVORITES)))
                 .build()
                 .inject(this);
         presenter.onCreate(savedInstanceState, this);
@@ -75,12 +83,16 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
         newsList.setLayoutManager(layoutManager);
         newsList.setAdapter(adapter);
         swipeRefresh.setColorSchemeResources(R.color.business_news_color_primary);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                presenter.loadNewsItems();
-            }
-        });
+        if (presenter.isBookmarked()) {
+            swipeRefresh.setRefreshing(false);
+        } else {
+            swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    presenter.loadNewsItems();
+                }
+            });
+        }
     }
 
     @Override
@@ -95,25 +107,31 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
     }
 
     @Override
-    public void refreshDisplay(final List<NewsItem> dataSet) {
+    public void refreshDisplay(final List<NewsItem> dataSet, final boolean isFavorites) {
         if (ThreadUtils.isMainThread()) {
-            doRefreshDisplay(dataSet);
+            doRefreshDisplay(dataSet, isFavorites);
         } else {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    doRefreshDisplay(dataSet);
+                    doRefreshDisplay(dataSet, isFavorites);
                 }
             });
         }
     }
 
-    private void doRefreshDisplay(List<NewsItem> dataSet) {
+    private void doRefreshDisplay(List<NewsItem> dataSet, boolean isFavorites) {
         this.newsItems = dataSet;
         if (newsItems.isEmpty()) {
             hideViews(newsList);
             showViews(emptyView);
-            emptyOrLoadingTextView.setText(R.string.no_internet_connection);
+            if (!isFavorites) {
+                showViews(tryAgain);
+                emptyOrLoadingTextView.setText(R.string.no_news);
+            } else {
+                hideViews(tryAgain, loadingProgress);
+                emptyOrLoadingTextView.setText(R.string.no_favorites);
+            }
         } else {
             showViews(newsList);
             hideViews(emptyView);
@@ -136,16 +154,12 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
     }
 
     private void doShowLoading(boolean loading) {
-        if (!isViewDestroyed()) {
+        if (!isViewDestroyed() && !presenter.isBookmarked()) {
             swipeRefresh.setRefreshing(loading);
-            if (loading) {
-                if (newsItems.isEmpty()) {
-                    showViews(emptyView, loadingProgress, emptyOrLoadingTextView);
-                    emptyOrLoadingTextView.setText(R.string.loading_news_feeds);
-                }
+            if (loading && newsItems.isEmpty()) {
+                showViews(emptyView, loadingProgress, emptyOrLoadingTextView);
             } else {
                 hideViews(loadingProgress);
-                emptyOrLoadingTextView.setText(R.string.no_internet_connection);
             }
         }
     }
@@ -155,5 +169,20 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
     public void onDestroyView() {
         swipeRefresh.setRefreshing(false);
         super.onDestroyView();
+    }
+
+    public static BaseFragment create(boolean isFavorites) {
+        BaseFragment fragment = new NewsFragment();
+        Bundle bundle = new Bundle(1);
+        bundle.putBoolean(IS_FAVORITES, isFavorites);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    @OnClick(R.id.bt_try_again)
+    public void tryAgain() {
+        if (!isViewDestroyed()) {
+            presenter.loadNewsItems();
+        }
     }
 }

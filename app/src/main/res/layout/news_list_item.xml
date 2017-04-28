@@ -26,6 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_columnSpan="1"
                 tools:text="Inflation shoots up in second quarter" />
@@ -87,7 +88,7 @@
             android:layout_marginLeft="@dimen/default_gap"
             android:background="@color/transparent"
             android:contentDescription="@string/bookmark"
-            android:src="@drawable/ic_bookmark_black_24dp"
+            android:src="@drawable/ic_bookmark_white_24dp"
             tools:ignore="RtlHardcoded" />
 
         <TextView
