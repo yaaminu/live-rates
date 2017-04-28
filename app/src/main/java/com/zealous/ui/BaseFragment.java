@@ -15,6 +15,8 @@ import butterknife.ButterKnife;
  */
 public abstract class BaseFragment extends Fragment {
 
+    private boolean viewIsDestroyed;
+
     @Nullable
     @Override
     public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -24,6 +26,7 @@ public abstract class BaseFragment extends Fragment {
             view = inflater.inflate(layout, container, false);
             ButterKnife.bind(this, view);
         }
+        viewIsDestroyed = false;
         return view;
     }
 
@@ -57,8 +60,13 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        viewIsDestroyed = true;
         ButterKnife.unbind(this);
         super.onDestroyView();
+    }
+
+    protected boolean isViewDestroyed() {
+        return viewIsDestroyed;
     }
 
     @LayoutRes

@@ -130,17 +130,20 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
     }
 
     private void doShowLoading(boolean loading) {
-        swipeRefresh.setRefreshing(loading);
-        if (loading) {
-            if (newsItems.isEmpty()) {
-                showViews(emptyView, loadingProgress, emptyOrLoadingTextView);
-                emptyOrLoadingTextView.setText(R.string.loading_news_feeds);
+        if (!isViewDestroyed()) {
+            swipeRefresh.setRefreshing(loading);
+            if (loading) {
+                if (newsItems.isEmpty()) {
+                    showViews(emptyView, loadingProgress, emptyOrLoadingTextView);
+                    emptyOrLoadingTextView.setText(R.string.loading_news_feeds);
+                }
+            } else {
+                hideViews(loadingProgress);
+                emptyOrLoadingTextView.setText(R.string.no_internet_connection);
             }
-        } else {
-            hideViews(loadingProgress);
-            emptyOrLoadingTextView.setText(R.string.no_internet_connection);
         }
     }
+
 
     @Override
     public void onDestroyView() {
