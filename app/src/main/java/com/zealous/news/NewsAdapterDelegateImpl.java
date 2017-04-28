@@ -3,8 +3,11 @@ package com.zealous.news;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Toast;
 
@@ -35,12 +38,20 @@ public class NewsAdapterDelegateImpl implements NewsAdapter.Delegate {
 
     @Override
     public void onItemClick(BaseAdapter<NewsItemHolder, NewsItem> adapter, View view, int position, long id) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(adapter.getItem(position).getUrl()));
+        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
+                .addDefaultShareMenuItem()
+                .setToolbarColor(ContextCompat.getColor(fragment.getContext(), R.color.business_news_color_primary))
+                .setShowTitle(true)
+                .setCloseButtonIcon(BitmapFactory.decodeResource(fragment.getResources(), R.drawable.ic_arrow_back_black_24dp))
+                .setSecondaryToolbarColor(ContextCompat.getColor(fragment.getContext(),
+                        R.color.business_news_color_primary_dark)).build();
+        customTabsIntent.intent.setPackage("com.android.chrome");
         try {
-            fragment.getCurrentActivity().startActivity(intent);
+            customTabsIntent.launchUrl(fragment.getContext(), Uri.parse(adapter.getItem(position).getUrl()));
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(fragment.getCurrentActivity(), R.string.no_browser, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(adapter.getItem(position).getUrl()));
+            fragment.getContext().startActivity(intent);
         }
     }
 

@@ -2,7 +2,7 @@ package com.zealous.ui;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 
 import com.zealous.R;
 import com.zealous.news.NewsFragment;
@@ -11,7 +11,7 @@ import com.zealous.utils.GenericUtils;
 /**
  * Created by yaaminu on 4/28/17.
  */
-public class $PagerAdapter extends FragmentStatePagerAdapter {
+public class $PagerAdapter extends FragmentPagerAdapter {
 
     private final BaseFragment[] fragments;
     private final String[] titles;

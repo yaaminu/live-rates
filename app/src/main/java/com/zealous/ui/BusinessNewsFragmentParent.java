@@ -19,6 +19,7 @@ public class BusinessNewsFragmentParent extends BaseFragment {
     ViewPager pager;
     @Bind(R.id.tab_strip)
     TabLayout tabLayout;
+    private $PagerAdapter adapter;
 
     @Override
     protected int getLayout() {
@@ -26,9 +27,15 @@ public class BusinessNewsFragmentParent extends BaseFragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        adapter = new $PagerAdapter(getFragmentManager());
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        pager.setAdapter(new $PagerAdapter(getFragmentManager()));
-        tabLayout.setupWithViewPager(pager);
+        pager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(pager, true);
     }
 }

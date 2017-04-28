@@ -3,7 +3,7 @@
     <item
         android:id="@+id/action_view_budget"
         android:title="@string/view_budget" />
-    <item
-        android:id="@+id/action_assistant"
-        android:title="@string/assistant" />
+    <!--<item-->
+        <!--android:id="@+id/action_assistant"-->
+        <!--android:title="@string/assistant" />-->
 </menu>
