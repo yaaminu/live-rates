@@ -17,6 +17,9 @@ import io.realm.annotations.Required;
 @SuppressWarnings("FieldCanBeLocal")
 public class NewsItem extends RealmObject {
     public static final String FIELD_DATE = "date";
+    public static final String FIELD_SOURCE = "source";
+    public static final String FIELD_TITLE = "title";
+    public static final String FIELD_DESCRIPTION = "description";
     @Required
     private String title;
     @PrimaryKey

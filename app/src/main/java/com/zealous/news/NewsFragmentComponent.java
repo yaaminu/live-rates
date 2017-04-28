@@ -1,5 +1,7 @@
 package com.zealous.news;
 
+import com.zealous.expense.MainActivityEventBusProvider;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -9,7 +11,7 @@ import dagger.Component;
  */
 
 @Singleton
-@Component(modules = {NewsFragmentProvider.class, BaseNewsProvider.class})
+@Component(modules = {NewsFragmentProvider.class, BaseNewsProvider.class, MainActivityEventBusProvider.class})
 public interface NewsFragmentComponent {
     void inject(NewsFragment newsFragment);
 }

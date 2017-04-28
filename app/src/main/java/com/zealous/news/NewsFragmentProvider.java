@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -42,7 +44,7 @@ public class NewsFragmentProvider {
 
     @Provides
     @Singleton
-    public NewsPresenter getPresenter(@NonNull NewsDataSource dataSource) {
-        return new NewsPresenter(dataSource);
+    public NewsPresenter getPresenter(@NonNull NewsDataSource dataSource, @NonNull EventBus bus) {
+        return new NewsPresenter(dataSource, bus);
     }
 }

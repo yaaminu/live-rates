@@ -118,6 +118,7 @@ public class MainActivity extends SearchActivity {
     protected boolean showSearch() {
         switch (bottomBar.getCurrentTabId()) {
             case R.id.tab_exchange_rates:
+            case R.id.tab_business_news:
                 return true;
             default:
                 return false;

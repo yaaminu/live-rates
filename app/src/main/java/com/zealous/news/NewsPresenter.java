@@ -8,13 +8,20 @@ import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
+import io.realm.Case;
 import io.realm.RealmChangeListener;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import rx.Subscriber;
@@ -23,12 +30,15 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
+import static com.zealous.exchangeRates.ExchangeRateListActivity.SEARCH;
+
 /**
  * Created by yaaminu on 4/25/17.
  */
 
 public class NewsPresenter extends BasePresenter<NewsScreen> {
     private static final String TAG = "NewsPresenter";
+    private final EventBus bus;
 
     @NonNull
     private List<NewsItem> dataSet;
@@ -39,9 +49,10 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     private Subscription loadNewsSubscription;
 
     @Inject
-    public NewsPresenter(@NonNull NewsDataSource dataSource) {
+    public NewsPresenter(@NonNull NewsDataSource dataSource, @NonNull EventBus bus) {
         this.dataSource = dataSource;
         this.dataSet = Collections.emptyList();
+        this.bus = bus;
     }
 
     @Nullable
@@ -50,16 +61,40 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     @Override
     public void onCreate(@Nullable Bundle savedState, @NonNull NewsScreen screen) {
         this.screen = screen;
+        bus.register(this);
         loadNews();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Object event) {
+        if (event instanceof Map) {
+            if (((Map) event).containsKey(SEARCH)) {
+                String constraint = ((String) ((Map) event).get(SEARCH));
+                GenericUtils.ensureNotNull(constraint);
+                updateRecords(constraint);
+                return;
+            }
+        }
+        PLog.w(TAG, "unknown event %s", event);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // TODO: 4/25/17 use makeQuery() instead of findAll()
-        dataSet = dataSource.makeQuery().findAllSortedAsync(NewsItem.FIELD_DATE, Sort.DESCENDING);
-        ((RealmResults<NewsItem>) dataSet).addChangeListener(changeListener);
+        updateRecords("");
         updateUi();
+    }
+
+    private void updateRecords(String constraint) {
+        RealmQuery<NewsItem> query = dataSource.makeQuery();
+        query.beginsWith(NewsItem.FIELD_SOURCE, constraint, Case.INSENSITIVE)
+                .or()
+                .contains(NewsItem.FIELD_TITLE, constraint, Case.INSENSITIVE)
+                .or()
+                .contains(NewsItem.FIELD_DESCRIPTION, constraint, Case.INSENSITIVE);
+
+        dataSet = query.findAllSortedAsync(NewsItem.FIELD_DATE, Sort.DESCENDING);
+        ((RealmResults<NewsItem>) dataSet).addChangeListener(changeListener);
     }
 
     private void updateUi() {
@@ -91,6 +126,7 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
             loadNewsSubscription.unsubscribe();
         }
         dataSource.close();
+        bus.unregister(this);
     }
 
 
