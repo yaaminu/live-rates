@@ -2,6 +2,7 @@ package com.zealous.bankRates;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.format.DateUtils;
 import android.widget.EditText;
@@ -126,6 +127,10 @@ public class InterestRateCalculatorActivity extends BaseZealousActivity {
         calculator = new SimpleInterestRateCalculator();
         title.setText(getString(R.string.title_today, DateUtils.formatDateTime(this, System.currentTimeMillis(),
                 DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH)));
+        setUpStatusBarColor(R.color.calculatorsPrimaryDark);
+        if (toolbar != null) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.calculatorsPrimary));
+        }
     }
 
     @Override
