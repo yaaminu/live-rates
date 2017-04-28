@@ -26,7 +26,7 @@ public class NewsFragmentProvider {
 
     @Provides
     @Singleton
-    public NewsAdapter getNewsAdapter(NewsAdapter.Delegate delegate) {
+    public NewsAdapter getNewsAdapter(@NonNull NewsAdapter.Delegate delegate) {
         return new NewsAdapter(delegate);
     }
 

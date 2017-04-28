@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Cache;
+import com.squareup.picasso.Picasso;
 import com.zealous.R;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
@@ -47,6 +49,10 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
     RecyclerView.LayoutManager layoutManager;
     @Inject
     NewsPresenter presenter;
+    @Inject
+    Picasso picasso;
+    @Inject
+    Cache cache;
 
     @Override
     protected int getLayout() {

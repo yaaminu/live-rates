@@ -11,7 +11,7 @@ import dagger.Component;
  */
 
 @Singleton
-@Component(modules = {NewsFragmentProvider.class, BaseNewsProvider.class, MainActivityEventBusProvider.class})
+@Component(modules = {NewsFragmentProvider.class, PicasoProvider.class, BaseNewsProvider.class, MainActivityEventBusProvider.class})
 public interface NewsFragmentComponent {
     void inject(NewsFragment newsFragment);
 }

@@ -12,9 +12,15 @@ import com.zealous.utils.PLog;
 import com.zealous.utils.ThreadUtils;
 
 import org.apache.commons.io.IOUtils;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +45,7 @@ import rx.functions.Func1;
 public class NewsLoader {
 
     private static final String TAG = "NewsLoader";
+    public static final String BROKEN_THUMNAIL = "broken_thumnail";
     private final Map<String, Integer> feedSources;
     private final OkHttpClient client;
     private final Map<String, Long> lastUpdated;
@@ -111,17 +118,44 @@ public class NewsLoader {
         List<NewsItem> items = new ArrayList<>(entries.size());
         for (SyndEntry syndEntry : entries) {
             PLog.d(TAG, "mapping %s to news Items", syndEntry.getLink());
+            Document jsoup = Jsoup.parse(syndEntry.getDescription().getValue());
+            jsoup.select("img").remove();
+            jsoup.select("a").remove();
             NewsItem newsItem = new NewsItemBuilder()
                     .setDate(syndEntry.getPublishedDate().getTime())
-                    .setDescription(syndEntry.getDescription().getValue())
+                    .setDescription(jsoup.toString().replaceAll("\\n+", ""))
                     .setTitle(syndEntry.getTitle())
                     .setUrl(syndEntry.getLink())
                     .setPublisherColor(publisherColor)
                     .setSource(source)
-                    .setThumbnailUrl(syndEntry.getUri()).createNewsItem();
+                    .setThumbnailUrl(getThumbnail(syndEntry)).createNewsItem();
             items.add(newsItem);
         }
         return items;
+    }
+
+    private String getThumbnail(SyndEntry syndEntry) {
+        List<Element> foreignMarkup = syndEntry.getForeignMarkup();
+        for (Element element : foreignMarkup) {
+            Attribute attribute = element.getAttribute("url");
+            if (attribute != null) {
+                try {
+                    String value = attribute.getValue();
+                    URL url = new URL(value);
+                    PLog.d(TAG, "thumbnail for %s is %s", syndEntry.getTitle(), url);
+                    return url.toExternalForm();
+                } catch (MalformedURLException e) {
+                    PLog.d(TAG, e.getMessage(), e);
+                }
+            }
+        }
+        Elements imgs = Jsoup.parse(syndEntry.getDescription().getValue()).select("img");
+        if (imgs.size() == 1) {
+            String src = imgs.get(0).attr("src");
+            PLog.d(TAG, "thumbnail for %s is %s", syndEntry.getTitle(), src);
+            return src;
+        }
+        return BROKEN_THUMNAIL;
     }
 
 

@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 
+import com.squareup.picasso.Cache;
+import com.squareup.picasso.RequestCreator;
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 
@@ -67,5 +69,17 @@ public class NewsAdapterDelegateImpl implements NewsAdapter.Delegate {
         } catch (ActivityNotFoundException e) {
             Toast.makeText(fragment.getContext(), R.string.no_sharing_app, Toast.LENGTH_LONG).show();
         }
+    }
+
+    @NonNull
+    @Override
+    public Cache cache() {
+        return fragment.cache;
+    }
+
+    @NonNull
+    @Override
+    public RequestCreator loadThumbnail(NewsItem item) {
+        return fragment.picasso.load(item.getThumbnailUrl());
     }
 }
