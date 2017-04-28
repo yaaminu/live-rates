@@ -34,4 +34,9 @@
         <item>Preview</item>
         <item>Delete</item>
     </string-array>
+    <string-array name="duration_types_interest">
+        <item>Days</item>
+        <item>Months</item>
+        <item>Years</item>
+    </string-array>
 </resources>
