@@ -68,7 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_gap"
-        android:background="@color/business_news_color_primary"
+        android:background="@color/reuters_color"
         android:gravity="center_vertical"
         android:padding="@dimen/default_gap">
 

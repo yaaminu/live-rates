@@ -38,7 +38,7 @@ public class NewsAdapter extends BaseAdapter<NewsItemHolder, NewsItem> {
         holder.datPublished.setText(DateUtils.getRelativeDateTimeString(delegate.context(), item.getDate(),
                 DateUtils.MINUTE_IN_MILLIS, DateUtils.DAY_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL));
         holder.source.setText(item.getSource());
-        holder.sourceBar.setBackgroundResource(item.getPublisherColor());
+//        holder.sourceBar.setBackgroundResource(item.getPublisherColor());
         Spanned formattedDescription = Html.fromHtml(item.getDescription(), imageGetter, null);
         if (formattedDescription.length() > maxDescriptionLength) {
             holder.description.setText(formattedDescription.subSequence(0, maxDescriptionLength - 3));
