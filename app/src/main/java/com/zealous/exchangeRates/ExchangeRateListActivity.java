@@ -3,6 +3,7 @@ package com.zealous.exchangeRates;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 
 import com.zealous.R;
 
@@ -44,6 +45,9 @@ public class ExchangeRateListActivity extends SearchActivity {
                 .beginTransaction()
                 .replace(R.id.container, new ExchangeRateFragment(), "exchangeRates")
                 .commit();
+        assert toolbar != null;
+        toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.exchangeRatePrimary));
+        setUpStatusBarColor(R.color.exchangeRatePrimaryDark);
     }
 
     @Override
