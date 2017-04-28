@@ -128,9 +128,6 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     @Override
     public boolean onMenuItemClicked(int itemId) {
         switch (itemId) {
-            case R.id.action_assistant:
-//                expenditureDataSource.clear();
-                return true;
             case R.id.action_view_budget:
                 assert screen != null;
                 final Activity currentActivity = screen.getCurrentActivity();
