@@ -29,7 +29,7 @@ public class BusinessNewsFragmentParent extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new $PagerAdapter(getFragmentManager());
+        adapter = new $PagerAdapter(getChildFragmentManager());
     }
 
     @Override
