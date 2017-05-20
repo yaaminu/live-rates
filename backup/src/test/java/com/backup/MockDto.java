@@ -5,6 +5,7 @@ package com.backup;
  */
 
 public class MockDto {
+    public static final String FIELD_NAME = "name", FIELD_EMAIL = "email";
     public String name;
     public String email;
 

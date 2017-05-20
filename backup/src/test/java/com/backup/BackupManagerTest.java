@@ -1,6 +1,7 @@
 package com.backup;
 
 import com.android.annotations.NonNull;
+import com.google.gson.JsonObject;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,6 +32,13 @@ public class BackupManagerTest {
     @Test
     public void testGetInstance() throws Exception {
         WellImplementedLogger logger = new WellImplementedLogger();
+
+        try {
+            BackupManager.getInstance(null);
+            fail("must not accept null  logger");
+        } catch (IllegalArgumentException e) {
+            System.out.println("correctly threw " + e.getClass().getName());
+        }
         BackupManager instance = BackupManager.getInstance(logger);
         assertNotNull("Should never return null", instance);
         assertEquals("Should always return the same backup manager for the same logger instance",
@@ -38,7 +46,7 @@ public class BackupManagerTest {
 
         try {
             //since the backup manager uses a HashMap to implement it's
-            //singleton per logger implementation, poorly implemented
+            //singleton per logger, poorly implemented
             //equals/hashcode could lead to really dire consequences where
             //a different logger will be returned which can easily lead to
             //corrupting the data of the mistaken logger as it will mix
@@ -61,26 +69,54 @@ public class BackupManagerTest {
         assertEquals(logger.entries.size(), 0); //check to ensure things are alright
 
         BackupManager manager = BackupManager.getInstance(logger);
-        try {
-            manager.log(null, null);
-            manager.log(null, PowerMockito.mock(Operation.class));
-            manager.log("group", null);
-            manager.log("", PowerMockito.mock(Operation.class));
-            fail("must reject null args");
-        } catch (IllegalArgumentException e) {
-            System.out.println("correctly threw " + e.getClass().getName());
-        }
+
+        checkInvalidArgsHandling(manager);
+
         Operation mock = PowerMockito.mock(Operation.class);
-        when(mock.serialize()).thenReturn(new byte[5]);
-        manager.log("group", mock);
+        when(mock.data()).thenReturn(new JsonObject());
+        manager.log("group", mock, System.currentTimeMillis());
         assertEquals("must append to the log", logger.entries.size(), 1);
 
         for (int i = 0; i < 10; i++) {
             mock = PowerMockito.mock(Operation.class);
-            when(mock.serialize()).thenReturn(new byte[5]);
-            manager.log("group", mock);
+            when(mock.data()).thenReturn(new JsonObject());
+            manager.log("group", mock, System.currentTimeMillis());
         }
         assertEquals("must append 10 more entries to the log", logger.entries.size(), 11);
+    }
+
+    private void checkInvalidArgsHandling(BackupManager manager) throws BackupException {
+        try {
+            manager.log(null, null, 0);
+            fail("must reject null args");
+        } catch (IllegalArgumentException e) {
+            System.out.println("correctly threw " + e.getClass().getName());
+        }
+        try {
+            manager.log(null, PowerMockito.mock(Operation.class), -1);
+            fail("must reject null args");
+        } catch (IllegalArgumentException e) {
+            System.out.println("correctly threw " + e.getClass().getName());
+        }
+        try {
+            manager.log("", PowerMockito.mock(Operation.class), 0);
+            fail("must reject null args");
+        } catch (IllegalArgumentException e) {
+            System.out.println("correctly threw " + e.getClass().getName());
+        }
+
+        try {
+            manager.log("group", null, 0);
+            fail("must reject null args");
+        } catch (IllegalArgumentException e) {
+            System.out.println("correctly threw " + e.getClass().getName());
+        }
+        try {
+            manager.log("group", PowerMockito.mock(Operation.class), -1);
+            fail("must reject null args");
+        } catch (IllegalArgumentException e) {
+            System.out.println("correctly threw " + e.getClass().getName());
+        }
     }
 
     @Test
@@ -90,10 +126,10 @@ public class BackupManagerTest {
         BackupManager.ProgressListener listener = PowerMockito.mock(BackupManager.ProgressListener.class);
         BackupManager manager = BackupManager.getInstance(logger);
         InsertOperation operation = mock(InsertOperation.class);
-        when(operation.serialize()).thenReturn(new byte[5]);
+        when(operation.data()).thenReturn(new JsonObject());
 
         for (int i = 0; i < 10; i++) {
-            manager.log("group", operation);
+            manager.log("group", operation, System.currentTimeMillis());
         }
         manager.restore(listener);
         verify(listener, times(10)).onProgress(anyLong(), anyLong());
@@ -113,9 +149,9 @@ public class BackupManagerTest {
         WellImplementedLogger logger = new WellImplementedLogger();
         BackupManager manager = BackupManager.getInstance(logger);
         InsertOperation operation = mock(InsertOperation.class);
-        when(operation.serialize()).thenReturn(new byte[5]);
+        when(operation.data()).thenReturn(new JsonObject());
         for (int i = 0; i < 10; i++) {
-            manager.log("group", operation);
+            manager.log("group", operation, System.currentTimeMillis());
         }
         BackupStats stats = manager.stats();
         assertEquals(stats.getLastModified(), logger.lastModified);

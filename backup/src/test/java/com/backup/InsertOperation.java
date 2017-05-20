@@ -1,17 +1,26 @@
 package com.backup;
 
 import com.android.annotations.NonNull;
+import com.backup.annotations.LoggerIgnore;
+import com.google.gson.JsonObject;
 
 /**
  * Created by yaaminu on 5/17/17.
  */
 public class InsertOperation implements Operation {
 
-    private final MockDto dto;
+    private JsonObject payload;
+
+    @LoggerIgnore
     private MockDataBase dataBase;
 
+    public InsertOperation() {
+    }
+
     public InsertOperation(MockDto dto) {
-        this.dto = dto;
+        payload = new JsonObject();
+        payload.addProperty(MockDto.FIELD_EMAIL, dto.email);
+        payload.addProperty(MockDto.FIELD_NAME, dto.name);
     }
 
     public void setDataBase(@NonNull MockDataBase dataBase) {
@@ -19,13 +28,13 @@ public class InsertOperation implements Operation {
     }
 
     @Override
-    public String getOperationType() {
-        return "Insert";
+    public JsonObject data() {
+        return payload;
     }
 
     @Override
-    public byte[] serialize() {
-        return (getOperationType() + ": " + dto.email + ":" + dto.name).getBytes();
+    public void setData(JsonObject object) {
+        this.payload = object;
     }
 
     @Override
@@ -33,6 +42,7 @@ public class InsertOperation implements Operation {
         if (dataBase == null) {
             throw new RuntimeException();
         }
-        dataBase.insert(dto);
+        dataBase.insert(new MockDto(payload.get(MockDto.FIELD_NAME).getAsString(),
+                payload.get(MockDto.FIELD_EMAIL).getAsString()));
     }
 }

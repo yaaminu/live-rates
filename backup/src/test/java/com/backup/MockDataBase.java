@@ -19,7 +19,7 @@ public class MockDataBase {
     public void insert(MockDto data) {
         records.add(data);
         try {
-            manager.log(MockDto.class.getName(), new InsertOperation(data));
+            manager.log(MockDto.class.getName(), new InsertOperation(data),System.currentTimeMillis());
         } catch (BackupException e) {
             throw new RuntimeException();
         }

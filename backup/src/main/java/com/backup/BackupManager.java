@@ -53,7 +53,12 @@ public class BackupManager {
 
         @Override
         public void onRestoreComplete() {
-            listener.done();
+            listener.done(null);
+        }
+
+        @Override
+        public void onRestoreError(BackupException e) {
+            listener.done(e);
         }
     }
 
@@ -68,17 +73,25 @@ public class BackupManager {
      * or creates a new one if it does not exist. This means that  any {@link Logger}
      * implementation can only be used with only one instance of Backup manager. Essentially
      * this makes BackupManager a partial singleton
+     * <p>
+     * <p>
+     * Backup manager attempts to check poorly implemented  hashcode()/equals() and
+     * throws if it detects one. This is only a fail-fast mechanism so clients must never rely on
+     * this check since a "clever" buggy code can outwit this check. It's your responsibility
+     * to implement them well to ensure good behaviour of backup manager
      *
      * @return the {@link BackupManager}. never null
-     * @throws IllegalStateException if not initialized
-     * @throws RuntimeException      when a it detects logger implementation with poor equals() and hashcode()
-     *                               implementation
+     * @throws RuntimeException when a it detects poor equals() and hashcode()
+     *                          implementations in a {@link Logger}.
      */
     @NonNull
-    public static synchronized <T extends Logger> BackupManager getInstance(T logger) {
+    public static synchronized <T extends Logger> BackupManager getInstance(@NonNull T logger) {
+        if (logger == null) throw new IllegalArgumentException("logger==null");
+
         if (INSTANCES == null) {
             INSTANCES = new HashMap<>(2);
         }
+
         BackupManager instance = INSTANCES.get(logger);
         if (instance == null) {
             instance = new BackupManager(logger);
@@ -103,12 +116,15 @@ public class BackupManager {
      * @param operation the operation that happened
      * @throws BackupException
      */
-    public synchronized void log(@NonNull String group, @NonNull Operation operation) throws BackupException {
+    public synchronized void log(@NonNull String group, @NonNull Operation operation, long timestamp) throws BackupException {
         if (operation == null) throw new IllegalArgumentException("operation is null");
         if (group == null || group.length() == 0) {
             throw new IllegalArgumentException("group canot be an empty string");
         }
-        logger.appendEntry(new LogEntry(group, operation, System.currentTimeMillis()));
+        if (timestamp < 0) {
+            throw new IllegalArgumentException("timestamp < 0");
+        }
+        logger.appendEntry(new LogEntry<>(group, operation, timestamp));
     }
 
     /**
@@ -117,11 +133,17 @@ public class BackupManager {
      *
      * @throws BackupException
      */
-    public synchronized void restore(@Nullable ProgressListener listener) throws BackupException {
+    public synchronized void restore(@Nullable ProgressListener listener) {
         if (listener == null) {
             listener = DUMMY_LISTENER;
         }
-        logger.retrieveAllEntries(new RestoreHandlerImpl(logger, stats().getSize(), listener));
+        // FIXME: 5/18/17 use appropriate stats object
+        RestoreHandlerImpl handler = new RestoreHandlerImpl(logger, 10000, listener);
+        try {
+            logger.retrieveAllEntries(handler);
+        } catch (BackupException e) {
+            handler.onRestoreError(e);
+        }
     }
 
     /**
@@ -155,7 +177,8 @@ public class BackupManager {
         /**
          * restore complete
          */
-        void done();
+        void done(BackupException e);
+
     }
 
     static final ProgressListener DUMMY_LISTENER = new ProgressListener() {
@@ -170,7 +193,7 @@ public class BackupManager {
         }
 
         @Override
-        public void done() {
+        public void done(BackupException e) {
 
         }
     };
