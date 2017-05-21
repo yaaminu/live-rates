@@ -13,51 +13,51 @@ import static org.junit.Assert.assertTrue;
 public class LogEntryFlagsTest {
     @Test
     public void setEncrypted() throws Exception {
-        FileSystemLogger.LogEntryFlags flags = new FileSystemLogger.LogEntryFlags();
+       LogEntryFlags flags = new LogEntryFlags();
         flags.setEncrypted();
-        assertEquals(flags.getFlags() & FileSystemLogger.LogEntryFlags.ENCRYPTED, FileSystemLogger.LogEntryFlags.ENCRYPTED);
+        assertEquals(flags.getFlags() &LogEntryFlags.ENCRYPTED,LogEntryFlags.ENCRYPTED);
     }
 
     @Test
     public void setCompressed() throws Exception {
-        FileSystemLogger.LogEntryFlags flags = new FileSystemLogger.LogEntryFlags();
+       LogEntryFlags flags = new LogEntryFlags();
         flags.setCompressed();
-        assertEquals(flags.getFlags() & FileSystemLogger.LogEntryFlags.COMPRESSED, FileSystemLogger.LogEntryFlags.COMPRESSED);
+        assertEquals(flags.getFlags() &LogEntryFlags.COMPRESSED,LogEntryFlags.COMPRESSED);
     }
 
     @Test
     public void isEncrypted() throws Exception {
-        FileSystemLogger.LogEntryFlags flags = new FileSystemLogger.LogEntryFlags();
+       LogEntryFlags flags = new LogEntryFlags();
         assertFalse(flags.isEncrypted());
         flags.setEncrypted();
-        assertEquals(flags.getFlags() & FileSystemLogger.LogEntryFlags.ENCRYPTED, FileSystemLogger.LogEntryFlags.ENCRYPTED);
+        assertEquals(flags.getFlags() &LogEntryFlags.ENCRYPTED,LogEntryFlags.ENCRYPTED);
         assertTrue(flags.isEncrypted());
     }
 
     @Test
     public void isCompressed() throws Exception {
-        FileSystemLogger.LogEntryFlags flags = new FileSystemLogger.LogEntryFlags();
+       LogEntryFlags flags = new LogEntryFlags();
         assertFalse(flags.isCompressed());
         flags.setCompressed();
-        assertEquals(flags.getFlags() & FileSystemLogger.LogEntryFlags.COMPRESSED, FileSystemLogger.LogEntryFlags.COMPRESSED);
+        assertEquals(flags.getFlags() &LogEntryFlags.COMPRESSED,LogEntryFlags.COMPRESSED);
         assertTrue(flags.isCompressed());
     }
 
     @Test
     public void clearCompressed() throws Exception {
-        FileSystemLogger.LogEntryFlags flags = new FileSystemLogger.LogEntryFlags();
+        LogEntryFlags flags = new LogEntryFlags();
         flags.setCompressed();
-        assertEquals(flags.getFlags() & FileSystemLogger.LogEntryFlags.COMPRESSED, FileSystemLogger.LogEntryFlags.COMPRESSED);
+        assertEquals(flags.getFlags() &LogEntryFlags.COMPRESSED,LogEntryFlags.COMPRESSED);
         flags.clearCompressed();
-        assertNotEquals(flags.getFlags() & FileSystemLogger.LogEntryFlags.COMPRESSED, FileSystemLogger.LogEntryFlags.COMPRESSED);
+        assertNotEquals(flags.getFlags() &LogEntryFlags.COMPRESSED,LogEntryFlags.COMPRESSED);
     }
 
     @Test
     public void clearEncrypted() throws Exception {
-        FileSystemLogger.LogEntryFlags flags = new FileSystemLogger.LogEntryFlags();
+       LogEntryFlags flags = new LogEntryFlags();
         flags.setEncrypted();
-        assertEquals(flags.getFlags() & FileSystemLogger.LogEntryFlags.ENCRYPTED, FileSystemLogger.LogEntryFlags.ENCRYPTED);
+        assertEquals(flags.getFlags() &LogEntryFlags.ENCRYPTED,LogEntryFlags.ENCRYPTED);
         flags.clearEncrypted();
-        assertNotEquals(flags.getFlags() & FileSystemLogger.LogEntryFlags.ENCRYPTED, FileSystemLogger.LogEntryFlags.ENCRYPTED);
+        assertNotEquals(flags.getFlags() &LogEntryFlags.ENCRYPTED,LogEntryFlags.ENCRYPTED);
     }
 }
