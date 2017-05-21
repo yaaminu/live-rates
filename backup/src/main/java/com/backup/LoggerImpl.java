@@ -3,21 +3,18 @@ package com.backup;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileFilter;
+import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.io.RandomAccessFile;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.concurrent.Semaphore;
 
 import static com.backup.BackupException.EAGAIN;
-import static com.backup.BackupException.EEXIST;
 import static com.backup.BackupException.EIOERROR;
 import static com.backup.BackupException.ENOENT;
 
@@ -52,29 +49,32 @@ import static com.backup.BackupException.ENOENT;
  * Created by yaaminu on 5/17/17.
  */
 
-public class FileSystemLogger implements Logger {
+public class LoggerImpl implements Logger {
 
-    public static final String BACKUP_LOG_SUFFIX = "-backup.log";
-    @NonNull
-    private final File directory;
     private final DependencyInjector injector;
     private final Serializer<LogEntry<? extends Operation>> serializer;
     private final Semaphore lock;
+    private final Storage storage;
+    private final String collectionName;
 
-    FileSystemLogger(@NonNull File directory,
-                     @NonNull DependencyInjector injector,
-                     @NonNull Serializer<LogEntry<? extends Operation>> serializer) {
-        checkArgs(directory, injector, serializer);
-
-        this.directory = directory;
+    LoggerImpl(@NonNull String collectionName, @NonNull DependencyInjector injector,
+               @NonNull Serializer<LogEntry<? extends Operation>> serializer, @NonNull Storage storage) {
+        checkArgs(collectionName, injector, serializer, storage);
+        this.collectionName = collectionName;
+        this.storage = storage;
         this.injector = injector;
         this.serializer = serializer;
         lock = new Semaphore(1, true);
     }
 
-    private void checkArgs(File directory, DependencyInjector injector, Serializer<LogEntry<? extends Operation>> serializer) {
-        if (directory == null) {
-            throw new IllegalArgumentException("directory == null");
+    private void checkArgs(@NonNull String collectionName, @NonNull DependencyInjector injector,
+                           @NonNull Serializer<LogEntry<? extends Operation>> serializer,
+                           @NonNull Storage storage) {
+        if (collectionName == null) {
+            throw new IllegalArgumentException("collection name is null");
+        }
+        if (collectionName.trim().length() == 0) {
+            throw new IllegalArgumentException("collection name is empty");
         }
         if (injector == null) {
             throw new IllegalArgumentException("injector == null");
@@ -82,33 +82,21 @@ public class FileSystemLogger implements Logger {
         if (serializer == null) {
             throw new IllegalArgumentException("serializer == null");
         }
-        if (!directory.exists()) {
-            if (!directory.mkdirs()) {
-                throw new IllegalArgumentException("failed to create directory");
-            }
-        }
-        if (!directory.isDirectory()) {
-            throw new IllegalArgumentException("backup  dir already exists and it's not a directory");
+        if (storage == null) {
+            throw new IllegalArgumentException("storage == null");
         }
     }
 
-    @NonNull
-    public static FileSystemLogger create(@NonNull File directory,
-                                          @NonNull DependencyInjector injector,
-                                          @NonNull Serializer<LogEntry<? extends Operation>> serializer) {
-        return new FileSystemLogger(directory, injector, serializer);
-    }
 
     @Override
     public void appendEntry(@NonNull LogEntry<? extends Operation> logEntry) throws BackupException {
+        OutputStream stream = null;
         try {
             lock.acquire();
-            ensureDirExists();
             byte[] blob = encodeLogEntry(logEntry, new LogEntryFlags());
-            // TODO: 5/18/17 encrypt before writing to file
-            String collectionName = logEntry.getCollectionName();
-            File file = new File(directory, makeFileName(collectionName));
-            FileUtils.writeByteArrayToFile(file, blob, true);
+            // TODO: 5/18/17 encrypt and compress before writing
+            stream = storage.newAppendableOutPutStream(collectionName);
+            IOUtils.write(blob, stream);
         } catch (FileNotFoundException e) {
             throw new BackupException(ENOENT, e.getMessage(), e);
         } catch (InterruptedIOException | InterruptedException e) {
@@ -116,6 +104,9 @@ public class FileSystemLogger implements Logger {
         } catch (IOException e) {
             throw new BackupException(EIOERROR, e.getMessage(), e);
         } finally {
+            if (stream != null) {
+                IOUtils.closeQuietly(stream);
+            }
             lock.release();
         }
     }
@@ -137,35 +128,6 @@ public class FileSystemLogger implements Logger {
         return blob.array();
     }
 
-    private String makeFileName(String collectionName) {
-        return "."/*hidden*/ + collectionName + BACKUP_LOG_SUFFIX;
-    }
-
-    private boolean isBackupFile(String filename) {
-        return filename.endsWith(BACKUP_LOG_SUFFIX);
-    }
-
-    private void ensureDirExists() throws BackupException {
-        if (!directory.exists()) {
-            if (!directory.mkdirs()) {
-                throw new BackupException(ENOENT, "failed to create backup dir", null);
-            }
-        }
-        if (!directory.isDirectory()) {
-            throw new BackupException(EEXIST, "backup directory exists but it's a file", null);
-        }
-    }
-
-    /**
-     * for testing purposes
-     *
-     * @param collectionName the name of collection
-     * @return the backup file for  this collection.
-     */
-    File getBackupFile(@NonNull String collectionName) {
-        return new File(directory, makeFileName(collectionName));
-    }
-
     @Override
     public void retrieveAllEntries(@NonNull RestoreHandler handler) {
         if (handler == null) throw new IllegalArgumentException("handler == null");
@@ -173,10 +135,7 @@ public class FileSystemLogger implements Logger {
             lock.acquire();
             // TODO: 5/19/17 use rxJava to stream stuffs
             handler.onPrepareRestore();
-            File[] files = findBackupFiles();
-            for (File file : files) {
-                restoreBackup(file, handler);
-            }
+            restoreBackup(handler);
             handler.onRestoreComplete();
         } catch (BackupException e) {
             handler.onRestoreError(e);
@@ -187,22 +146,21 @@ public class FileSystemLogger implements Logger {
         }
     }
 
-    private void restoreBackup(File file, RestoreHandler handler) throws BackupException {
-        RandomAccessFile randomAccessFile = null;
+    private void restoreBackup(RestoreHandler handler) throws BackupException {
+        DataInputStream inputStream = null;
         try {
-            randomAccessFile = new RandomAccessFile(file, "r");
-            randomAccessFile.seek(0L);
+            inputStream = new DataInputStream(storage.newInputStream(collectionName));
             int read = 0;
-            long entrySize = 0;
+            long entrySize;
             byte[] buffer = new byte[1024];
+            long size = storage.size(collectionName);
             do {
-                char flags = randomAccessFile.readChar();
-                entrySize = randomAccessFile.readLong();
+                char flags = inputStream.readChar();
+                entrySize = inputStream.readLong();
                 if (buffer.length < entrySize) { //only reuse if we wont fit
                     buffer = new byte[(int) entrySize];
                 }
-                randomAccessFile.readFully(buffer, 0, (int) entrySize);
-
+                inputStream.readFully(buffer, 0, (int) entrySize);
                 LogEntryFlags logEntryFlags = new LogEntryFlags(flags);
                 // TODO: 5/19/17 do something (like decompress) to the payload based on the flags
                 LogEntry<? extends Operation> entry = serializer.deserialize(buffer, 0, (int) entrySize);
@@ -210,44 +168,21 @@ public class FileSystemLogger implements Logger {
 
                 read += (entrySize + 10/*sizeOf(char) + sizeOf(long)*/);
 
-            } while (read < file.length());
+            } while (read < size);
         } catch (FileNotFoundException e) {
             handler.onRestoreError(new BackupException(ENOENT, e.getMessage(), e));
         } catch (IOException e) {
             handler.onRestoreError(new BackupException(EIOERROR, e.getMessage(), e));
         } finally {
-            IOUtils.closeQuietly(randomAccessFile);
+            IOUtils.closeQuietly(inputStream);
         }
     }
-
-    private File[] findBackupFiles() throws BackupException {
-        File[] files = directory.listFiles(BACKUP_FILES_FILTER);
-
-        return files == null ? new File[]{} : files;
-    }
-
-    private final FileFilter BACKUP_FILES_FILTER = new FileFilter() {
-        @Override
-        public boolean accept(File file) {
-            return isBackupFile(file.getAbsolutePath());
-        }
-    };
 
     @Override
-    public BackupStats stats() throws BackupException {
+    public final BackupStats stats() throws BackupException {
         try {
             lock.acquire();
-            File[] files = findBackupFiles();
-            long finalSize = 0,
-                    latest = 0;
-            for (File file : files) {
-                finalSize += file.length();
-                long tmpLastMod = file.lastModified();
-                if (tmpLastMod > latest) {
-                    latest = tmpLastMod;
-                }
-            }
-            return new BackupStats(finalSize, latest);
+            return new BackupStats(storage.size(collectionName), storage.lastModified(collectionName));
         } catch (InterruptedException e) {
             throw new BackupException(EAGAIN, e.getMessage(), e);
         } finally {
@@ -255,70 +190,27 @@ public class FileSystemLogger implements Logger {
         }
     }
 
-    @Override
-    @NonNull
-    public DependencyInjector getInjector() {
-        return injector;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FileSystemLogger logger = (FileSystemLogger) o;
+        LoggerImpl logger = (LoggerImpl) o;
 
-        return directory.getAbsolutePath().equals(logger.directory.getAbsolutePath());
+        return collectionName.equals(logger.collectionName);
 
     }
 
     @Override
     public int hashCode() {
-        return directory.getAbsolutePath().hashCode();
+        return collectionName.hashCode();
     }
 
-    static class LogEntryFlags {
-        static final char ENCRYPTED = 0x1, COMPRESSED = 0x2;
-        private char flags;
-
-        public LogEntryFlags() {
-            this((char) 0);
-        }
-
-        public LogEntryFlags(char flags) {
-            this.flags = flags;
-        }
-
-        public char getFlags() {
-            return flags;
-        }
-
-        int setEncrypted() {
-            flags |= ENCRYPTED;
-            return flags;
-        }
-
-        int clearEncrypted() {
-            flags &= ~ENCRYPTED;
-            return flags;
-        }
-
-        int setCompressed() {
-            flags |= COMPRESSED;
-            return flags;
-        }
-
-        int clearCompressed() {
-            flags &= ~COMPRESSED;
-            return flags;
-        }
-
-        boolean isEncrypted() {
-            return (flags & ENCRYPTED) == ENCRYPTED;
-        }
-
-        boolean isCompressed() {
-            return (flags & COMPRESSED) == COMPRESSED;
-        }
+    @Override
+    @NonNull
+    public final DependencyInjector getInjector() {
+        return injector;
     }
+
 }

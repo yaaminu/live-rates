@@ -41,6 +41,7 @@ public class LogEntry<T extends Operation> {
     }
 
 
+
     private static String calculateHashSum(String group, long size, Operation operation, long dateLogged) {
         try {
             //don't change the algorithm without changing the HASH_SIZE
