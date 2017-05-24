@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:gravity="center_horizontal"
+        android:lines="2"
         android:textColor="@color/light_violet"
         tools:text="Food" />
 </LinearLayout>
