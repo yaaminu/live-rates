@@ -86,6 +86,9 @@ public class Expenditure extends RealmObject {
 
     @NonNull
     public String getNormalizedAmount() {
+        if (getAmountSpent() == 0) {
+            return "";
+        }
         if (normalizedAmount == null) {
             normalizedAmount = ExchangeRate.FORMAT.format(BigDecimal.valueOf(getAmountSpent())
                     .divide(BigDecimal.valueOf(100), MathContext.DECIMAL128));

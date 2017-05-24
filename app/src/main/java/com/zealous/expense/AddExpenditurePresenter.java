@@ -1,6 +1,5 @@
 package com.zealous.expense;
 
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -79,7 +78,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
         this.location = "";
         this.time = System.currentTimeMillis();
         currency = "GH₵";
-        amount = "0.00";
+        amount = "";
         expenditureCategoryName = "";
         description = "";
         this.attachments = new ArrayList<>(1);
