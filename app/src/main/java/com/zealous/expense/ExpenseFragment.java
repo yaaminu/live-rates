@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
 import com.zealous.R;
@@ -188,7 +189,6 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
 
         private final View totalView;
         private final View fab;
-        private int lastDy;
 
         public CustomScrollListener(View totalView, View fab) {
             this.totalView = totalView;
@@ -220,23 +220,16 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             PLog.d(TAG, "dx: %d, dy: %d", dx, dy);
-            lastDy += dy;
-            PLog.d(TAG, "cummulative dy: %d", lastDy);
-            if (Math.abs(lastDy) >= totalView.getHeight()) {
-                if (lastDy < 0) { //scrolling up
+            if (Math.abs(dy) >= totalView.getHeight()) {
+                if (dy < 0) { //scrolling up
                     //animate totalView into view
-                    //animate fab view into view
-                    totalView.setTranslationY(0);
                     totalView.setVisibility(View.VISIBLE);
-//                    totalView.animate().translationY(totalView.getHeight())
-//                            .setInterpolator(new AccelerateInterpolator())
-//                            .start();
+                    totalView.setTranslationY(0);
                 } else { //scrolling down
                     //animate totalView out of view;
-                    //animate fab view out of view
-                    lastDy = 0;
                     totalView.animate().translationY(-totalView.getHeight())
-                            .setInterpolator(new AccelerateInterpolator())
+                            .setInterpolator(new DecelerateInterpolator())
+                            .setDuration(750)
                             .setListener(new AnimatorListenerImpl(totalView, true)).start();
                 }
             }

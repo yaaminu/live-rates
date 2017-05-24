@@ -72,14 +72,20 @@ public class MainActivity extends SearchActivity {
 
     private void updateToolbar(@IdRes int id) {
         final ActionBar supportActionBar = getSupportActionBar();
-        if (toolbar != null) {
+        if (id == R.id.tab_expenses) {
             if (supportActionBar != null) {
-                supportActionBar.show();
+                supportActionBar.hide();
             }
-            closeSearch();
-            toolbar.setBackgroundColor(ContextCompat.getColor(this, getToolBarColor(id)));
+        } else {
+            if (toolbar != null) {
+                if (supportActionBar != null) {
+                    supportActionBar.show();
+                }
+                closeSearch();
+                toolbar.setBackgroundColor(ContextCompat.getColor(this, getToolBarColor(id)));
+            }
+            setUpStatusBarColor(getStatusBarColor(id));
         }
-        setUpStatusBarColor(getStatusBarColor(id));
     }
 
     @ColorRes
