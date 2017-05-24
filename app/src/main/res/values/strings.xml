@@ -117,7 +117,7 @@
     <string name="saving_expnditure">Saving expenditure</string>
     <string name="attachment_preview">Attachment Preview</string>
     <string name="loading">Loading</string>
-    <string name="attachments">Attachments</string>
+    <string name="attachments">Attachments (%d)</string>
     <string name="no_app_for_viewing_pdf_files">No app for viewing pdf files</string>
     <string name="add_location">Add location</string>
     <string name="loading_news_feeds">Loading news feed</string>
@@ -134,6 +134,7 @@
     <string name="favorites">Favorites</string>
     <string name="home">Home</string>
     <string name="follow_link">Follow this link to read more</string>
+    <string name="attachment_title">Attachment %d</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

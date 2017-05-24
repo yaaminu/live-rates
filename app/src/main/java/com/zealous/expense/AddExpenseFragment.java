@@ -78,6 +78,8 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     RecyclerView recyclerView;
     @Bind(R.id.attachments)
     RecyclerView attachmentRv;
+    @Bind(R.id.attachments_title)
+    TextView attachmentTitle;
     @Bind(R.id.tv_date)
     TextView date;
     @Bind(R.id.tv_location)
@@ -337,7 +339,7 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         attachmentRv.setAdapter(attachmentAdapter);
     }
 
-    @OnClick({R.id.edit_date, R.id.edit_location, R.id.tv_location, R.id.tv_date})
+    @OnClick({R.id.edit_date, R.id.edit_location, R.id.tv_location, R.id.tv_date, R.id.attachments_title})
     void onClick(View view) {
         final int position = delegate.getSelectedItemPosition();
         addExpenditurePresenter.updateData(amount.getText().toString().trim(),
@@ -351,6 +353,9 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
             case R.id.edit_location:
             case R.id.tv_location:
                 addExpenditurePresenter.editLocation(getFragmentManager());
+                break;
+            case R.id.attachments_title:
+                attachmentRv.setVisibility(attachmentRv.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 break;
             default:
                 throw new AssertionError();
@@ -386,6 +391,7 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
             com.zealous.utils.ViewUtils.hideViews(ButterKnife.findById(view, R.id.attachments_pane));
         } else {
             View view = getView();
+            attachmentTitle.setText(getString(R.string.attachments, attachments.size()));
             assert view != null;
             com.zealous.utils.ViewUtils.showViews(ButterKnife.findById(view, R.id.attachments_pane));
             attachmentAdapter.notifyDataChanged("");
