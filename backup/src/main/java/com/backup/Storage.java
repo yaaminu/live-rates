@@ -38,14 +38,16 @@ public interface Storage {
      *
      * @param collectionName the name of the collection.
      * @return the size of the collection.
+     * @throws IOException when there's an error
      */
-    long size(String collectionName);
+    long size(String collectionName) throws IOException;
 
     /**
      * returns the last time this collection was modified
      *
      * @param collectionName the name of the collection.
      * @return the lastModified
+     * @throws IOException when there's an error
      */
-    long lastModified(String collectionName);
+    long lastModified(String collectionName) throws IOException;
 }

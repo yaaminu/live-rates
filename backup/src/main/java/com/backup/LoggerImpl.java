@@ -185,6 +185,8 @@ public class LoggerImpl implements Logger {
             return new BackupStats(storage.size(collectionName), storage.lastModified(collectionName));
         } catch (InterruptedException e) {
             throw new BackupException(EAGAIN, e.getMessage(), e);
+        } catch (IOException e) {
+            throw new BackupException(EIOERROR, e.getMessage(), e);
         } finally {
             lock.release();
         }

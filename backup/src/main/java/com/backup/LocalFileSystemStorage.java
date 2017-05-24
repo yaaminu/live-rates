@@ -50,13 +50,17 @@ public class LocalFileSystemStorage implements Storage {
         return new FileInputStream(new File(dir, collectionName));
     }
 
+    public File getBackupFile(@NonNull String collectionName) {
+        return new File(dir, collectionName);
+    }
+
     @Override
-    public long size(@NonNull String collectionName) {
+    public long size(@NonNull String collectionName) throws IOException {
         return new File(dir, collectionName).length();
     }
 
     @Override
-    public long lastModified(@NonNull String collectionName) {
+    public long lastModified(@NonNull String collectionName) throws IOException {
         return new File(dir, collectionName).lastModified();
     }
 }

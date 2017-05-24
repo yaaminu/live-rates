@@ -198,4 +198,13 @@ public class LocalFileSystemStorageTest {
             lastModified = currentTimeMillis();
         }
     }
+
+    @Test
+    public void getBackupFile() throws Exception {
+        File dir = new File("/tmp");
+        LocalFileSystemStorage storage = new LocalFileSystemStorage(dir);
+        assertEquals(new File(dir, "test"), storage.getBackupFile("test"));
+        assertEquals(new File(dir, "test2"), storage.getBackupFile("test2"));
+        assertEquals(new File(dir, "test3"), storage.getBackupFile("test3"));
+    }
 }

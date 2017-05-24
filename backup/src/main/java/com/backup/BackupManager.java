@@ -130,8 +130,6 @@ public class BackupManager {
     /**
      * restores all backed up data. This is a potentially long
      * running operation
-     *
-     * @throws BackupException
      */
     public synchronized void restore(@Nullable ProgressListener listener) {
         if (listener == null) {
