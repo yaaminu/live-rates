@@ -18,14 +18,14 @@ import java.util.List;
 public class ExpenseAdapterDelegateImpl implements ExpenseAdapter.Delegate {
 
     private static final String TAG = "ExpenseAdapterDelegateImpl";
-    private final Context context;
+    private final ExpenseFragment context;
     @NonNull
     private final ExpenditureScreenPresenter presenter;
     @NonNull
     private List<Expenditure> dataSet;
     private int selectedItem = RecyclerView.NO_POSITION;
 
-    public ExpenseAdapterDelegateImpl(@NonNull Context context, @NonNull ExpenditureScreenPresenter presenter) {
+    public ExpenseAdapterDelegateImpl(@NonNull ExpenseFragment context, @NonNull ExpenditureScreenPresenter presenter) {
         this.dataSet = Collections.emptyList();
         this.context = context;
         this.presenter = presenter;
@@ -38,7 +38,7 @@ public class ExpenseAdapterDelegateImpl implements ExpenseAdapter.Delegate {
 
     @Override
     public Context context() {
-        return context;
+        return context.getContext();
     }
 
     @Override
@@ -47,6 +47,7 @@ public class ExpenseAdapterDelegateImpl implements ExpenseAdapter.Delegate {
         if (selectedItem == position) { //this already selected so toggle
             selectedItem = RecyclerView.NO_POSITION;
             adapter.notifyItemChanged(position);
+            context.showFab();
         } else {
             int previous = selectedItem;
             selectedItem = position;
@@ -54,6 +55,7 @@ public class ExpenseAdapterDelegateImpl implements ExpenseAdapter.Delegate {
                 adapter.notifyItemChanged(previous);
             }
             adapter.notifyItemChanged(selectedItem);
+            context.hideFab();
         }
     }
 
@@ -78,12 +80,12 @@ public class ExpenseAdapterDelegateImpl implements ExpenseAdapter.Delegate {
     @Override
     public void deleteItem(int position) {
         selectedItem = AdapterView.INVALID_POSITION;
-        presenter.deleteItem(context, dataSet.get(position));
+        presenter.deleteItem(context.getContext(), dataSet.get(position));
     }
 
     @Override
     public void editItem(int position) {
         selectedItem = AdapterView.INVALID_POSITION;
-        presenter.editItem(context, dataSet.get(position));
+        presenter.editItem(context.getContext(), dataSet.get(position));
     }
 }

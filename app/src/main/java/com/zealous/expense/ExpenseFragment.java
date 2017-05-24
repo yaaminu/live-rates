@@ -136,7 +136,7 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         super.onViewCreated(view, savedInstanceState);
         expenseList.setLayoutManager(layoutManager);
         expenseList.setAdapter(adapter);
-        listener = new CustomScrollListener(totalView, fab);
+        listener = new CustomScrollListener(this);
         year.setText(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
         todaysDate.setText(DateUtils.formatDateTime(getContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
     }
@@ -184,15 +184,25 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         return getActivity();
     }
 
+    public void showFab() {
+        fab.animate().scaleX(1.0f).scaleY(1.0f).start();
+    }
+
+    public void hideFab() {
+        fab.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateInterpolator()).start();
+    }
+
 
     private static class CustomScrollListener extends RecyclerView.OnScrollListener {
 
         private final View totalView;
         private final View fab;
+        private final ExpenseFragment fragment;
 
-        public CustomScrollListener(View totalView, View fab) {
-            this.totalView = totalView;
-            this.fab = fab;
+        public CustomScrollListener(ExpenseFragment fragment) {
+            this.totalView = fragment.totalView;
+            this.fab = fragment.fab;
+            this.fragment = fragment;
         }
 
         @Override
@@ -200,12 +210,12 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
             String scrollState;
             switch (newState) {
                 case SCROLL_STATE_DRAGGING:
-                    fab.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateInterpolator()).start();
+                    fragment.hideFab();
                     scrollState = "dragging";
                     break;
                 case SCROLL_STATE_IDLE:
                     scrollState = "idle";
-                    fab.animate().scaleX(1.0f).scaleY(1.0f).start();
+                    fragment.showFab();
                     break;
                 case SCROLL_STATE_SETTLING:
                     scrollState = "settling";
