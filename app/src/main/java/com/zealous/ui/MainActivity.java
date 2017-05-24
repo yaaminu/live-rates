@@ -21,6 +21,7 @@ import com.zealous.expense.ExpenseFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Collections;
 import java.util.Map;
@@ -144,7 +145,7 @@ public class MainActivity extends SearchActivity {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Object event) {
         if (event instanceof Map) {
             if (((Map) event).containsKey(EVENT_RATE_SELECTED)) {

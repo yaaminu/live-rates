@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,133 +9,141 @@
     android:paddingTop="@dimen/default_gap">
 
     <LinearLayout
-        android:id="@+id/expenditure_range"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/oval_spinner_bg"
-        android:clickable="true"
-        android:descendantFocusability="beforeDescendants"
-        android:gravity="center"
-        android:minWidth="200dp">
-
-        <TextView
-            android:id="@+id/expenditure_range_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_gap"
-            android:layout_marginRight="@dimen/default_gap"
-            android:layout_weight="1"
-            android:background="@color/transparent"
-            android:clickable="false"
-            android:entries="@array/expense_range"
-            android:gravity="center"
-            android:paddingLeft="@dimen/default_gap"
-            android:paddingRight="@dimen/default_gap"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            tools:text="Today" />
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:clickable="false"
-            android:contentDescription="@string/drop_down_icon"
-            android:src="@drawable/ic_arrow_drop_down_circle_black_24dp"
-            tools:ignore="RtlHardcoded" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/total_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/expenditure_range"
-        android:layout_marginBottom="@dimen/default_gap"
-        android:layout_marginTop="@dimen/default_gap"
-        android:background="@color/light_violet">
-
-
-        <TextView
-            android:id="@+id/total_expenditure"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_gap"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="@dimen/default_gap"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/otherRatesPrimary"
-            tools:ignore="RtlHardcoded"
-            tools:text="Total Expenditure - $75.3" />
-
-        <TextView
-            android:id="@+id/monthly_budget"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_gap"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:padding="@dimen/default_gap"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/otherRatesPrimary"
-            tools:ignore="RtlHardcoded"
-            tools:text="Monthly Budget - $1234.00" />
-    </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/total_view"
-        android:layout_marginRight="@dimen/default_gap"
-        tools:ignore="RtlHardcoded"
-        tools:listitem="@layout/expense_list_item" />
-
-    <TextView
-        android:id="@+id/year"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/expenditure_range"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginRight="@dimen/default_gap"
-        android:layout_marginTop="@dimen/default_gap"
-        android:background="@color/transparent"
         android:gravity="center_vertical"
-        android:maxLength="5"
-        android:paddingTop="@dimen/default_gap"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        tools:ignore="RtlHardcoded,RtlSymmetry"
-        tools:text="2017" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/today_s_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/expenditure_range"
-        android:layout_marginLeft="@dimen/default_gap"
-        android:layout_marginTop="@dimen/default_gap"
-        android:maxLength="12"
-        android:paddingTop="@dimen/default_gap"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textColor="@color/white"
-        tools:ignore="RelativeOverlap,RtlHardcoded"
-        tools:text="12 Feb" />
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/default_gap"
+            android:layout_marginRight="@dimen/default_gap"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/today_s_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/default_gap"
+                android:maxLength="12"
+                android:paddingTop="@dimen/default_gap"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@color/white"
+                tools:ignore="RelativeOverlap,RtlHardcoded"
+                tools:text="12 Feb" />
+
+            <LinearLayout
+                android:id="@+id/expenditure_range"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/oval_spinner_bg"
+                android:clickable="true"
+                android:descendantFocusability="beforeDescendants"
+                android:gravity="center"
+                android:minWidth="200dp">
+
+                <TextView
+                    android:id="@+id/expenditure_range_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/default_gap"
+                    android:layout_marginRight="@dimen/default_gap"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:clickable="false"
+                    android:entries="@array/expense_range"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/default_gap"
+                    android:paddingRight="@dimen/default_gap"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    tools:text="Today" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:clickable="false"
+                    android:contentDescription="@string/drop_down_icon"
+                    android:src="@drawable/ic_arrow_drop_down_circle_black_24dp"
+                    tools:ignore="RtlHardcoded" />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginLeft="@dimen/default_gap"
+                android:background="@color/transparent"
+                android:maxLength="5"
+                android:paddingTop="@dimen/default_gap"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                tools:ignore="RtlHardcoded,RtlSymmetry"
+                tools:text="2017" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/total_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_gap"
+            android:layout_marginTop="@dimen/default_gap"
+            android:background="@color/light_violet">
+
+
+            <TextView
+                android:id="@+id/total_expenditure"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/default_gap"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/default_gap"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/otherRatesPrimary"
+                tools:ignore="RtlHardcoded"
+                tools:text="Total Expenditure - $75.3" />
+
+            <TextView
+                android:id="@+id/monthly_budget"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/default_gap"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/default_gap"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/otherRatesPrimary"
+                tools:ignore="RtlHardcoded"
+                tools:text="Monthly Budget - $1234.00" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/total_view"
+            android:layout_marginRight="@dimen/default_gap"
+            tools:ignore="RtlHardcoded"
+            tools:listitem="@layout/expense_list_item" />
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:contentDescription="@string/add"
         android:src="@drawable/ic_add_violet_24dp"
         app:backgroundTint="@color/white"
         app:fabSize="mini"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
-</RelativeLayout>
+</FrameLayout>

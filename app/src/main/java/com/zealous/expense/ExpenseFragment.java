@@ -1,18 +1,19 @@
 package com.zealous.expense;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.TextView;
 
 import com.zealous.R;
@@ -25,7 +26,6 @@ import com.zealous.utils.PLog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.List;
@@ -35,6 +35,10 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 
 /**
  * @author by yaaminu on 4/8/17.
@@ -69,6 +73,12 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     TextView todaysDate;
     @Bind(R.id.year)
     TextView year;
+
+    @Bind(R.id.header)
+    View totalView;
+    @Bind(R.id.fab)
+    View fab;
+    private CustomScrollListener listener;
 
     @Override
     protected int getLayout() {
@@ -109,19 +119,23 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     public void onResume() {
         super.onResume();
         eventBus.register(this);
+        expenseList.addOnScrollListener(listener);
     }
 
     @Override
     public void onPause() {
         eventBus.unregister(this);
+        expenseList.removeOnScrollListener(listener);
         super.onPause();
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         expenseList.setLayoutManager(layoutManager);
         expenseList.setAdapter(adapter);
+        listener = new CustomScrollListener(totalView, fab);
         year.setText(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
         todaysDate.setText(DateUtils.formatDateTime(getContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
     }
@@ -167,5 +181,95 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     @Override
     public Activity getCurrentActivity() {
         return getActivity();
+    }
+
+
+    private static class CustomScrollListener extends RecyclerView.OnScrollListener {
+
+        private final View totalView;
+        private final View fab;
+        private int lastDy;
+
+        public CustomScrollListener(View totalView, View fab) {
+            this.totalView = totalView;
+            this.fab = fab;
+        }
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            String scrollState;
+            switch (newState) {
+                case SCROLL_STATE_DRAGGING:
+                    fab.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateInterpolator()).start();
+                    scrollState = "dragging";
+                    break;
+                case SCROLL_STATE_IDLE:
+                    scrollState = "idle";
+                    fab.animate().scaleX(1.0f).scaleY(1.0f).start();
+                    break;
+                case SCROLL_STATE_SETTLING:
+                    scrollState = "settling";
+                    break;
+                default:
+                    scrollState = "unknown";
+                    break;
+            }
+            PLog.d(TAG, "scroll state: %s", scrollState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            PLog.d(TAG, "dx: %d, dy: %d", dx, dy);
+            lastDy += dy;
+            PLog.d(TAG, "cummulative dy: %d", lastDy);
+            if (Math.abs(lastDy) >= totalView.getHeight()) {
+                if (lastDy < 0) { //scrolling up
+                    //animate totalView into view
+                    //animate fab view into view
+                    totalView.setTranslationY(0);
+                    totalView.setVisibility(View.VISIBLE);
+//                    totalView.animate().translationY(totalView.getHeight())
+//                            .setInterpolator(new AccelerateInterpolator())
+//                            .start();
+                } else { //scrolling down
+                    //animate totalView out of view;
+                    //animate fab view out of view
+                    lastDy = 0;
+                    totalView.animate().translationY(-totalView.getHeight())
+                            .setInterpolator(new AccelerateInterpolator())
+                            .setListener(new AnimatorListenerImpl(totalView, true)).start();
+                }
+            }
+        }
+    }
+
+    private static class AnimatorListenerImpl implements Animator.AnimatorListener {
+
+        private final View target;
+        private final boolean hideOnComplete;
+
+        public AnimatorListenerImpl(View target, boolean hideOnComplete) {
+            this.target = target;
+            this.hideOnComplete = hideOnComplete;
+        }
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            target.setVisibility(hideOnComplete ? View.GONE : View.VISIBLE);
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
     }
 }
