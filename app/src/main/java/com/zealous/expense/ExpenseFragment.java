@@ -239,7 +239,7 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
                     //animate totalView out of view;
                     totalView.animate().translationY(-totalView.getHeight())
                             .setInterpolator(new DecelerateInterpolator())
-                            .setDuration(750)
+                            .setDuration(200)
                             .setListener(new AnimatorListenerImpl(totalView, true)).start();
                 }
             }
