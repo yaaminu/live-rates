@@ -25,7 +25,6 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_gap"
             android:layout_weight="1"
             android:orientation="vertical"
             tools:ignore="NestedWeights,RtlHardcoded">
@@ -34,7 +33,8 @@
                 android:id="@+id/tv_expense_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+                android:layout_marginLeft="@dimen/default_gap"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:textColor="@color/otherRatesPrimary"
                 tools:text="-$52.29" />
 
@@ -42,8 +42,10 @@
                 android:id="@+id/expense_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/default_gap"
                 android:ellipsize="middle"
                 android:lines="@integer/expenditure_description_lines"
+                android:paddingTop="4dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:textColor="@color/white"
                 tools:text="Expenditure will appear here" />
@@ -52,11 +54,12 @@
                 android:id="@+id/tv_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
                 android:drawableLeft="@drawable/ic_place_black_24dp"
                 android:ellipsize="middle"
                 android:gravity="center_vertical"
                 android:lines="1"
-                android:paddingTop="@dimen/default_gap"
+                android:paddingTop="4dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:textColor="@color/faint_voilet"
                 tools:ignore="RtlHardcoded"
