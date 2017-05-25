@@ -180,7 +180,10 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
         switch (type) {
             case RANGE_CUSTOM:
                 PLog.w(TAG, "custom range not supported");
-                //fall through
+                //we are returning since 1970 - to next year. This is to capture any future expense added while
+                //the app is opened. Unless the app is left open in active state for a whole year (yes a whole year)
+                //we shouldn't be screwed.
+                return new NonNullTuple<>(0L, System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365));
             case RANGE_TODAY:
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, 0);

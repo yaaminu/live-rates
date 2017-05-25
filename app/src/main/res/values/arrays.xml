@@ -19,7 +19,7 @@
         <item>This Week</item>
         <item>This Month</item>
         <item>This Year</item>
-        <item>Custom Date</item>
+        <item>All Expenses</item>
     </string-array>
     <string-array name="category_long_click_context_menu">
         <item>Update</item>
