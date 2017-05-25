@@ -60,9 +60,9 @@ public class BaseNewsProvider {
         sources.put("http://www.myjoyonline.com/pages/rss/site_business.xml", R.color.my_joy_online_color);
         sources.put("http://rss.cnn.com/rss/money_news_international.rss", R.color.bbc_color);
         sources.put("http://feeds.bbci.co.uk/news/business/rss.xml", R.color.bbc_color);
-        sources.put("http://www.economist.com/sections/business-finance/rss.xml", R.color.otherRatesPrimary);
-        sources.put("http://www.economist.com/sections/economics/rss.xml", R.color.otherRatesPrimary);
-        sources.put("http://www.economist.com/topics/banking/index.xml", R.color.otherRatesPrimary);
+        sources.put("http://www.economist.com/sections/business-finance/rss.xml", R.color.orange);
+        sources.put("http://www.economist.com/sections/economics/rss.xml", R.color.orange);
+        sources.put("http://www.economist.com/topics/banking/index.xml", R.color.orange);
         return sources;
     }
 

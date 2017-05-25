@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/default_gap"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="@color/otherRatesPrimary"
+                android:textColor="@color/orange"
                 tools:text="-$52.29" />
 
             <TextView
