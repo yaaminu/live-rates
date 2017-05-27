@@ -8,10 +8,10 @@ import android.view.View;
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 import com.zealous.utils.GenericUtils;
-import com.zealous.utils.ViewUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -20,6 +20,8 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 
 import static com.zealous.utils.GenericUtils.getString;
+import static com.zealous.utils.ViewUtils.hideViews;
+import static com.zealous.utils.ViewUtils.showViews;
 
 /**
  * Created by yaaminu on 4/14/17.
@@ -101,11 +103,18 @@ public class ExchangeRateAdapterDelegateImpl implements ExchangeRatesListAdapter
                             ExchangeRate.FIELD_CURRENCY_NAME, Sort.ASCENDING);
         }
         if (ret.isEmpty()) {
-            com.zealous.utils.ViewUtils.showViews(fragment.emptyView);
-            ViewUtils.hideViews(fragment.recyclerView);
+            showViews(fragment.emptyView);
+            showViews(fragment.tvLastUpdated);
+            hideViews(fragment.recyclerView);
         } else {
-            ViewUtils.hideViews(fragment.emptyView);
-            ViewUtils.showViews(fragment.recyclerView);
+            if (System.currentTimeMillis() - ExchangeRateManager.lastUpdated()
+                     >= TimeUnit.DAYS.toMillis(2)) {
+                showViews(fragment.tvLastUpdated);
+            } else {
+                hideViews(fragment.tvLastUpdated);
+            }
+            hideViews(fragment.emptyView);
+            showViews(fragment.recyclerView);
         }
         return ret;
     }
