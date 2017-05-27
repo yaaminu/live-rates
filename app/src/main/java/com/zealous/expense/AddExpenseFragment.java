@@ -382,6 +382,7 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         }
         adapter.notifyDataChanged("");
         this.note.setText(description);
+        this.note.setSelection(description.length());
         this.amount.setText(amount);
         this.amount.setSelection(amount.length());
         this.currency.setText(currency);
