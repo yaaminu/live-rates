@@ -412,12 +412,12 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return HistoricalRateMontFragment.create(currentYear, position, activity.getDouble(activity.currencyToRate.getText().toString()), to, from);
+            return HistoricalRateMontFragment.create(currentYear, currentMonth - position, activity.getDouble(activity.currencyToRate.getText().toString()), to, from);
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return titles[position];
+            return titles[currentMonth - position];
         }
 
         @Override
