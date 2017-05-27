@@ -129,13 +129,28 @@
                 tools:text="Monthly Budget - $1234.00" />
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/default_gap"
-            tools:ignore="RtlHardcoded"
-            tools:listitem="@layout/expense_list_item" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_horizontal"
+                android:text="@string/no_expenses"
+                android:textColor="@color/white" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/default_gap"
+                android:visibility="visible"
+                tools:ignore="RtlHardcoded"
+                tools:listitem="@layout/expense_list_item" />
+        </FrameLayout>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

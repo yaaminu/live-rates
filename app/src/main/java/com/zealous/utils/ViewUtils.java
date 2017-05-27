@@ -40,4 +40,9 @@ public class ViewUtils {
             view.setVisibility(flag ? View.VISIBLE : View.GONE);
         }
     }
+
+    public static void showByFlag(boolean show, View view) {
+        if (view == null) return;
+        view.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
 }

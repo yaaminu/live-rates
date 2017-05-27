@@ -137,6 +137,7 @@
     <string name="attachment_title">Attachment %d</string>
     <string name="duplicate_attachment">This file is already attached</string>
     <string name="stale_rates">Stale rates, connect to the internet to get latest rates</string>
+    <string name="no_expenses">No Expenses</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

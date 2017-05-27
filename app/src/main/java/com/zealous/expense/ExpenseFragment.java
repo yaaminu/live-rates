@@ -40,6 +40,7 @@ import butterknife.OnClick;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
+import static com.zealous.utils.ViewUtils.showByFlag;
 
 /**
  * @author by yaaminu on 4/8/17.
@@ -63,6 +64,8 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
 
     @Bind(R.id.recycler_view)
     RecyclerView expenseList;
+    @Bind(R.id.empty_view)
+    TextView emptyView;
 
     @Bind(R.id.total_expenditure)
     TextView totalExpenditure;
@@ -170,6 +173,8 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         delegate.refreshDataSet(expenditures, adapter);
         this.totalBudget.setText(getString(R.string.total_budget, totalBudget));
         this.totalExpenditure.setText(getString(R.string.total_expenditire, totalExpenditure));
+        showByFlag(expenditures.isEmpty(), emptyView);
+        showByFlag(!expenditures.isEmpty(), expenseList);
         rangeText.setText(rangeName);
     }
 
