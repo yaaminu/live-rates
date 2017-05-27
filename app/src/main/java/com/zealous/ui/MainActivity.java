@@ -6,6 +6,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 
@@ -50,6 +51,7 @@ public class MainActivity extends SearchActivity {
     Lazy<ToolsFragment> toolsFragmentLazy;
     @Inject
     Lazy<BusinessNewsFragmentParent> businessNewsFragmentLazy;
+    private Fragment previousFragment;
 
     @Override
     protected void doCreate(@Nullable Bundle savedInstanceState) {
@@ -60,10 +62,21 @@ public class MainActivity extends SearchActivity {
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(@IdRes int tabId) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, getFragment(tabId), String.valueOf(tabId))
-                        .commit();
+                Fragment tmp = getFragment(tabId);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.add(R.id.container, tmp, String.valueOf(tabId))
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                transaction.commit();
+                transaction = getSupportFragmentManager()
+                        .beginTransaction();
+
+                if (previousFragment != null) {
+                    transaction.remove(previousFragment);
+                    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                    transaction.commit();
+                }
+                previousFragment = tmp;
                 updateToolbar(tabId);
                 supportInvalidateOptionsMenu();
             }
