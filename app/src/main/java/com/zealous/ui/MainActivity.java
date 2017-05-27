@@ -58,7 +58,6 @@ public class MainActivity extends SearchActivity {
         super.doCreate(savedInstanceState);
         DaggerMainActivityComponent.create()
                 .inject(this);
-        bus.register(this);
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(@IdRes int tabId) {
@@ -186,16 +185,17 @@ public class MainActivity extends SearchActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        bus.register(this);
     }
 
     @Override
     protected void onPause() {
+        bus.unregister(this);
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        bus.unregister(this);
         super.onDestroy();
     }
 
