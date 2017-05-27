@@ -30,8 +30,13 @@ public class ExchangeRateFragment extends BaseFragment {
 
     @Inject
     EventBus bus;
-
+    @Inject
+    Realm realm;
+    @Inject
     ExchangeRatesListAdapter adapter;
+    @Inject
+    ExchangeRateManager ratesManager;
+
     private final RealmChangeListener<Realm> changeListener = new RealmChangeListener<Realm>() {
         @Override
         public void onChange(Realm element) {
@@ -45,7 +50,6 @@ public class ExchangeRateFragment extends BaseFragment {
     @Bind(R.id.tv_last_updated)
     TextView tvLastUpdated;
     String filter;
-    private Realm realm;
 
     @Override
     protected int getLayout() {
@@ -55,12 +59,12 @@ public class ExchangeRateFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerExchangeRateFragmentComponent.create()
+         DaggerExchangeRateFragmentComponent.builder()
+                .exchangeRateFragmentModule(new ExchangeRateFragmentModule(this))
+                .build()
                 .inject(this);
-        realm = ExchangeRate.Realm(getContext());
-        adapter = new ExchangeRatesListAdapter(new ExchangeRateAdapterDelegateImpl(this, realm));
         bus.register(this);
-        new ExchangeRateManager(bus).loadRates();
+        ratesManager.loadRates();
     }
 
     @Override

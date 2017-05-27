@@ -11,7 +11,7 @@ import dagger.Component;
  */
 
 @Singleton
-@Component(modules = MainActivityEventBusProvider.class)
+@Component(modules = {MainActivityEventBusProvider.class, ExchangeRateFragmentModule.class})
 public interface ExchangeRateFragmentComponent {
     void inject(ExchangeRateFragment fragment);
 }
