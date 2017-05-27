@@ -37,7 +37,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_columnSpan="2"
                 tools:text="United Arab Emirates Dinar" />
@@ -51,8 +50,8 @@
                 android:id="@+id/tv_rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="end"
-                android:textSize="14sp"
+                android:gravity="start"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_columnWeight="1.0"
                 app:layout_gravity="bottom"
