@@ -83,6 +83,11 @@ public class MainActivity extends SearchActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     private void updateToolbar(@IdRes int id) {
         final ActionBar supportActionBar = getSupportActionBar();
         if (id == R.id.tab_expenses) {

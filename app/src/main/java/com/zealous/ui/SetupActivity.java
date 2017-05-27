@@ -2,6 +2,8 @@ package com.zealous.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
@@ -11,6 +13,7 @@ import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.exchangeRates.ExchangeRateManager;
 import com.zealous.expense.BaseExpenditureProvider;
 import com.zealous.expense.ExpenditureCategory;
+import com.zealous.utils.Config;
 import com.zealous.utils.TaskManager;
 import com.zealous.utils.ThreadUtils;
 
@@ -21,14 +24,38 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
 public class SetupActivity extends AppCompatActivity {
+    public static final String KEY_ZEALOUS_SETUP_COMPLETED = "zealous.setup.completed";
     @Bind(R.id.app_version)
     TextView appVersion;
+
+    private final Runnable initRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (ThreadUtils.isMainThread()) {
+                gotoMainActivity();
+            } else {
+                if (!isSetup()) {
+                    setupRates();
+                    setupExpenditureCategories();
+                    Config.getApplicationWidePrefs().edit()
+                            .putBoolean(KEY_ZEALOUS_SETUP_COMPLETED, true)
+                            .apply();
+                    new Handler(Looper.getMainLooper())
+                            .postDelayed(this, TimeUnit.SECONDS.toMillis(3));
+                } else {
+                    runOnUiThread(this);
+                }
+            }
+        }
+
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,28 +68,19 @@ public class SetupActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        TaskManager.executeNow(new Runnable() {
-            @Override
-            public void run() {
-                if (ThreadUtils.isMainThread()) {
-                    gotoMainActivity();
-                } else {
-                    setupRates(this);
-                    setupExpenditureCategories();
-                    runOnUiThread(this);
-                }
-            }
-
-        }, false);
+        TaskManager.executeNow(initRunnable, false);
     }
 
-    void setupRates(Runnable target) {
+    public static boolean isSetup() {
+        return Config.getApplicationWidePrefs().getBoolean(KEY_ZEALOUS_SETUP_COMPLETED, false);
+    }
+
+    void setupRates() {
         Realm realm = ExchangeRate.Realm(SetupActivity.this);
         try {
             if (realm.where(ExchangeRate.class).count() < 120) {
                 ExchangeRateManager.initialiseRates(SetupActivity.this, realm);
             }
-            runOnUiThread(target);
         } finally {
             realm.close();
         }
