@@ -111,9 +111,9 @@
                         android:id="@+id/tv_currency_to"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
                         android:ellipsize="end"
                         android:gravity="center"
-                        android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
                         android:paddingTop="2.0dip"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         android:textSize="12.0sp"
@@ -264,6 +264,16 @@
                             tools:ignore="MissingPrefix" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/stale_rates"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="@dimen/default_gap"
+                    android:paddingRight="@dimen/default_gap"
+                    android:text="@string/stale_rates"
+                    android:textColor="@color/red" />
 
                 <RelativeLayout
                     android:layout_width="fill_parent"

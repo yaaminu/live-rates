@@ -43,7 +43,7 @@
     <string name="_7_days_ago">7 days ago</string>
     <string name="$28_days_ago">28 days ago</string>
     <string name="back">Back</string>
-    <string name="today_title">Today, %s</string>
+    <string name="today_title">%s</string>
     <string name="missing">\?\?</string>
     <string name="historical_rates_title">Rates This Year</string>
     <string name="select_currency">Selected Currency</string>
@@ -136,6 +136,7 @@
     <string name="follow_link">Follow this link to read more</string>
     <string name="attachment_title">Attachment %d</string>
     <string name="duplicate_attachment">This file is already attached</string>
+    <string name="stale_rates">Stale rates, connect to the internet to get latest rates</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

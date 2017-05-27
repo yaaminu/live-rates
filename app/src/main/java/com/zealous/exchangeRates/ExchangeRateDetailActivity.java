@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,6 +48,7 @@ import butterknife.OnTextChanged;
 import io.realm.Realm;
 
 import static android.text.format.DateUtils.FORMAT_SHOW_DATE;
+import static android.text.format.DateUtils.FORMAT_SHOW_WEEKDAY;
 import static com.zealous.exchangeRates.ExchangeRate.FORMAT;
 
 public class ExchangeRateDetailActivity extends BaseZealousActivity {
@@ -83,6 +85,9 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     com.github.mikephil.charting.charts.LineChart lineChartView;
     @Bind(R.id.drawer)
     DrawerLayout drawer;
+    @Bind(R.id.stale_rates)
+    TextView staleRates;
+
     List<HistoricalRateTuple> historicalRates;
     boolean selfChanged = false;
     ViewPager pager;
@@ -114,8 +119,16 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         from = from == null ? "" : from;
         realm = ExchangeRate.Realm(this);
         TextView title = ButterKnife.findById(this, R.id.title_today);
-        title.setText(getString(R.string.today_title, DateUtils.formatDateTime(this, System.currentTimeMillis(),
-                FORMAT_SHOW_DATE)));
+        long lastUpdated = ExchangeRateManager.lastUpdated();
+        if (lastUpdated <= 0) {
+            lastUpdated = System.currentTimeMillis();
+        }
+
+        staleRates.setVisibility((lastUpdated > 0 && lastUpdated <= System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+                ? View.VISIBLE : View.GONE);
+
+        title.setText(getString(R.string.today_title, DateUtils.formatDateTime(this, lastUpdated,
+                FORMAT_SHOW_DATE | FORMAT_SHOW_WEEKDAY)));
         historicalRates = new ArrayList<>(28);
         fillRates();
         startWith = getIntent().getStringExtra(EXTRA_START_WITH);
