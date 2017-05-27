@@ -135,6 +135,7 @@
     <string name="home">Home</string>
     <string name="follow_link">Follow this link to read more</string>
     <string name="attachment_title">Attachment %d</string>
+    <string name="duplicate_attachment">This file is already attached</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

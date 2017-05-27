@@ -29,14 +29,18 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+
+import static com.zealous.utils.GenericUtils.getString;
 
 /**
  * Created by yaaminu on 4/14/17.
@@ -45,6 +49,7 @@ import io.realm.RealmResults;
 public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     private static final String TAG = "AddExpenditurePresenter";
     public static final String KEY_OUTPUT_URI = "key_output_uri";
+    public static final int MAX_ATTACHMENTS = 5;
     private final ExpenditureDataSource dataSource;
     private AddExpenseFragment screen;
     private String location;
@@ -52,6 +57,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     private String currency, amount;
     private RealmResults<ExpenditureCategory> categories;
     private String expenditureCategoryName;
+    private Set<String> addedFiles;
 
     @Nullable
     private Uri cameraOutputUri;
@@ -81,7 +87,8 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
         amount = "";
         expenditureCategoryName = "";
         description = "";
-        this.attachments = new ArrayList<>(1);
+        this.attachments = new ArrayList<>(MAX_ATTACHMENTS);
+        addedFiles = new HashSet<>();
     }
 
     @Override
@@ -171,7 +178,7 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
 
     public boolean onAddExpenditure(@NonNull String amount, @NonNull String description, int selectedItemPosition) {
         if (selectedItemPosition < 0 || selectedItemPosition >= categories.size()) {
-            screen.showValidationError(GenericUtils.getString(R.string.no_category_error));
+            screen.showValidationError(getString(R.string.no_category_error));
             return false;
         }
         if (GenericUtils.isEmpty(description)) {
@@ -181,13 +188,13 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
             double tmp = Double.parseDouble(amount);
             long actualAmount = BigDecimal.valueOf(tmp).multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue();
             if (actualAmount <= 0) {
-                screen.showValidationError(GenericUtils.getString(R.string.invalid_amount));
+                screen.showValidationError(getString(R.string.invalid_amount));
                 return false;
             } else {
                 return doFinallyAdd(description, selectedItemPosition, actualAmount);
             }
         } catch (NumberFormatException e) {
-            screen.showValidationError(GenericUtils.getString(R.string.invalid_amount));
+            screen.showValidationError(getString(R.string.invalid_amount));
             return false;
         }
     }
@@ -311,15 +318,22 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
     }
 
     public synchronized void addAttachment(@NonNull String path) {
+        if (attachments.size() == MAX_ATTACHMENTS) {
+            screen.showValidationError(R.string.too_many_attachments);
+            return;
+        }
         File file = new File(path);
-        if (!file.exists()) {
+        if (addedFiles.contains(file.getAbsolutePath())) {
+            screen.showValidationError(getString(R.string.duplicate_attachment));
+        } else if (!file.exists()) {
             screen.showValidationError(screen.getCurrentActivity().getString(R.string.path_not_found, path));
         } else {
             try {
-                attachments.add(
+                attachments.add(0,
                         new Attachment(file.getName(),
                                 org.apache.commons.io.FileUtils.readFileToByteArray(file),
                                 FileUtils.getMimeType(file.getAbsolutePath())));
+                addedFiles.add(file.getAbsolutePath());
                 updateUI();
             } catch (IOException | ZealousException e) {
                 screen.showValidationError(e.getMessage());
