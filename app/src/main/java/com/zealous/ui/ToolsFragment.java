@@ -81,10 +81,9 @@ public class ToolsFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        items = new ArrayList<>(3);
+        items = new ArrayList<>(2);
         items.add(new Tuple(getString(R.string.exchange_rate_calculator), getString(R.string.exchange_rate_calc_description)));
         items.add(new Tuple(getString(R.string.interest_calc), getString(R.string.interest_calc_des)));
-        items.add(new Tuple(getString(R.string.tax_calc), getString(R.string.tax_calc_des)));
     }
 
     @Override
