@@ -59,6 +59,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     public static final int PICK_EXCHANGE_RATE_REQUEST_FROM = 1001;
     public static final String EXTRA_START_WITH = "startWith";
     private static final int PICK_EXCHANGE_RATE_REQUEST_TO = 1002;
+    public static final String EXTRA_START_WITH_VALUE = "extra_start_with_value";
     @NonNull
     private final EventBus eventBus = EventBus.builder().build();
     @NonNull
@@ -99,6 +100,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     private String to;
     private String from;
     private String startWith;
+    private String startWithValue;
 
     @Override
     protected boolean hasParent() {
@@ -115,6 +117,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
         super.doCreate(savedInstanceState);
         to = getIntent().getStringExtra(EXTRA_CURRENCY_TARGET);
         from = getIntent().getStringExtra(EXTRA_CURRENCY_SOURCE);
+        startWithValue = getIntent().getStringExtra(EXTRA_START_WITH_VALUE);
         to = to == null ? "" : to;
         from = from == null ? "" : from;
         realm = ExchangeRate.Realm(this);
@@ -165,14 +168,23 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     protected void onResume() {
         super.onResume();
         boolean toChanged = false;
-        if (!GenericUtils.isEmpty(startWith)) {
+        if (!GenericUtils.isEmpty(startWithValue)) {
+            selfChanged = true;
+            toChanged = false;
+            currencyFromRate.setText(startWithValue);
+            currencyFromRate.setSelection(currencyFromRate.getText().length());
+            startWithValue = null; //next on resume will not use it
+            selfChanged = false;
+        } else if (!GenericUtils.isEmpty(startWith)) {
             selfChanged = true;
             if (startWith.equals(to)) {
                 toChanged = true;
                 currencyToRate.setText(R.string.base);
+                currencyFromRate.setSelection(currencyToRate.getText().length());
             } else if (startWith.equals(from)) {
                 toChanged = false;
                 currencyFromRate.setText(R.string.base);
+                currencyFromRate.setSelection(currencyFromRate.getText().length());
             }
             selfChanged = false;
         }
@@ -269,11 +281,13 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
             tmp = BigDecimal.valueOf(inputTo).divide(BigDecimal.valueOf(rateTo.getRate()), MathContext.DECIMAL128)
                     .multiply(BigDecimal.valueOf(rateFrom.getRate())).doubleValue();
             currencyFromRate.setText(FORMAT.format(tmp));
+            currencyFromRate.setSelection(currencyFromRate.getText().length());
             inputFrom = tmp;
         } else {
             tmp = BigDecimal.valueOf(inputFrom).divide(BigDecimal.valueOf(rateFrom.getRate()), MathContext.DECIMAL128)
                     .multiply(BigDecimal.valueOf(rateTo.getRate())).doubleValue();
             currencyToRate.setText(FORMAT.format(tmp));
+            currencyToRate.setSelection(currencyToRate.getText().length());
             inputTo = tmp;
         }
         if (!historicalRates.isEmpty() && inputFrom > 0) {
@@ -296,7 +310,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
 
     double getDouble(String text) {
         try {
-            return Double.parseDouble(text);
+            return Double.parseDouble(GenericUtils.cleanNumberText(text));
         } catch (NumberFormatException e) {
             PLog.e(TAG, e.getMessage(), e);
             return 0.00;

@@ -73,4 +73,7 @@ public class GenericUtils {
         return builder.toString();
     }
 
+    public static String cleanNumberText(String text) {
+        return text.replaceAll("[^\\d\\.]+", "");
+    }
 }

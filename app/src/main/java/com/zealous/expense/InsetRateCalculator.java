@@ -17,6 +17,7 @@ import com.zealous.R;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.exchangeRates.ExchangeRateDetailActivity;
 import com.zealous.utils.GenericUtils;
+import com.zealous.utils.PLog;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -24,6 +25,7 @@ import java.math.MathContext;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
+import static android.content.ContentValues.TAG;
 import static com.zealous.exchangeRates.ExchangeRate.FORMAT;
 
 /**
@@ -127,6 +129,15 @@ public class InsetRateCalculator extends BottomSheetDialogFragment {
                 getDialog().dismiss();
                 Intent intent = new Intent(getContext(), ExchangeRateDetailActivity.class);
                 intent.putExtras(arguments);
+                String text = etCurrencyFromRate.getText().toString().trim();
+                try {
+                    double val = Double.parseDouble(GenericUtils.cleanNumberText(text));
+                    if (val > 0) {
+                        intent.putExtra(ExchangeRateDetailActivity.EXTRA_START_WITH_VALUE, String.valueOf(val));
+                    }
+                } catch (NumberFormatException e) {
+                    PLog.e(TAG, e.getMessage(), e);
+                }
                 getActivity().startActivity(intent);
             }
         });
@@ -140,7 +151,7 @@ public class InsetRateCalculator extends BottomSheetDialogFragment {
             return;
         }
         selfChanged = true;
-        text = text.replaceAll("[^\\d\\.]+", "");
+        text = GenericUtils.cleanNumberText(text);
         try {
             if (toRate.getRate() == 0) {
                 throw new NumberFormatException();
@@ -159,7 +170,7 @@ public class InsetRateCalculator extends BottomSheetDialogFragment {
             return;
         }
         selfChanged = true;
-        text = text.replaceAll("[^\\d\\.]+", "");
+        text = GenericUtils.cleanNumberText(text);
         try {
             double val = Double.parseDouble(text);
             if (toRate.getRate() == 0) {
