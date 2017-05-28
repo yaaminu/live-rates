@@ -180,7 +180,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
             if (startWith.equals(to)) {
                 toChanged = true;
                 currencyToRate.setText(R.string.base);
-                currencyFromRate.setSelection(currencyToRate.getText().length());
+                currencyToRate.setSelection(currencyToRate.getText().length());
             } else if (startWith.equals(from)) {
                 toChanged = false;
                 currencyFromRate.setText(R.string.base);

@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zealous.BuildConfig;
@@ -34,6 +37,8 @@ public class SetupActivity extends AppCompatActivity {
     public static final String KEY_ZEALOUS_SETUP_COMPLETED = "zealous.setup.completed";
     @Bind(R.id.app_version)
     TextView appVersion;
+    @Bind(R.id.iv_app_icon)
+    ImageView appIcon;
 
     private final Runnable initRunnable = new Runnable() {
         @Override
@@ -68,7 +73,43 @@ public class SetupActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        TaskManager.executeNow(initRunnable, false);
+        if (Config.getApplicationWidePrefs().getBoolean(KEY_ZEALOUS_SETUP_COMPLETED, false)) {
+            TaskManager.executeNow(initRunnable, false);
+        } else {
+            //animate the app icon,
+            Animation set = AnimationUtils.loadAnimation(this, R.anim.fade_rotate),
+                    fadeIn = AnimationUtils.loadAnimation(this, R.anim.move_up);
+            fadeIn.setDuration(1000);
+
+            set.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            ButterKnife.findById(this, R.id.tv_job_details).startAnimation(fadeIn);
+            ButterKnife.findById(this, R.id.app_version).startAnimation(fadeIn);
+            ButterKnife.findById(this, R.id.app_name).startAnimation(fadeIn);
+            appIcon.startAnimation(set);
+            //show app name,version, and copyright after animation end
+            new Handler(Looper.getMainLooper())
+                    .postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            TaskManager.executeNow(initRunnable, false);
+                        }
+                    }, TimeUnit.SECONDS.toMillis(9));
+
+        }
     }
 
     public static boolean isSetup() {
