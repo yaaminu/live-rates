@@ -2,7 +2,6 @@ package com.zealous.exchangeRates;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.format.DateUtils;
 import android.view.View;
 
 import com.zealous.R;
@@ -19,7 +18,6 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-import static com.zealous.utils.GenericUtils.getString;
 import static com.zealous.utils.ViewUtils.hideViews;
 import static com.zealous.utils.ViewUtils.showViews;
 
@@ -30,21 +28,7 @@ import static com.zealous.utils.ViewUtils.showViews;
 public class ExchangeRateAdapterDelegateImpl implements ExchangeRatesListAdapter.Delegate {
     private final ExchangeRate baseRate;
     private final ExchangeRateFragment fragment;
-    final RealmChangeListener<RealmResults<ExchangeRate>> changeListener = new RealmChangeListener<RealmResults<ExchangeRate>>() {
-        @Override
-        public void onChange(RealmResults<ExchangeRate> element) {
-            fragment.adapter.notifyDataChanged(fragment.filter);
-            long lastUpdated = ExchangeRateManager.lastUpdated();
-            long now = System.currentTimeMillis();
-            if (now - lastUpdated < 60 * 1000) {
-                fragment.tvLastUpdated.setText(getString(R.string.last_updated_s, getString(R.string.now)));
-            } else {
-                fragment.tvLastUpdated.setText(
-                        getString(R.string.last_updated_s, (lastUpdated <= 0 ? getString(R.string.last_updated_never) :
-                                DateUtils.getRelativeTimeSpanString(lastUpdated, now, DateUtils.MINUTE_IN_MILLIS))));
-            }
-        }
-    };
+
     private final RealmResults<ExchangeRate> exchangeRates;
     private final Realm realm;
 
@@ -59,7 +43,13 @@ public class ExchangeRateAdapterDelegateImpl implements ExchangeRatesListAdapter
         exchangeRates = realm.where(ExchangeRate.class).
                 findAllSortedAsync(ExchangeRate.FIELD_WATCHING, Sort.DESCENDING,
                         ExchangeRate.FIELD_CURRENCY_NAME, Sort.ASCENDING);
-        exchangeRates.addChangeListener(changeListener);
+        exchangeRates.addChangeListener(new RealmChangeListener<RealmResults<ExchangeRate>>() {
+            @Override
+            public void onChange(RealmResults<ExchangeRate> element) {
+                fragment.adapter.notifyDataChanged("");
+                exchangeRates.removeChangeListener(this);
+            }
+        });
 
     }
 
@@ -106,9 +96,14 @@ public class ExchangeRateAdapterDelegateImpl implements ExchangeRatesListAdapter
             showViews(fragment.emptyView);
             hideViews(fragment.recyclerView, fragment.tvLastUpdated);
         } else {
-            if (System.currentTimeMillis() - ExchangeRateManager.lastUpdated()
+
+            long lastUpdated = ExchangeRateManager.lastUpdated();
+            if (lastUpdated == 0) {
+                fragment.tvLastUpdated.setText(R.string.connect_get_rates_notice);
+            } else if (System.currentTimeMillis() - lastUpdated
                     >= TimeUnit.DAYS.toMillis(2)) {
                 showViews(fragment.tvLastUpdated);
+                fragment.tvLastUpdated.setText(R.string.sale_rates_notice);
             } else {
                 hideViews(fragment.tvLastUpdated);
             }

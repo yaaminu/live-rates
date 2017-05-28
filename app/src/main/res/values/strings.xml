@@ -35,7 +35,6 @@
     <string name="preparing_zealous_notice">Preparing for first use……</string>
     <string name="content_descrip_currency_icon">Currency Icon</string>
     <string name="rate_template" formatted="false">%s %s -> %s %s</string>
-    <string name="last_updated_s">Last updated: %s</string>
     <string name="search">Search</string>
     <string name="hint_search">Search…</string>
     <string name="arrow">Arrow</string>
@@ -141,6 +140,8 @@
     <string name="view_full_details">View more details</string>
     <string name="app_icon">App Icon</string>
     <string name="delete_warning">Are you sure you want to delete this entry?</string>
+    <string name="sale_rates_notice">Stale rates!!! connect to refresh</string>
+    <string name="connect_get_rates_notice">Connect to get latest rates</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

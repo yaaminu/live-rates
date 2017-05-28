@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/red"
         android:gravity="center"
-        android:text="@string/last_updated_s"
+        android:text="stale rates connect to refreshL"
         android:textColor="@color/white"
         android:textStyle="italic"
         tools:ignore="Suspicious0dp" />

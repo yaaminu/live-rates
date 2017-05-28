@@ -49,7 +49,6 @@ public class ExchangeRateFragment extends BaseFragment {
     View emptyView;
     @Bind(R.id.tv_last_updated)
     TextView tvLastUpdated;
-    String filter;
 
     @Override
     protected int getLayout() {
