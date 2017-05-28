@@ -1,6 +1,5 @@
 package com.zealous.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.IdRes;
@@ -19,6 +18,7 @@ import com.zealous.exchangeRates.ExchangeRateDetailActivity;
 import com.zealous.exchangeRates.ExchangeRateFragment;
 import com.zealous.exchangeRates.SearchActivity;
 import com.zealous.expense.ExpenseFragment;
+import com.zealous.expense.InsetRateCalculator;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -173,11 +173,13 @@ public class MainActivity extends SearchActivity {
         if (event instanceof Map) {
             if (((Map) event).containsKey(EVENT_RATE_SELECTED)) {
                 ExchangeRate exchangeRate = ((ExchangeRate) ((Map) event).get(EVENT_RATE_SELECTED));
-                Intent intent = new Intent(this, ExchangeRateDetailActivity.class);
-                intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_SOURCE, "GHS");
-                intent.putExtra(ExchangeRateDetailActivity.EXTRA_START_WITH, exchangeRate.getRate() >= 1 ? "GHS" : exchangeRate.getCurrencyIso());
-                intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_TARGET, exchangeRate.getCurrencyIso());
-                startActivity(intent);
+                Bundle intent = new Bundle(3);
+                intent.putString(ExchangeRateDetailActivity.EXTRA_CURRENCY_SOURCE, "GHS");
+                intent.putString(ExchangeRateDetailActivity.EXTRA_START_WITH, exchangeRate.getRate() >= 1 ? "GHS" : exchangeRate.getCurrencyIso());
+                intent.putString(ExchangeRateDetailActivity.EXTRA_CURRENCY_TARGET, exchangeRate.getCurrencyIso());
+                InsetRateCalculator fragment = new InsetRateCalculator();
+                fragment.setArguments(intent);
+                fragment.show(getSupportFragmentManager(), exchangeRate.getCurrencyIso());
             }
         }
     }

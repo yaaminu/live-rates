@@ -1,12 +1,15 @@
 package com.zealous.exchangeRates;
 
 import android.content.Context;
+import android.support.annotation.DrawableRes;
 
+import com.zealous.R;
 import com.zealous.adapter.ITuple;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -101,4 +104,14 @@ public class ExchangeRate extends RealmObject implements ITuple {
         return watching == 1;
     }
 
+    @DrawableRes
+    public int getCurrencyIcon(Context context) {
+        int res = context.getResources().getIdentifier("drawable/" +
+                        getCurrencyIso().toLowerCase(Locale.US),
+                null, context.getPackageName());
+        if (res == 0) {
+            res = R.drawable.default_flag;
+        }
+        return res;
+    }
 }

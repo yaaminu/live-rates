@@ -12,7 +12,6 @@ import com.zealous.adapter.BaseAdapter;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.Locale;
 
 import butterknife.Bind;
 
@@ -22,23 +21,17 @@ import butterknife.Bind;
 public class ExchangeRatesListAdapter extends BaseAdapter<ExchangeRatesListAdapter.Holder, ExchangeRate> {
 
 
-    private final String packageName;
     private final Delegate delegate;
 
     public ExchangeRatesListAdapter(Delegate delegate) {
         super(delegate);
-        packageName = delegate.context().getPackageName();
         this.delegate = delegate;
     }
 
     @Override
     protected void doBindHolder(Holder holder, int position) {
         ExchangeRate rate = getItem(position);
-        holder.currencyIcon.setImageResource(
-                holder.getContext().getResources().getIdentifier("drawable/" +
-                                rate.getCurrencyIso().toLowerCase(Locale.US),
-                        null, packageName)
-        );
+        holder.currencyIcon.setImageResource(rate.getCurrencyIcon(delegate.context()));
         holder.currencyName.setText(rate.getCurrencyName());
         holder.currencyRate.setText(getText(rate));
     }

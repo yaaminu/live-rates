@@ -227,8 +227,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
             currencyToRate.setTag(to);
             rateTo = realm.where(ExchangeRate.class).equalTo(ExchangeRate.FIELD_CURRENCY_ISO, to).findFirst();
             if (rateTo != null) {
-                currencyIconTo.setImageResource(getResources().getIdentifier("drawable/" + rateTo
-                        .getCurrencyIso().toLowerCase(Locale.US), null, getPackageName()));
+                currencyIconTo.setImageResource(rateTo.getCurrencyIcon(this));
                 currencyTo.setText(rateTo.getCurrencyName());
             } else {
                 currencyTo.setText(R.string.choose_currency);
@@ -241,8 +240,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
             if (rateFrom != null) {
                 currencyFrom.setText(rateFrom.getCurrencyName());
 
-                currencyIconFrom.setImageResource(getResources().getIdentifier("drawable/" + rateFrom
-                        .getCurrencyIso().toLowerCase(Locale.US), null, getPackageName()));
+                currencyIconFrom.setImageResource(rateFrom.getCurrencyIcon(this));
             } else {
                 currencyFrom.setText(R.string.choose_currency);
                 currencyIconFrom.setImageResource(R.drawable.ghs);

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:columnCount="3"
+        app:orientation="vertical"
+        app:rowCount="3">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_currency_icon_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/content_descrip_currency_icon"
+            app:layout_gravity="center_horizontal"
+            tools:src="@drawable/ghs" />
+
+        <TextView
+            android:id="@+id/tv_currency_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:paddingTop="2.0dip"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textSize="12.0sp"
+            app:layout_gravity="center_horizontal"
+            tools:text="Ghanaian Cedis" />
+
+        <EditText
+            android:id="@+id/tv_currency_from_rate"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="@dimen/default_gap"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:maxLength="@integer/currency_name_max"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_columnWeight="1.0"
+            tools:text="1.00" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_currency_icon_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/content_descrip_currency_icon"
+            app:layout_gravity="center_horizontal"
+            tools:src="@drawable/usd" />
+
+        <TextView
+            android:id="@+id/tv_currency_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:paddingTop="2.0dip"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textSize="12.0sp"
+            app:layout_gravity="center_horizontal"
+            tools:text="United states dollars" />
+
+        <EditText
+            android:id="@+id/tv_currency_to_rate"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:maxLength="@integer/currency_name_max"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_columnWeight="1.0"
+            tools:text="1.00" />
+    </android.support.v7.widget.GridLayout>
+
+    <Button
+        android:id="@+id/view_full_screen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@drawable/bg_violet"
+        android:contentDescription="@string/view_full_details"
+        android:drawableRight="@drawable/ic_fullscreen_black_24dp"
+        android:paddingLeft="@dimen/default_gap"
+        android:paddingRight="@dimen/default_gap"
+        android:text="@string/view_full_details"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
+</LinearLayout>
