@@ -27,7 +27,6 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/black"
-                android:textStyle="bold"
                 app:layout_columnSpan="1"
                 tools:text="Inflation shoots up in second quarter" />
 
@@ -88,7 +87,7 @@
             android:layout_marginLeft="@dimen/default_gap"
             android:background="@color/transparent"
             android:contentDescription="@string/bookmark"
-            android:src="@drawable/ic_bookmark_white_24dp"
+            android:src="@drawable/ic_favorite_border_white_24dp"
             tools:ignore="RtlHardcoded" />
 
         <TextView
@@ -98,6 +97,7 @@
             android:layout_weight="1"
             android:gravity="end"
             android:textColor="@color/white"
+            android:textSize="12sp"
             android:textStyle="italic|bold"
             tools:text="myjoyonline.com" />
     </LinearLayout>
