@@ -26,7 +26,7 @@
         <activity android:name=".ui.MainActivity" />
         <activity
             android:name=".exchangeRates.ExchangeRateListActivity"
-            android:label="@string/live_exchange_rates" />
+            android:label="@string/select_currency" />
         <activity android:name=".exchangeRates.ExchangeRateDetailActivity" />
         <activity
             android:name=".bankRates.InterestRateCalculatorActivity"
