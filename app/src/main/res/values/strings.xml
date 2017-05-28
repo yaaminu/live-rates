@@ -51,12 +51,12 @@
     <string name="now">now</string>
     <string name="base">1.00</string>
     <string name="choose_currency">Choose Currency</string>
-    <string name="interest_rate_calculator">Interest Rate Calculator</string>
+    <string name="interest_rate_calculator">Interest Calculator</string>
     <string name="principal">Principal</string>
     <string name="rate_percent">rate %</string>
     <string name="tv_duration_label">Duration</string>
     <string name="interest">Interest</string>
-    <string name="amount">Amount</string>
+    <string name="amount">Total</string>
     <string name="your_bank_s_terms_and_conditions_might_affect_this_value">Note: your bank\'s terms and condition may affect final interest</string>
     <string name="title_today">Today %s</string>
     <string name="interest_amount">Interest\n\n%s</string>

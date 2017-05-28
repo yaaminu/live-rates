@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
-import android.text.format.DateUtils;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,7 +26,7 @@ public class InterestRateCalculatorActivity extends BaseZealousActivity {
     @Bind(R.id.tv_amount)
     TextView amount;
     @NonNull
-    InterestCalculator calculator = new SimpleInterestRateCalculator();
+    InterestCalculator calculator = new CompoundInterestRateCalculator();
 
     @Bind(R.id.sp_days_month_year)
     Spinner durationSpinner;
@@ -36,9 +35,6 @@ public class InterestRateCalculatorActivity extends BaseZealousActivity {
     EditText duration;
     @Bind(R.id.et_rate)
     EditText etRate;
-
-    @Bind(R.id.title_today)
-    TextView title;
 
     @Override
     protected int getLayout() {
@@ -90,29 +86,6 @@ public class InterestRateCalculatorActivity extends BaseZealousActivity {
         durationChanged(duration.getText());
     }
 
-    @OnItemSelected(R.id.sp_rate_type)
-    void onItemSelected(int position) {
-        InterestCalculator tmp = calculator;
-        switch (position) {
-            case 0:
-                calculator = new SimpleInterestRateCalculator();
-                break;
-            case 1:
-                calculator = new CompoundInterestRateCalculator();
-                break;
-            case 2:
-                calculator = new TreasuryBillCalculator();
-                break;
-            default:
-                throw new AssertionError();
-        }
-
-        calculator.setDuration(tmp.getDuration());
-        calculator.setPrincipal(tmp.getPrincipal());
-        calculator.setRate(tmp.getRate());
-        refreshDisplay();
-    }
-
 
     @Override
     protected boolean hasParent() {
@@ -124,9 +97,7 @@ public class InterestRateCalculatorActivity extends BaseZealousActivity {
         super.doCreate(savedInstanceState);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(R.string.interest_rate_calculator);
-        calculator = new SimpleInterestRateCalculator();
-        title.setText(getString(R.string.title_today, DateUtils.formatDateTime(this, System.currentTimeMillis(),
-                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH)));
+        calculator = new CompoundInterestRateCalculator();
         setUpStatusBarColor(R.color.calculatorsPrimaryDark);
         if (toolbar != null) {
             toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.calculatorsPrimary));

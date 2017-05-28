@@ -305,6 +305,7 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
 
     private double getHistory(double inputTo, double historicalRate) {
         assert rateFrom != null;
+        if (historicalRate == 0) return 0;
         return BigDecimal.valueOf(inputTo).divide(BigDecimal.valueOf(historicalRate), MathContext.DECIMAL128).doubleValue();
     }
 
