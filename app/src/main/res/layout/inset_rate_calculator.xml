@@ -83,7 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/default_gap"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:background="@drawable/bg_violet"
@@ -91,7 +91,7 @@
         android:drawableRight="@drawable/ic_fullscreen_black_24dp"
         android:paddingLeft="@dimen/default_gap"
         android:paddingRight="@dimen/default_gap"
-        android:text="@string/view_full_details"
+            android:text="@string/view_full_details"
         android:textColor="@color/white"
         android:textSize="12sp" />
 </LinearLayout>

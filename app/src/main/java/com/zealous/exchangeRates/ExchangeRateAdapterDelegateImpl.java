@@ -104,11 +104,10 @@ public class ExchangeRateAdapterDelegateImpl implements ExchangeRatesListAdapter
         }
         if (ret.isEmpty()) {
             showViews(fragment.emptyView);
-            showViews(fragment.tvLastUpdated);
-            hideViews(fragment.recyclerView);
+            hideViews(fragment.recyclerView, fragment.tvLastUpdated);
         } else {
             if (System.currentTimeMillis() - ExchangeRateManager.lastUpdated()
-                     >= TimeUnit.DAYS.toMillis(2)) {
+                    >= TimeUnit.DAYS.toMillis(2)) {
                 showViews(fragment.tvLastUpdated);
             } else {
                 hideViews(fragment.tvLastUpdated);
