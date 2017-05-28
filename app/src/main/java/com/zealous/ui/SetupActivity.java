@@ -29,20 +29,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
 public class SetupActivity extends AppCompatActivity {
     public static final String KEY_ZEALOUS_SETUP_COMPLETED = "zealous.setup.completed";
-    @Bind(R.id.app_version)
-    TextView appVersion;
-    @Bind(R.id.iv_app_icon)
-    ImageView appIcon;
-
     private final Runnable initRunnable = new Runnable() {
         @Override
         public void run() {
+            //don't touch ui elements here
             if (ThreadUtils.isMainThread()) {
                 gotoMainActivity();
             } else {
@@ -65,9 +60,6 @@ public class SetupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-        ButterKnife.bind(this);
-        appVersion.setText(BuildConfig.VERSION_NAME);
     }
 
     @Override
@@ -76,6 +68,11 @@ public class SetupActivity extends AppCompatActivity {
         if (Config.getApplicationWidePrefs().getBoolean(KEY_ZEALOUS_SETUP_COMPLETED, false)) {
             TaskManager.executeNow(initRunnable, false);
         } else {
+            setContentView(R.layout.activity_splash);
+
+            TextView appVersion = ButterKnife.findById(this, R.id.app_version);
+            ImageView appIcon = ButterKnife.findById(this, R.id.iv_app_icon);
+            appVersion.setText(BuildConfig.VERSION_NAME);
             //animate the app icon,
             Animation set = AnimationUtils.loadAnimation(this, R.anim.fade_rotate),
                     fadeIn = AnimationUtils.loadAnimation(this, R.anim.move_up);
