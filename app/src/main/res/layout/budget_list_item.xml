@@ -46,7 +46,7 @@
 
         <TextView
             android:id="@+id/tv_amount_spent"
-            android:textColor="@color/light_violet"
+            android:textColor="@color/red"
             app:layout_columnWeight="1"
             tools:text="Amount Spent" />
 

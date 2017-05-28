@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
+import com.zealous.utils.GenericUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -58,7 +59,12 @@ public class BudgetAdapterDelegateImpl implements BudgetAdapter.Delegate {
                                 fragment.update(category);
                                 break;
                             case 1:
-                                fragment.remove(category);
+                                GenericUtils.showComfirmationDialog(fragment.getContext(), fragment.getString(R.string.delete_warning), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        fragment.remove(category);
+                                    }
+                                });
                                 break;
                             default:
                                 throw new AssertionError();

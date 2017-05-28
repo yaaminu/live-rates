@@ -1,6 +1,9 @@
 package com.zealous.utils;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.StringRes;
+import android.support.v7.app.AlertDialog;
 
 /**
  * author Null-Pointer on 1/11/2016.
@@ -75,5 +78,22 @@ public class GenericUtils {
 
     public static String cleanNumberText(String text) {
         return text.replaceAll("[^\\d\\.]+", "");
+    }
+
+
+    public static void showComfirmationDialog(Context context, String message, final Runnable cb) {
+        DialogInterface.OnClickListener onclickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == DialogInterface.BUTTON_POSITIVE) {
+                    cb.run();
+                }
+            }
+        };
+        new AlertDialog.Builder(context)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, onclickListener)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create().show();
     }
 }

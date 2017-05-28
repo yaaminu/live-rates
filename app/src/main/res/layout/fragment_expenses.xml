@@ -153,15 +153,19 @@
         </FrameLayout>
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:contentDescription="@string/add"
-        android:src="@drawable/ic_add_violet_24dp"
         app:backgroundTint="@color/white"
-        app:fabSize="mini"
+        app:fab_addButtonColorNormal="@color/white"
+        app:fab_addButtonColorPressed="@color/faint_voilet"
+        app:fab_addButtonPlusIconColor="@color/colorPrimary"
+        app:fab_addButtonSize="mini"
+        app:fab_labelsPosition="left"
+        app:fab_labelStyle="@style/label_style"
         tools:ignore="RtlHardcoded,RtlSymmetry" />
 </FrameLayout>

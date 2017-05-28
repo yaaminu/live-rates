@@ -183,7 +183,12 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
                                 addExpenditurePresenter.viewAttachment(item);
                                 break;
                             case 1:
-                                addExpenditurePresenter.removeAttachment(item);
+                                GenericUtils.showComfirmationDialog(getContext(), getString(R.string.delete_warning), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        addExpenditurePresenter.removeAttachment(item);
+                                    }
+                                });
                                 break;
                             default:
                                 throw new RuntimeException();

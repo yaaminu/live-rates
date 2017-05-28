@@ -6,7 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
+import com.zealous.utils.GenericUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -80,7 +82,13 @@ public class ExpenseAdapterDelegateImpl implements ExpenseAdapter.Delegate {
     @Override
     public void deleteItem(int position) {
         selectedItem = AdapterView.INVALID_POSITION;
-        presenter.deleteItem(context.getContext(), dataSet.get(position));
+        final Expenditure expenditure = dataSet.get(position);
+        GenericUtils.showComfirmationDialog(context.getContext(), context.getString(R.string.delete_warning), new Runnable() {
+            @Override
+            public void run() {
+                presenter.deleteItem(context.getContext(), expenditure);
+            }
+        });
     }
 
     @Override

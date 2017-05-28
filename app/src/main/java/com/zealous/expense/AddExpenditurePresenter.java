@@ -295,17 +295,22 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
         });
     }
 
-    public void onCategoryContextMenuAction(FragmentManager manager, ExpenditureCategory category, int position) {
+    public void onCategoryContextMenuAction(FragmentManager manager, final ExpenditureCategory category, int position) {
         switch (position) {
             case 0:
                 doAddCustomCategory(manager, category);
                 break;
             case 1:
-                try {
-                    dataSource.removeCategory(category);
-                } catch (ZealousException e) {
-                    screen.showValidationError(e.getMessage());
-                }
+                GenericUtils.showComfirmationDialog(screen.getContext(), screen.getString(R.string.delete_warning), new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            dataSource.removeCategory(category);
+                        } catch (ZealousException e) {
+                            screen.showValidationError(e.getMessage());
+                        }
+                    }
+                });
                 break;
             default:
                 throw new AssertionError();

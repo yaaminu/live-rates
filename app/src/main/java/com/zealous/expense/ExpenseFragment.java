@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +18,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.zealous.R;
 import com.zealous.exchangeRates.ExchangeRateListActivity;
 import com.zealous.ui.BaseFragment;
@@ -81,8 +84,10 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     @Bind(R.id.header)
     View totalView;
     @Bind(R.id.fab)
-    View fab;
+    FloatingActionsMenu fab;
     private CustomScrollListener listener;
+    private FloatingActionButton addExpenditureFab;
+    private FloatingActionButton viewBudgetFab;
 
     @Override
     protected int getLayout() {
@@ -142,6 +147,45 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
         listener = new CustomScrollListener(this);
         year.setText(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
         todaysDate.setText(DateUtils.formatDateTime(getContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
+
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        addExpenditureFab = (FloatingActionButton) inflater.inflate(R.layout.layout, null);
+//        addExpenditureFab.setTag(R.id.fab_label, inflater.inflate(R.layout.lable_text, null));
+        addExpenditureFab.setTitle(getString(R.string.add_expenditure));
+        addExpenditureFab.setIcon(R.drawable.ic_add_expense);
+        addExpenditureFab.setColorNormalResId(R.color.white);
+        addExpenditureFab.setColorPressedResId(R.color.faint_voilet);
+        addExpenditureFab.setId(R.id.add_new_expenditure);
+        this.fab.addButton(addExpenditureFab);
+
+        viewBudgetFab = (FloatingActionButton) inflater.inflate(R.layout.layout, null);
+//        addExpenditureFab.setTag(R.id.fab_label, inflater.inflate(R.layout.lable_text, null));
+        viewBudgetFab.setTitle(getString(R.string.view_budget));
+        viewBudgetFab.setIcon(R.drawable.budget_icon);
+        viewBudgetFab.setColorNormalResId(R.color.white);
+        viewBudgetFab.setColorPressedResId(R.color.faint_voilet);
+        viewBudgetFab.setId(R.id.action_view_budget);
+        this.fab.addButton(viewBudgetFab);
+
+        View.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fab.collapse();
+                switch (v.getId()) {
+                    case R.id.add_new_expenditure:
+                        expenditureScreenPresenter.onAddNewExpenditure(getContext());
+                        break;
+                    case R.id.action_view_budget:
+                        expenditureScreenPresenter.onMenuItemClicked(R.id.action_view_budget);
+                        break;
+                    default:
+                        throw new AssertionError();
+                }
+            }
+        };
+        this.addExpenditureFab.setOnClickListener(clickListener);
+        this.viewBudgetFab.setOnClickListener(clickListener);
     }
 
     @OnClick(R.id.expenditure_range)
@@ -154,11 +198,11 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
                     }
                 }).create().show();
     }
-
-    @OnClick(R.id.fab)
-    void addExpenditure() {
-        expenditureScreenPresenter.onAddNewExpenditure(getContext());
-    }
+//
+//    @OnClick(R.id.fab)
+//    void addExpenditure() {
+//        fab.toggle();
+//    }
 
     @Nullable
     @Override
@@ -194,6 +238,7 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     }
 
     public void hideFab() {
+        fab.collapse();
         fab.animate().scaleX(0).scaleY(0).setInterpolator(new AccelerateInterpolator()).start();
     }
 

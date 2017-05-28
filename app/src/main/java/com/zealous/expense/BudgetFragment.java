@@ -1,30 +1,26 @@
 package com.zealous.expense;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.zealous.R;
-import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 
 /**
  * Created by yaaminu on 4/17/17.
@@ -48,12 +44,28 @@ public class BudgetFragment extends BaseFragment implements BudgetScreen {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         DaggerBudgetFragmentComponent.builder()
                 .budgetFragmentProvider(new BudgetFragmentProvider(this))
                 .build().inject(this);
         presenter.onCreate(savedInstanceState, this);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.budget_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_category:
+                onAddNewBudget();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -96,8 +108,7 @@ public class BudgetFragment extends BaseFragment implements BudgetScreen {
         return presenter;
     }
 
-    @OnClick(R.id.fab)
-    void onclick() {
+    void onAddNewBudget() {
         presenter.onAddCategory(getFragmentManager(), null);
     }
 
