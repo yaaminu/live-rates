@@ -66,7 +66,7 @@ public class LogEntryTypeAdapterTest {
             Map<String, ?> data = jsonWriter.data;
             Assert.assertEquals(entry.getDateLogged(), data.get(FIELD_DATE_LOGGED));
             Assert.assertEquals(entry.getHashSum(), data.get(FIELD_HASH_SUM));
-            Assert.assertEquals(entry.getSize(), data.get(FIELD_SIZE));
+            Assert.assertEquals(entry.getSize(), ((Long) data.get(FIELD_SIZE)).longValue());
 
             //we are adding the FIELD_OP_CLAZZ prop to make the two same if this property is
             //the only difference. This is only to make the test  simple otherwise we

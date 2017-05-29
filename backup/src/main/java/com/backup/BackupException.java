@@ -8,7 +8,8 @@ import com.android.annotations.Nullable;
 
 public class BackupException extends Exception {
 
-    public static final int ENOENT = 0x1, EEXIST = 0x2, EAGAIN = 0x3, EIOERROR = 0x4;
+    public static final int ENOENT = 0x1, EEXIST = 0x2, EAGAIN = 0x3, EIOERROR = 0x4,
+            EMALFORMEDINPUT = 0x5;
     private final int errCode;
 
     public BackupException(int errCode, @Nullable String message, @Nullable Throwable cause) {

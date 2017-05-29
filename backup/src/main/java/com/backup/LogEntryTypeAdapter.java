@@ -3,6 +3,7 @@ package com.backup;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
@@ -23,7 +24,8 @@ public class LogEntryTypeAdapter extends TypeAdapter<LogEntry<? extends Operatio
     private final Gson gson;
 
     public LogEntryTypeAdapter() {
-        gson = new Gson();
+        gson = new GsonBuilder()
+                .create();
     }
 
     @Override
@@ -58,7 +60,8 @@ public class LogEntryTypeAdapter extends TypeAdapter<LogEntry<? extends Operatio
         }
 
         String hashSum = null, group = null;
-        long size = 0, dateLogged = 0;
+        int size = 0;
+        long dateLogged = 0;
         Operation op = null;
         in.beginObject();
         while (in.hasNext()) {
@@ -67,7 +70,7 @@ public class LogEntryTypeAdapter extends TypeAdapter<LogEntry<? extends Operatio
                     hashSum = in.nextString();
                     break;
                 case LogEntry.FIELD_SIZE:
-                    size = in.nextLong();
+                    size = in.nextInt();
                     break;
                 case LogEntry.FIELD_GROUP:
                     group = in.nextString();
@@ -88,12 +91,12 @@ public class LogEntryTypeAdapter extends TypeAdapter<LogEntry<? extends Operatio
         return logEntry;
     }
 
-    private void checkIntegrity(String hashSum, long size, LogEntry<Operation> logEntry) throws IOException {
+    private void checkIntegrity(String hashSum, int size, LogEntry<Operation> logEntry) throws IOException {
         String actualHashSum = logEntry.getHashSum();
         if (!actualHashSum.equals(hashSum)) {
             throw new IOException("check sum mismatch. expected " + hashSum + " but was " + actualHashSum);
         }
-        long actualSize = logEntry.getSize();
+        int actualSize = logEntry.getSize();
         if (actualSize != size) {
             throw new IOException("size mismatch. expected " + size + " but was " + actualSize);
         }

@@ -24,7 +24,7 @@ public class LogEntry<T extends Operation> {
     private final T op;
 
     @LoggerIgnore
-    private final long size;
+    private final int size;
     private static final int HASH_SIZE = 40;//sha1 check sum as hex_string  is 40 bytes long
 
 
@@ -35,11 +35,10 @@ public class LogEntry<T extends Operation> {
 
 
         this.size = group.getBytes().length + HASH_SIZE +
-                8/*sizeOf(dateLogged)*/ + 8 /*sizeOf(size)*/ + op.data().toString().getBytes().length;
+                8/*sizeOf(dateLogged)*/ + 4/*sizeOf(size)*/ + op.data().toString().getBytes().length;
 
         this.hashSum = calculateHashSum(this.group, this.size, this.op, this.dateLogged);
     }
-
 
 
     private static String calculateHashSum(String group, long size, Operation operation, long dateLogged) {
@@ -71,7 +70,7 @@ public class LogEntry<T extends Operation> {
         return hashSum;
     }
 
-    public long getSize() {
+    public int getSize() {
         return size;
     }
 

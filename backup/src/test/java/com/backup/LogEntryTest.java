@@ -22,7 +22,7 @@ public class LogEntryTest {
         digest.update(collection.getBytes());
         byte[] opData = dummyOp.data().toString().getBytes();
         digest.update(String.valueOf(collection.getBytes().length +
-                opData.length + 8/*size*/ + 8/*dateLogged*/ + 40/*sha1length*/).getBytes());
+                opData.length + 4/*size*/ + 8/*dateLogged*/ + 40/*sha1length*/).getBytes());
         digest.update(opData);
         digest.update(String.valueOf(dateLogged).getBytes());
         String hashSum = Utils.bytesToString(digest.digest());
@@ -38,7 +38,7 @@ public class LogEntryTest {
         LogEntry<?> logEntry =
                 new LogEntry<>(collection, dummyOp, dateLogged);
         Assert.assertEquals(dummyOp.data().toString()
-                .getBytes().length + 8 + 8 + 40 + collection.getBytes().length, logEntry.getSize());
+                .getBytes().length + 8 + 4 + 40 + collection.getBytes().length, logEntry.getSize());
     }
 
 }

@@ -1,17 +1,13 @@
 package com.backup;
 
 import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.concurrent.Semaphore;
 
 import static com.backup.BackupException.EAGAIN;
@@ -93,7 +89,7 @@ public class LoggerImpl implements Logger {
         OutputStream stream = null;
         try {
             lock.acquire();
-            byte[] blob = encodeLogEntry(logEntry, new LogEntryFlags());
+            byte[] blob = Parser.encode(serializer, logEntry);
             // TODO: 5/18/17 encrypt and compress before writing
             stream = storage.newAppendableOutPutStream(collectionName);
             IOUtils.write(blob, stream);
@@ -109,23 +105,6 @@ public class LoggerImpl implements Logger {
             }
             lock.release();
         }
-    }
-
-    private byte[] encodeLogEntry(@NonNull LogEntry<? extends Operation> logEntry, @Nullable LogEntryFlags flags) throws BackupException {
-        byte[] payload = serializer.serialize(logEntry);
-        // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // + header(10 bytes)                    | payload(variable length)+
-        // + ____________________________________|_________________________+
-        // + flags(2 bytes)| payloadSize(8 bytes)|                         +
-        // + ____________________________________|_________________________+
-        // + all reserved  | long integer        |                         +
-        // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        ByteBuffer blob = ByteBuffer.allocate(payload.length + 10); //the 10 is the header.
-        blob.order(ByteOrder.BIG_ENDIAN);
-        blob.put((byte) 0).put((byte) 0)
-                .putLong(payload.length)
-                .put(payload);
-        return blob.array();
     }
 
     @Override
@@ -147,34 +126,20 @@ public class LoggerImpl implements Logger {
     }
 
     private void restoreBackup(RestoreHandler handler) throws BackupException {
-        DataInputStream inputStream = null;
+        Parser parser = null;
+
         try {
-            inputStream = new DataInputStream(storage.newInputStream(collectionName));
-            int read = 0;
-            long entrySize;
-            byte[] buffer = new byte[1024];
-            long size = storage.size(collectionName);
-            do {
-                char flags = inputStream.readChar();
-                entrySize = inputStream.readLong();
-                if (buffer.length < entrySize) { //only reuse if we wont fit
-                    buffer = new byte[(int) entrySize];
-                }
-                inputStream.readFully(buffer, 0, (int) entrySize);
-                LogEntryFlags logEntryFlags = new LogEntryFlags(flags);
-                // TODO: 5/19/17 do something (like decompress) to the payload based on the flags
-                LogEntry<? extends Operation> entry = serializer.deserialize(buffer, 0, (int) entrySize);
+            parser = new Parser(storage.newInputStream(collectionName), serializer);
+            LogEntry<? extends Operation> entry;
+            while ((entry = parser.next()) != null) {
                 handler.onEntry(entry);
-
-                read += (entrySize + 10/*sizeOf(char) + sizeOf(long)*/);
-
-            } while (read < size);
+            }
         } catch (FileNotFoundException e) {
             handler.onRestoreError(new BackupException(ENOENT, e.getMessage(), e));
         } catch (IOException e) {
             handler.onRestoreError(new BackupException(EIOERROR, e.getMessage(), e));
         } finally {
-            IOUtils.closeQuietly(inputStream);
+            IOUtils.closeQuietly(parser);
         }
     }
 

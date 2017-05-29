@@ -31,6 +31,8 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 @SuppressWarnings("EmptyCatchBlock")
 public class LoggerImplTest {
 
+    public static final int HEADER_SIZE = 8;
+
     @Test
     public void testConstructor() throws Exception {
         DependencyInjector injector = mock(DependencyInjector.class);
@@ -99,7 +101,7 @@ public class LoggerImplTest {
         long sizeSoFar = 0L;
         for (int i = 0; i < 100; i++) {
             LogEntry<DummyOp> entry = new LogEntry<>("group", new DummyOp(i), currentTimeMillis());
-            sizeSoFar += serializer.serialize(entry).length + 10; //the logger must add a header of 10 bytes
+            sizeSoFar += serializer.serialize(entry).length + HEADER_SIZE; //the logger must add a header of 10 bytes
             logger.appendEntry(entry);
         }
         assertTrue(outFile.length() > 0);
@@ -170,7 +172,7 @@ public class LoggerImplTest {
         long sizeSoFar = 0L;
         for (int i = 0; i < 100; i++) {
             LogEntry<DummyOp> entry = new LogEntry<>("group", new DummyOp(i), currentTimeMillis());
-            sizeSoFar += serializer.serialize(entry).length + 10; //the logger must add a header of 10 bytes
+            sizeSoFar += serializer.serialize(entry).length + HEADER_SIZE; //the logger must add a header of 10 bytes
             logger.appendEntry(entry);
         }
         BackupStats stats = logger.stats();
