@@ -51,6 +51,6 @@ public class NewsItemBuilder {
     }
 
     public NewsItem createNewsItem() {
-        return new NewsItem(title, url, thumbnailUrl, description, date, source, publisherColor,bookmarked);
+        return new NewsItem(title, url, thumbnailUrl, description, date, source,bookmarked);
     }
 }

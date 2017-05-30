@@ -191,7 +191,7 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     public void toggleBookmark(NewsItem item) {
         ThreadUtils.ensureMain();
         item = new NewsItem(item.getTitle(), item.getUrl(), item.getThumbnailUrl(), item.getDescription(),
-                item.getDate(), item.getSource(), item.getPublisherColor(), !item.isBookmarked());
+                item.getDate(), item.getSource(), !item.isBookmarked());
         dataSource.update(item);
     }
 

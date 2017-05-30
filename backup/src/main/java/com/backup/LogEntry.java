@@ -1,6 +1,8 @@
 package com.backup;
 
-import com.android.annotations.NonNull;
+
+import android.support.annotation.NonNull;
+
 import com.backup.annotations.LoggerIgnore;
 
 import java.security.NoSuchAlgorithmException;

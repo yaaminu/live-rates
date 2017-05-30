@@ -10,7 +10,6 @@ android {
 }
 
 dependencies {
-    compile files('libs/annotations-25.1.2.jar')
     compile 'com.google.code.gson:gson:2.4'
     compile 'commons-io:commons-io:2.4'
     compile 'commons-codec:commons-codec:1.4'

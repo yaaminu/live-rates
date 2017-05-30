@@ -1,6 +1,7 @@
 package com.backup;
 
-import com.android.annotations.NonNull;
+
+import android.support.annotation.NonNull;
 
 /**
  * Loggers take care of sending/retrieving log entries

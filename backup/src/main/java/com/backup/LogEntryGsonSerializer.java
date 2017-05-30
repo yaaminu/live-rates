@@ -1,7 +1,9 @@
 package com.backup;
 
-import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;

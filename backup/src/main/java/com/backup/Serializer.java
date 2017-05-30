@@ -1,7 +1,8 @@
 package com.backup;
 
-import com.android.annotations.NonNull;
-import com.android.annotations.Nullable;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * An interface for transforming POJO's to byte stream and back.
