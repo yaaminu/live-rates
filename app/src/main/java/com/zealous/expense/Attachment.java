@@ -3,10 +3,13 @@ package com.zealous.expense;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 
+import com.google.gson.JsonObject;
 import com.zealous.R;
 import com.zealous.errors.ZealousException;
 import com.zealous.utils.FileUtils;
 import com.zealous.utils.GenericUtils;
+
+import org.apache.commons.codec.binary.Base64;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
@@ -16,6 +19,9 @@ import io.realm.annotations.Required;
  */
 
 public class Attachment extends RealmObject {
+    static final String FIELD_TITLE = "title",
+            FIELD_BLOB = "blob", FIELD_SHA1SUM = "sha1Sum", FIELD_MIME_TYPE = "mimeType";
+
     @Required
     private String title;
     @Required
@@ -32,17 +38,27 @@ public class Attachment extends RealmObject {
         blob = new byte[]{};
     }
 
-    public Attachment(@NonNull String title, @NonNull byte[] blob, String mimeType) throws ZealousException {
-        GenericUtils.ensureNotEmpty(title, mimeType);
+    public Attachment(@NonNull String title, @NonNull byte[] blob, @NonNull String mimeType) throws ZealousException {
         //noinspection ConstantConditions
-        GenericUtils.ensureConditionTrue(blob != null && blob.length > 0, "invalid data");
+        if (title == null || title.trim().length() <= 0) {
+            throw new IllegalArgumentException("title == null title.length() < 1");
+        }
+        //noinspection ConstantConditions
+        if (mimeType == null || mimeType.trim().length() <= 0) {
+            throw new IllegalArgumentException("mimetype == null mimeType.length() < 1");
+        }
+
+        //noinspection ConstantConditions
+        if (blob == null || blob.length <= 0) {
+            throw new IllegalArgumentException("blob is empty");
+        }
         if (Expenditure.isTooLarge(blob)) {
             throw new ZealousException(GenericUtils.getString(R.string.attachment_too_large));
         }
-        this.title = title;
+        this.title = title.trim();
         this.blob = blob;
 
-        this.mimeType = mimeType;
+        this.mimeType = mimeType.trim();
         this.sha1Sum = FileUtils.sha1(blob);
     }
 
@@ -90,6 +106,31 @@ public class Attachment extends RealmObject {
             return R.drawable.pdf_preview;
         } else {
             return R.drawable.preview_unknown;
+        }
+    }
+
+    public JsonObject toJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(FIELD_MIME_TYPE, getMimeType());
+        jsonObject.addProperty(FIELD_TITLE, getTitle());
+        jsonObject.addProperty(FIELD_SHA1SUM, getSha1Sum());
+        jsonObject.addProperty(FIELD_BLOB, Base64.encodeBase64String(getBlob()));
+        return jsonObject;
+    }
+
+    public static Attachment fromJson(JsonObject jsonObject) {
+        String mimeType = jsonObject.get(FIELD_MIME_TYPE).getAsString();
+        String title = jsonObject.get(FIELD_TITLE).getAsString();
+        String sha1sum = jsonObject.get(FIELD_SHA1SUM).getAsString();
+        byte[] blob = Base64.decodeBase64(jsonObject.get(FIELD_BLOB).getAsString());
+        try {
+            Attachment attachment = new Attachment(title, blob, mimeType);
+            if (!sha1sum.equals(attachment.getSha1Sum())) {
+                throw new IllegalStateException("checksum mismatch, attachment has been tampered with");
+            }
+            return attachment;
+        } catch (ZealousException e) { //normally thrown when the blob is too large
+            throw new RuntimeException(e);
         }
     }
 }
