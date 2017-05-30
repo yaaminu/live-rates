@@ -3,6 +3,9 @@ package com.zealous.expense;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.zealous.R;
 import com.zealous.errors.ZealousException;
 import com.zealous.exchangeRates.ExchangeRate;
@@ -38,6 +41,7 @@ public class Expenditure extends RealmObject {
     public static final String FIELD_DESCRIPTION = "description";
     public static final String FIELD_LOCATION = "location";
     public static final String FEILD_ATTACHMENTS = "attachments";
+    public static final long MAX_ATTACH_SIZE = FileUtils.ONE_MB * 5;
     @Index
     private long amountSpent;
     @Required
@@ -147,7 +151,7 @@ public class Expenditure extends RealmObject {
     }
 
     static boolean isTooLarge(byte[] blob) {
-        return blob.length > FileUtils.ONE_MB * 3;
+        return blob.length > MAX_ATTACH_SIZE;
     }
 
     public boolean removeAttachment(Attachment attachment) {
@@ -169,5 +173,66 @@ public class Expenditure extends RealmObject {
             return Collections.emptyList();
         }
         return attachments;
+    }
+
+    @NonNull
+    public JsonObject toJson() {
+        JsonObject data = new JsonObject();
+        data.addProperty(Expenditure.FIELD_ID, this.getId());
+        data.addProperty(Expenditure.FIELD_AMOUNT, this.getNormalizedAmount());
+        data.addProperty(Expenditure.FIELD_DESCRIPTION, this.getDescription());
+        data.addProperty(Expenditure.FIELD_LOCATION, this.getLocation());
+        data.addProperty(Expenditure.FIELD_TIME, this.getExpenditureTime().getTime());
+        data.add(Expenditure.FIELD_CATEGORY, getCategory().toJson());
+        JsonArray arr = new JsonArray();
+        List<Attachment> attachments = getAttachments();
+        for (Attachment attachment : attachments) {
+            arr.add(attachment.toJson());
+        }
+        data.add(Expenditure.FEILD_ATTACHMENTS, arr);
+        return data;
+    }
+
+    public static Expenditure fromJson(JsonObject jsonObject) {
+        //we want to use the constructor so we can take advantage of the rigorous
+        //validation it does
+        String description = jsonObject.get(FIELD_DESCRIPTION).getAsString();
+        String location = jsonObject.get(FIELD_LOCATION).getAsString();
+        String id = jsonObject.get(FIELD_ID).getAsString();
+        double amount = jsonObject.get(FIELD_AMOUNT).getAsDouble();
+        long time = jsonObject.get(FIELD_TIME).getAsLong();
+
+        ExpenditureCategory category = ExpenditureCategory
+                .fromJson(jsonObject.get(FIELD_CATEGORY).getAsJsonObject());
+
+        Expenditure expenditure = new Expenditure(id, description, BigDecimal
+                .valueOf(amount).multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue(),
+                category, time, location);
+        JsonArray array = jsonObject.get(FEILD_ATTACHMENTS).getAsJsonArray();
+
+        try {
+            for (JsonElement jsonElement : array) {
+                expenditure.addAttachment(Attachment.fromJson(jsonElement.getAsJsonObject()));
+            }
+        } catch (ZealousException e) {
+            throw new RuntimeException(e);
+        }
+        return expenditure;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Expenditure that = (Expenditure) o;
+
+        return expenditureID != null ? expenditureID.equals(that.expenditureID) : that.expenditureID == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return expenditureID != null ? expenditureID.hashCode() : 0;
     }
 }
