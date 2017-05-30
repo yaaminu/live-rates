@@ -3,7 +3,9 @@ package com.zealous.expense;
 import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 
+import com.google.gson.JsonObject;
 import com.zealous.R;
 import com.zealous.utils.GenericUtils;
 
@@ -100,6 +102,56 @@ public class ExpenditureCategory extends RealmObject {
         return BigDecimal
                 .valueOf(dataSource.makeQuery().equalTo(Expenditure.FIELD_CATEGORY + "." + FIELD_NAME, getName())
                         .sum(Expenditure.FIELD_AMOUNT).longValue()).divide(BigDecimal.valueOf(100), MathContext.DECIMAL128);
+    }
+
+    @NonNull
+    public JsonObject toJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(FIELD_BUDGET, getBudget());
+        jsonObject.addProperty(FIELD_BUDGET_DURATION, getBudgetDuration());
+        jsonObject.addProperty(FIELD_NAME, getName());
+        return jsonObject;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ExpenditureCategory category = (ExpenditureCategory) o;
+
+        if (budgetDuration != category.budgetDuration) return false;
+        //noinspection SimplifiableIfStatement
+        if (budget != category.budget) return false;
+        return name != null ? name.equals(category.name) : category.name == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + budgetDuration;
+        result = 31 * result + (int) (budget ^ (budget >>> 32));
+        return result;
+    }
+
+    public static ExpenditureCategory fromJson(JsonObject jsonObject) {
+        String name = jsonObject.get(FIELD_NAME).getAsString();
+        long budget = jsonObject.get(FIELD_BUDGET).getAsLong();
+        int duration = jsonObject.get(FIELD_BUDGET_DURATION).getAsInt();
+        switch (duration) {
+            case DAILY:
+            case WEEKLY:
+            case MONTHLY:
+            case YEARLY:
+                //do nothing
+                break;
+            default:
+                throw new IllegalArgumentException("unknown duration type");
+        }
+        //we've already checked
+        //noinspection WrongConstant
+        return new ExpenditureCategory(name, budget, duration);
     }
 
     @IntDef({DAILY, WEEKLY, MONTHLY, YEARLY})
