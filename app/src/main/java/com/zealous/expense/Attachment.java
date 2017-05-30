@@ -109,6 +109,7 @@ public class Attachment extends RealmObject {
         }
     }
 
+    @NonNull
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(FIELD_MIME_TYPE, getMimeType());
@@ -118,6 +119,7 @@ public class Attachment extends RealmObject {
         return jsonObject;
     }
 
+    @NonNull
     public static Attachment fromJson(JsonObject jsonObject) {
         String mimeType = jsonObject.get(FIELD_MIME_TYPE).getAsString();
         String title = jsonObject.get(FIELD_TITLE).getAsString();

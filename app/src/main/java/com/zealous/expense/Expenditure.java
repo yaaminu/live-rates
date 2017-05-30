@@ -193,6 +193,7 @@ public class Expenditure extends RealmObject {
         return data;
     }
 
+    @NonNull
     public static Expenditure fromJson(JsonObject jsonObject) {
         //we want to use the constructor so we can take advantage of the rigorous
         //validation it does

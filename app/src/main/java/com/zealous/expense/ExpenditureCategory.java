@@ -135,6 +135,7 @@ public class ExpenditureCategory extends RealmObject {
         return result;
     }
 
+    @NonNull
     public static ExpenditureCategory fromJson(JsonObject jsonObject) {
         String name = jsonObject.get(FIELD_NAME).getAsString();
         long budget = jsonObject.get(FIELD_BUDGET).getAsLong();
