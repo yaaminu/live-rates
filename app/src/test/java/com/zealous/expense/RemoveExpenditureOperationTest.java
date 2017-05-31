@@ -10,7 +10,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -33,9 +32,10 @@ public class RemoveExpenditureOperationTest {
         assertEquals(operation.data(), new JsonObject());
         Expenditure expected = new Expenditure("id", "description", 1,
                 new ExpenditureCategory("name", 1, ExpenditureCategory.MONTHLY), 3, "location");
-        operation = new RemoveExpenditureOperation(expected);
-        assertEquals(expected.toJson(), operation.data());
-        assertNotNull(operation.data());
+        operation = new RemoveExpenditureOperation(expected.getId());
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(Expenditure.FIELD_ID, expected.getId());
+        assertEquals(jsonObject, operation.data());
     }
 
     @Test
@@ -57,7 +57,9 @@ public class RemoveExpenditureOperationTest {
         Assert.assertEquals(operation.data(), new JsonObject());
         operation.dataSource = PowerMockito.mock(ExpenditureDataSource.class);
         operation.dataSource = PowerMockito.spy(operation.dataSource);
-        operation.setData(expected.toJson());
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(Expenditure.FIELD_ID, expected.getId());
+        operation.setData(jsonObject);
         operation.replay();
         verify(operation.dataSource, times(1)).removeExpenditure(expected.getId());
     }

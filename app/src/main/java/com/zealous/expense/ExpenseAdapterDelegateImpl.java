@@ -94,6 +94,7 @@ public class ExpenseAdapterDelegateImpl implements ExpenseAdapter.Delegate {
     @Override
     public void editItem(int position) {
         selectedItem = AdapterView.INVALID_POSITION;
+        context.showFab();
         presenter.editItem(context.getContext(), dataSet.get(position));
     }
 }

@@ -1,7 +1,11 @@
 package com.zealous.expense;
 
 import com.backup.BackupException;
+import com.google.gson.JsonObject;
+import com.zealous.errors.ZealousException;
 import com.zealous.utils.PLog;
+
+import static com.zealous.expense.Expenditure.FIELD_ID;
 
 /**
  * Created by yaaminu on 5/30/17.
@@ -14,18 +18,19 @@ public class RemoveExpenditureOperation extends BaseExpenditureOperation {
     public RemoveExpenditureOperation() {
     }
 
-    public RemoveExpenditureOperation(Expenditure expenditure) {
-        this.data = expenditure.toJson();
+    public RemoveExpenditureOperation(String expenditureId) {
+        this.data = new JsonObject();
+        data.addProperty(FIELD_ID, expenditureId);
     }
 
     @Override
     protected void doReplay() throws BackupException {
         PLog.d(TAG, "replaying operation: %s", getClass().getName());
-        Expenditure toRestore = Expenditure.fromJson(data());
+        String expenditureId = data().get(FIELD_ID).getAsString();
         //nullness should have been checked in the parent class
         //noinspection ConstantConditions
-        if (!dataSource.removeExpenditure(toRestore.getId())) {
-            PLog.d(TAG, "failed to remove expenditure with id %s", toRestore.getId());
+        if (!dataSource.removeExpenditure(expenditureId)) {
+            PLog.d(TAG, "failed to remove expenditure with id %s", expenditureId);
         }
     }
 }

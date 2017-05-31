@@ -54,8 +54,8 @@ public class LoggerImpl implements Logger {
     private final Storage storage;
     private final String collectionName;
 
-    LoggerImpl(@NonNull String collectionName, @NonNull DependencyInjector injector,
-               @NonNull Serializer<LogEntry<? extends Operation>> serializer, @NonNull Storage storage) {
+    public LoggerImpl(@NonNull String collectionName, @NonNull DependencyInjector injector,
+                      @NonNull Serializer<LogEntry<? extends Operation>> serializer, @NonNull Storage storage) {
         checkArgs(collectionName, injector, serializer, storage);
         this.collectionName = collectionName;
         this.storage = storage;
@@ -64,6 +64,7 @@ public class LoggerImpl implements Logger {
         lock = new Semaphore(1, true);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void checkArgs(@NonNull String collectionName, @NonNull DependencyInjector injector,
                            @NonNull Serializer<LogEntry<? extends Operation>> serializer,
                            @NonNull Storage storage) {
@@ -110,6 +111,7 @@ public class LoggerImpl implements Logger {
 
     @Override
     public void retrieveAllEntries(@NonNull RestoreHandler handler) {
+        //noinspection ConstantConditions
         if (handler == null) throw new IllegalArgumentException("handler == null");
         try {
             lock.acquire();
@@ -144,6 +146,7 @@ public class LoggerImpl implements Logger {
         }
     }
 
+    @NonNull
     @Override
     public final BackupStats stats() throws BackupException {
         try {
@@ -179,6 +182,11 @@ public class LoggerImpl implements Logger {
     @NonNull
     public final DependencyInjector getInjector() {
         return injector;
+    }
+
+    @Override
+    public String getCollectionName() {
+        return collectionName;
     }
 
 }

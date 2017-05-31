@@ -3,15 +3,20 @@ package com.zealous.news;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.backup.DependencyInjector;
+import com.backup.Operation;
 import com.squareup.picasso.Cache;
 import com.squareup.picasso.Picasso;
 import com.zealous.R;
+import com.zealous.Zealous;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
@@ -60,6 +65,13 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
     @Inject
     Cache cache;
 
+    private final DependencyInjector injector = new DependencyInjector() {
+        @Override
+        public void inject(Operation operation) {
+            throw new UnsupportedOperationException();
+        }
+    };
+
     @Override
     protected int getLayout() {
         return R.layout.fragmet_news;
@@ -71,6 +83,7 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
         Bundle arguments = getArguments();
         GenericUtils.ensureNotNull(arguments);
         DaggerNewsFragmentComponent.builder()
+                .baseNewsProvider(new BaseNewsProvider(((Zealous) getActivity().getApplication()).getNewsBackupManager(injector)))
                 .newsFragmentProvider(new NewsFragmentProvider(this, arguments.getBoolean(IS_FAVORITES)))
                 .build()
                 .inject(this);
@@ -169,6 +182,19 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
     public void onDestroyView() {
         swipeRefresh.setRefreshing(false);
         super.onDestroyView();
+    }
+
+    @Override
+    public void showDialogMessage(CharSequence message) {
+
+    }
+
+    @Override
+    public void showDialogMessage(@StringRes int message) {
+        new AlertDialog.Builder(getContext())
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .create().show();
     }
 
     public static BaseFragment create(boolean isFavorites) {

@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
+import com.backup.BackupException;
 import com.zealous.R;
 import com.zealous.errors.ZealousException;
 import com.zealous.exchangeRates.ExchangeRate;
@@ -219,7 +220,11 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                 return false;
             }
         }
-        dataSource.addOrUpdateExpenditure(expenditure);
+        try {
+            dataSource.addOrUpdateExpenditure(expenditure);
+        } catch (BackupException e) {
+            screen.showValidationError(getString(R.string.save_error));
+        }
         return true;
     }
 
@@ -308,6 +313,8 @@ public class AddExpenditurePresenter extends BasePresenter<AddExpenseFragment> {
                             dataSource.removeCategory(category);
                         } catch (ZealousException e) {
                             screen.showValidationError(e.getMessage());
+                        } catch (BackupException e) {
+                            screen.showValidationError(R.string.save_error);
                         }
                     }
                 });

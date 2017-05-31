@@ -33,7 +33,7 @@ public class BackupManagerTest {
 
     @Test
     public void testGetInstance() throws Exception {
-        WellImplementedLogger logger = new WellImplementedLogger();
+        WellImplementedLogger logger = new WellImplementedLogger("group");
 
         try {
             BackupManager.getInstance(null);
@@ -67,7 +67,7 @@ public class BackupManagerTest {
 
     @Test
     public void log() throws Exception {
-        WellImplementedLogger logger = new WellImplementedLogger();
+        WellImplementedLogger logger = new WellImplementedLogger("group");
         assertEquals(logger.entries.size(), 0); //check to ensure things are alright
 
         BackupManager manager = BackupManager.getInstance(logger);
@@ -76,45 +76,40 @@ public class BackupManagerTest {
 
         Operation mock = PowerMockito.mock(Operation.class);
         when(mock.data()).thenReturn(new JsonObject());
-        manager.log("group", mock, System.currentTimeMillis());
+        manager.log(mock, System.currentTimeMillis());
         assertEquals("must append to the log", logger.entries.size(), 1);
 
         for (int i = 0; i < 10; i++) {
             mock = PowerMockito.mock(Operation.class);
             when(mock.data()).thenReturn(new JsonObject());
-            manager.log("group", mock, System.currentTimeMillis());
+            manager.log(mock, System.currentTimeMillis());
         }
         assertEquals("must append 10 more entries to the log", logger.entries.size(), 11);
     }
 
     private void checkInvalidArgsHandling(BackupManager manager) throws BackupException {
         try {
-            manager.log(null, null, 0);
+            manager.log(null, 0);
             fail("must reject null args");
         } catch (IllegalArgumentException e) {
             System.out.println("correctly threw " + e.getClass().getName());
         }
         try {
-            manager.log(null, PowerMockito.mock(Operation.class), -1);
-            fail("must reject null args");
-        } catch (IllegalArgumentException e) {
-            System.out.println("correctly threw " + e.getClass().getName());
-        }
-        try {
-            manager.log("", PowerMockito.mock(Operation.class), 0);
+            manager.log(PowerMockito.mock(Operation.class), -1);
             fail("must reject null args");
         } catch (IllegalArgumentException e) {
             System.out.println("correctly threw " + e.getClass().getName());
         }
 
+
         try {
-            manager.log("group", null, 0);
+            manager.log(null, 0);
             fail("must reject null args");
         } catch (IllegalArgumentException e) {
             System.out.println("correctly threw " + e.getClass().getName());
         }
         try {
-            manager.log("group", PowerMockito.mock(Operation.class), -1);
+            manager.log(PowerMockito.mock(Operation.class), -1);
             fail("must reject null args");
         } catch (IllegalArgumentException e) {
             System.out.println("correctly threw " + e.getClass().getName());
@@ -123,7 +118,7 @@ public class BackupManagerTest {
 
     @Test
     public void restore() throws Exception {
-        WellImplementedLogger logger = new WellImplementedLogger();
+        WellImplementedLogger logger = new WellImplementedLogger("group");
         logger = PowerMockito.spy(logger);
         BackupManager.ProgressListener listener = PowerMockito.mock(BackupManager.ProgressListener.class);
         BackupManager manager = BackupManager.getInstance(logger);
@@ -131,7 +126,7 @@ public class BackupManagerTest {
         when(operation.data()).thenReturn(new JsonObject());
 
         for (int i = 0; i < 10; i++) {
-            manager.log("group", operation, System.currentTimeMillis());
+            manager.log(operation, System.currentTimeMillis());
         }
         manager.restore(listener);
         verify(listener, times(10)).onProgress(anyLong(), anyLong());
@@ -148,12 +143,12 @@ public class BackupManagerTest {
 
     @Test
     public void stats() throws Exception {
-        WellImplementedLogger logger = new WellImplementedLogger();
+        WellImplementedLogger logger = new WellImplementedLogger("group");
         BackupManager manager = BackupManager.getInstance(logger);
         InsertOperation operation = mock(InsertOperation.class);
         when(operation.data()).thenReturn(new JsonObject());
         for (int i = 0; i < 10; i++) {
-            manager.log("group", operation, System.currentTimeMillis());
+            manager.log(operation, System.currentTimeMillis());
         }
         BackupStats stats = manager.stats();
         assertEquals(stats.getLastModified(), logger.lastModified);
@@ -171,14 +166,17 @@ public class BackupManagerTest {
     }
 
     public static class WellImplementedLogger implements Logger {
+        private final String collectionName;
         List<LogEntry> entries;
         private long lastModified;
 
-        public WellImplementedLogger() {
+        public WellImplementedLogger(String collectionName) {
             entries = new LinkedList<>();
             lastModified = System.currentTimeMillis();
+            this.collectionName = collectionName;
         }
 
+        @NonNull
         @Override
         public BackupStats stats() throws BackupException {
             long size = 0;
@@ -188,6 +186,7 @@ public class BackupManagerTest {
             return new BackupStats(size, lastModified);
         }
 
+        @NonNull
         @Override
         public DependencyInjector getInjector() {
             return INJECTOR;
@@ -197,6 +196,11 @@ public class BackupManagerTest {
         public void appendEntry(@NonNull LogEntry logEntry) throws BackupException {
             entries.add(logEntry);
             lastModified = System.currentTimeMillis();
+        }
+
+        @Override
+        public String getCollectionName() {
+            return collectionName;
         }
 
         @Override
@@ -220,14 +224,21 @@ public class BackupManagerTest {
             throw new UnsupportedOperationException();
         }
 
+        @NonNull
         @Override
         public BackupStats stats() throws BackupException {
             return null;
         }
 
+        @NonNull
         @Override
         public DependencyInjector getInjector() {
             return INJECTOR;
+        }
+
+        @Override
+        public String getCollectionName() {
+            return "group";
         }
 
         @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
@@ -260,14 +271,21 @@ public class BackupManagerTest {
             return true;
         }
 
+        @NonNull
         @Override
         public BackupStats stats() throws BackupException {
             return null;
         }
 
+        @NonNull
         @Override
         public DependencyInjector getInjector() {
             return INJECTOR;
+        }
+
+        @Override
+        public String getCollectionName() {
+            return "group";
         }
 
         @Override
@@ -281,7 +299,7 @@ public class BackupManagerTest {
         public void inject(Operation operation) {
             if (operation instanceof InsertOperation) {
                 ((InsertOperation) operation)
-                        .setDataBase(new MockDataBase(BackupManager.getInstance(new WellImplementedLogger())));
+                        .setDataBase(new MockDataBase(BackupManager.getInstance(new WellImplementedLogger("group"))));
             }
         }
     };

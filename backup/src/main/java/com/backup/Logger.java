@@ -89,6 +89,8 @@ public interface Logger {
     @NonNull
     DependencyInjector getInjector();
 
+    String getCollectionName();
+
     /**
      * The {@link Logger} retrieves the logs one by one and pass it on to
      * {@link RestoreHandler} implementations to be replayed.

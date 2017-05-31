@@ -112,19 +112,16 @@ public class BackupManager {
     /**
      * logs an operation to the backup log.
      *
-     * @param group     the group(collection) this operation is associated with
      * @param operation the operation that happened
      * @throws BackupException
      */
-    public synchronized void log(@NonNull String group, @NonNull Operation operation, long timestamp) throws BackupException {
+    public synchronized void log(@NonNull Operation operation, long timestamp) throws BackupException {
         if (operation == null) throw new IllegalArgumentException("operation is null");
-        if (group == null || group.length() == 0) {
-            throw new IllegalArgumentException("group canot be an empty string");
-        }
+
         if (timestamp < 0) {
             throw new IllegalArgumentException("timestamp < 0");
         }
-        logger.appendEntry(new LogEntry<>(group, operation, timestamp));
+        logger.appendEntry(new LogEntry<>(logger.getCollectionName(), operation, timestamp));
     }
 
     /**
@@ -136,11 +133,16 @@ public class BackupManager {
             listener = DUMMY_LISTENER;
         }
         // FIXME: 5/18/17 use appropriate stats object
-        RestoreHandlerImpl handler = new RestoreHandlerImpl(logger, 10000, listener);
+        RestoreHandlerImpl handler = null;
         try {
+            handler = new RestoreHandlerImpl(logger, stats().getSize(), listener);
             logger.retrieveAllEntries(handler);
         } catch (BackupException e) {
-            handler.onRestoreError(e);
+            if (handler != null) {
+                handler.onRestoreError(e);
+            } else {
+                listener.done(e);
+            }
         }
     }
 

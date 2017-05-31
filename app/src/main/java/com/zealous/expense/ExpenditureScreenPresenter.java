@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.backup.BackupException;
 import com.zealous.R;
 import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
@@ -249,8 +250,12 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
     }
 
     public void deleteItem(Context context, Expenditure expenditure) {
-        if (expenditureDataSource.removeExpenditure(expenditure.getId())) {
-            Toast.makeText(context, R.string.expenditure_removed_success, Toast.LENGTH_LONG).show();
+        try {
+            if (expenditureDataSource.removeExpenditure(expenditure.getId())) {
+                Toast.makeText(context, R.string.expenditure_removed_success, Toast.LENGTH_LONG).show();
+            }
+        } catch (BackupException e) {
+            Toast.makeText(context, R.string.failed_to_delete, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -272,5 +277,9 @@ public class ExpenditureScreenPresenter extends BasePresenter<ExpenseListScreen>
 
     public void search(String filter) {
         updateRecords(filter);
+    }
+
+    public ExpenditureDataSource getDataSource() {
+        return expenditureDataSource;
     }
 }

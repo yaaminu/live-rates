@@ -24,8 +24,12 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.backup.BackupManager;
+import com.backup.DependencyInjector;
+import com.backup.Operation;
 import com.zealous.BuildConfig;
 import com.zealous.R;
+import com.zealous.Zealous;
 import com.zealous.adapter.BaseAdapter;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
@@ -202,12 +206,22 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         return R.layout.layout_add_expense;
     }
 
+    private final DependencyInjector injector = new DependencyInjector() {
+        @Override
+        public void inject(Operation operation) {
+            throw new UnsupportedOperationException();
+        }
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        BackupManager bm = ((Zealous) getActivity().getApplication())
+                .getExpenseBackupManager(injector);
         DaggerAddExpenditureComponent.builder()
-                .addExpenseFragmentProvider(new AddExpenseFragmentProvider(this, delegate, attachmentAdapterDelegate))
+                .addExpenseFragmentProvider(
+                        new AddExpenseFragmentProvider(bm, this, delegate, attachmentAdapterDelegate))
                 .build().inject(this);
         addExpenditurePresenter.onCreate(savedInstanceState, this);
         Bundle bundle = getArguments();

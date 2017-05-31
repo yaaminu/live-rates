@@ -18,9 +18,13 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
+import com.backup.BackupManager;
+import com.backup.DependencyInjector;
+import com.backup.Operation;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.zealous.R;
+import com.zealous.Zealous;
 import com.zealous.exchangeRates.ExchangeRateListActivity;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
@@ -89,6 +93,16 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     private FloatingActionButton addExpenditureFab;
     private FloatingActionButton viewBudgetFab;
 
+    private final DependencyInjector injector = new DependencyInjector() {
+        @Override
+        public void inject(Operation operation) {
+            if (operation instanceof BaseExpenditureOperation) {
+                ((BaseExpenditureOperation) operation).dataSource
+                        = expenditureScreenPresenter.getDataSource();
+            }
+        }
+    };
+
     @Override
     protected int getLayout() {
         return R.layout.fragment_expenses;
@@ -98,8 +112,11 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        BackupManager backupManager = ((Zealous) getActivity().getApplication()).getExpenseBackupManager(injector);
+
         DaggerExpenseFragmentComponent
                 .builder()
+                .baseExpenditureProvider(new BaseExpenditureProvider(backupManager))
                 .expenseFragmentProvider(new ExpenseFragmentProvider(this))
                 .build()
                 .inject(this);

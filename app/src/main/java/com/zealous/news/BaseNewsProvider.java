@@ -3,6 +3,7 @@ package com.zealous.news;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.backup.BackupManager;
 import com.zealous.R;
 import com.zealous.utils.Config;
 
@@ -25,6 +26,12 @@ import okhttp3.OkHttpClient;
 @Module
 public class BaseNewsProvider {
 
+    private final BackupManager manager;
+
+    public BaseNewsProvider(BackupManager manager) {
+        this.manager = manager;
+    }
+
     @Provides
     public Realm getRealm(@NonNull RealmConfiguration configuration) {
         return Realm.getInstance(configuration);
@@ -42,7 +49,7 @@ public class BaseNewsProvider {
 
     @Provides
     public NewsDataSource createDataSource(@NonNull Realm realm, @NonNull NewsLoader loader) {
-        return new NewsDataSource(realm, loader);
+        return new NewsDataSource(realm, loader, manager);
     }
 
     @Singleton

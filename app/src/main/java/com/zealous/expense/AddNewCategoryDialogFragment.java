@@ -11,8 +11,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.backup.BackupException;
+import com.backup.DependencyInjector;
+import com.backup.Operation;
 import com.zealous.R;
+import com.zealous.Zealous;
 import com.zealous.utils.GenericUtils;
 
 import java.math.BigDecimal;
@@ -41,13 +46,25 @@ public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
     Button btAdd;
     ExpenditureDataSource dataSource;
 
+    DependencyInjector injector = new DependencyInjector() {
+        @Override
+        public void inject(Operation operation) {
+            if (operation instanceof BaseExpenditureOperation) {
+                ((BaseExpenditureOperation) operation).dataSource
+                        = dataSource;
+            }
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_add_new_category, container, false);
         ButterKnife.bind(this, v);
-        BaseExpenditureProvider provider = new BaseExpenditureProvider();
+        BaseExpenditureProvider provider =
+                new BaseExpenditureProvider(
+                        ((Zealous) getActivity().getApplication()).getExpenseBackupManager(injector));
         dataSource = provider.createDataSource(provider.getExpenditureRealm(provider.getConfiguration()));
         setCancelable(true);
         return v;
@@ -104,9 +121,14 @@ public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
     }
 
     private void doAddNewCategory(String name, double budget, int budgetType) {
-        dataSource.addOrUpdateCategory(originalName, new ExpenditureCategory(name,
-                BigDecimal.valueOf(budget).multiply(BigDecimal.valueOf(100), MathContext.DECIMAL128).longValue(), budgetType));
-        getDialog().dismiss();
+        try {
+            dataSource.addOrUpdateCategory(originalName, new ExpenditureCategory(name,
+                    BigDecimal.valueOf(budget).multiply(BigDecimal.valueOf(100),
+                            MathContext.DECIMAL128).longValue(), budgetType));
+            getDialog().dismiss();
+        } catch (BackupException e) {
+            Toast.makeText(getDialog().getContext(), R.string.failed_to_add_category, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

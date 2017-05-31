@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.backup.BackupException;
+import com.zealous.R;
 import com.zealous.ui.BasePresenter;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
@@ -192,7 +194,13 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
         ThreadUtils.ensureMain();
         item = new NewsItem(item.getTitle(), item.getUrl(), item.getThumbnailUrl(), item.getDescription(),
                 item.getDate(), item.getSource(), !item.isBookmarked());
-        dataSource.update(item);
+        try {
+            dataSource.update(item);
+        } catch (BackupException e) {
+            if (screen != null) {
+                screen.showDialogMessage(R.string.failed_to_add_favorite);
+            }
+        }
     }
 
     public boolean isBookmarked() {

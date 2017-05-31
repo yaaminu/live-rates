@@ -1,7 +1,10 @@
 package com.zealous.news;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.backup.BackupException;
+import com.backup.BackupManager;
 import com.zealous.utils.GenericUtils;
 
 import java.io.Closeable;
@@ -24,12 +27,16 @@ public class NewsDataSource implements Closeable {
     private final Realm realm;
     private final NewsLoader newsLoader;
 
+    @Nullable
+    private final BackupManager manager;
+
     @Inject
-    public NewsDataSource(@NonNull Realm realm, NewsLoader newsLoader) {
+    public NewsDataSource(@NonNull Realm realm, NewsLoader newsLoader, @Nullable BackupManager manager) {
         GenericUtils.ensureNotNull(realm, newsLoader);
         this.realm = realm;
         ensureNotClosed();
         this.newsLoader = newsLoader;
+        this.manager = manager;
     }
 
 
@@ -82,10 +89,13 @@ public class NewsDataSource implements Closeable {
         GenericUtils.ensureConditionTrue(!realm.isClosed(), "can't use a closed datasource");
     }
 
-    public void update(NewsItem item) {
+    public void update(NewsItem item) throws BackupException {
         ensureNotClosed();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(item);
+        if (manager != null) {
+            manager.log(new AddNewsFavoriteOperation(), System.currentTimeMillis());
+        }
         realm.commitTransaction();
     }
 }

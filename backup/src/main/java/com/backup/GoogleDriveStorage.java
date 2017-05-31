@@ -2,6 +2,7 @@ package com.backup;
 
 import android.content.Context;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -58,22 +59,36 @@ public class GoogleDriveStorage implements Storage {
                 context.getDir(DRIVE_BACKUP_BACKUPLOG_DIRNAME, MODE_APPEND));
     }
 
-    public void initiaize(Context context) {
+    public void initiaize(final Context context) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                lock.acquireUninterruptibly();
+                try {
+                    if (apiClient == null) {
+                        apiClient = new GoogleApiClient.Builder(context)
+                                .addApi(Drive.API)
+                                .addScope(Drive.SCOPE_APPFOLDER)
+                                .build();
+                        ConnectionResult result = apiClient.blockingConnect();
+                        if (result.getErrorCode() != ConnectionResult.SUCCESS) {
+                            // TODO: 5/22/17 post this to the notification panel
+                            throw new RuntimeException();
+                        }
+                    }
+                } finally {
+                    lock.release();
+                }
+            }
+        };
         if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-            throw new IllegalStateException("can't make this call on the main thread");
-        }
-
-        apiClient = new GoogleApiClient.Builder(context)
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_APPFOLDER)
-                .build();
-        ConnectionResult result = apiClient.blockingConnect();
-        if (result.getErrorCode() != ConnectionResult.SUCCESS) {
-            // TODO: 5/22/17 post this to the notification pane
-            throw new RuntimeException();
+            new Thread(runnable).start();
+        } else {
+            runnable.run();
         }
     }
 
+    @NonNull
     @Override
     public OutputStream newAppendableOutPutStream(String collectionName) throws IOException {
         lock.acquireUninterruptibly();
@@ -91,6 +106,7 @@ public class GoogleDriveStorage implements Storage {
         }
     }
 
+    @NonNull
     @Override
     public InputStream newInputStream(String collectionName) throws IOException {
         MetadataBuffer metadataBuffer = null;

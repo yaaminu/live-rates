@@ -10,8 +10,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.backup.DependencyInjector;
+import com.backup.Operation;
 import com.zealous.BuildConfig;
 import com.zealous.R;
+import com.zealous.Zealous;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.exchangeRates.ExchangeRateManager;
 import com.zealous.expense.BaseExpenditureProvider;
@@ -124,8 +127,16 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
+    private final DependencyInjector injector = new DependencyInjector() {
+        @Override
+        public void inject(Operation operation) {
+            throw new UnsupportedOperationException();
+        }
+    };
+
     void setupExpenditureCategories() {
-        BaseExpenditureProvider provider = new BaseExpenditureProvider();
+        BaseExpenditureProvider provider =
+                new BaseExpenditureProvider(((Zealous) getApplication()).getExpenseBackupManager(injector));
         Realm realm = provider.getExpenditureRealm(provider.getConfiguration());
         InputStream inputStream = null;
         try {

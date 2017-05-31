@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 
+import com.backup.BackupException;
 import com.zealous.R;
 import com.zealous.errors.ZealousException;
 import com.zealous.exchangeRates.ExchangeRate;
@@ -106,6 +107,9 @@ public class BudgetFragmentPresenter extends BasePresenter<BudgetScreen> {
         } catch (ZealousException e) {
             PLog.d(TAG, e.getMessage(), e);
             screen.showValidationError(e.getMessage());
+        } catch (BackupException e) {
+            PLog.f(TAG, e.getMessage(), e);
+            screen.showValidationError(GenericUtils.getString(R.string.failed_to_delete));
         }
     }
 }

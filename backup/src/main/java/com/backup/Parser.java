@@ -33,7 +33,7 @@ public class Parser implements Closeable {
         buffer = new ByteArrayOutputStream();
     }
 
-    @NonNull
+    @Nullable
     LogEntry<? extends Operation> next() throws IOException {
         try {
             int read;

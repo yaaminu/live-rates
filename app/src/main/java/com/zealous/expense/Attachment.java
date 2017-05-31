@@ -2,6 +2,7 @@ package com.zealous.expense;
 
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.util.Base64;
 
 import com.google.gson.JsonObject;
 import com.zealous.R;
@@ -9,10 +10,11 @@ import com.zealous.errors.ZealousException;
 import com.zealous.utils.FileUtils;
 import com.zealous.utils.GenericUtils;
 
-import org.apache.commons.codec.binary.Base64;
-
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
+
+import static android.util.Base64.NO_WRAP;
+import static android.util.Base64.decode;
 
 /**
  * Created by yaaminu on 4/22/17.
@@ -115,7 +117,9 @@ public class Attachment extends RealmObject {
         jsonObject.addProperty(FIELD_MIME_TYPE, getMimeType());
         jsonObject.addProperty(FIELD_TITLE, getTitle());
         jsonObject.addProperty(FIELD_SHA1SUM, getSha1Sum());
-        jsonObject.addProperty(FIELD_BLOB, Base64.encodeBase64String(getBlob()));
+        //for compatibility, the json must contain the CRLF pair or else
+        //it will break the parser
+        jsonObject.addProperty(FIELD_BLOB, Base64.encodeToString(getBlob(), NO_WRAP));
         return jsonObject;
     }
 
@@ -124,7 +128,9 @@ public class Attachment extends RealmObject {
         String mimeType = jsonObject.get(FIELD_MIME_TYPE).getAsString();
         String title = jsonObject.get(FIELD_TITLE).getAsString();
         String sha1sum = jsonObject.get(FIELD_SHA1SUM).getAsString();
-        byte[] blob = Base64.decodeBase64(jsonObject.get(FIELD_BLOB).getAsString());
+        //for compatibility, the json must contain the CRLF pair or else
+        //it will break the parser
+        byte[] blob = decode(jsonObject.get(FIELD_BLOB).getAsString(), NO_WRAP);
         try {
             Attachment attachment = new Attachment(title, blob, mimeType);
             if (!sha1sum.equals(attachment.getSha1Sum())) {

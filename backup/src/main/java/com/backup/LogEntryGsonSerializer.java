@@ -17,7 +17,7 @@ public class LogEntryGsonSerializer implements Serializer<LogEntry<? extends Ope
 
     private final Gson gson;
 
-    LogEntryGsonSerializer() {
+    public LogEntryGsonSerializer() {
         gson = new GsonBuilder()
                 .registerTypeAdapter(LogEntry.class, new LogEntryTypeAdapter())
                 .setExclusionStrategies(new LoggerIgnoreExclusionStrategy())

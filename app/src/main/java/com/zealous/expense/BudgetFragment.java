@@ -10,7 +10,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.backup.DependencyInjector;
+import com.backup.Operation;
 import com.zealous.R;
+import com.zealous.Zealous;
 import com.zealous.ui.BaseFragment;
 import com.zealous.ui.BasePresenter;
 
@@ -41,11 +44,20 @@ public class BudgetFragment extends BaseFragment implements BudgetScreen {
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
 
+    DependencyInjector injector = new DependencyInjector() {
+        @Override
+        public void inject(Operation operation) {
+            throw new UnsupportedOperationException();
+        }
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         DaggerBudgetFragmentComponent.builder()
+                .baseExpenditureProvider(new BaseExpenditureProvider(
+                        ((Zealous) getActivity().getApplication()).getExpenseBackupManager(injector)))
                 .budgetFragmentProvider(new BudgetFragmentProvider(this))
                 .build().inject(this);
         presenter.onCreate(savedInstanceState, this);
