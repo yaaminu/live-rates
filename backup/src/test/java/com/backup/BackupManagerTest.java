@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -33,7 +32,7 @@ public class BackupManagerTest {
 
     @Test
     public void testGetInstance() throws Exception {
-        WellImplementedLogger logger = new WellImplementedLogger("group");
+        LoggerImplTest logger = new LoggerImplTest("group");
 
         try {
             BackupManager.getInstance(null);
@@ -41,33 +40,11 @@ public class BackupManagerTest {
         } catch (IllegalArgumentException e) {
             System.out.println("correctly threw " + e.getClass().getName());
         }
-        BackupManager instance = BackupManager.getInstance(logger);
-        assertNotNull("Should never return null", instance);
-        assertEquals("Should always return the same backup manager for the same logger instance",
-                instance, BackupManager.getInstance(logger));
-
-        try {
-            //since the backup manager uses a HashMap to implement it's
-            //singleton per logger, poorly implemented
-            //equals/hashcode could lead to really dire consequences where
-            //a different logger will be returned which can easily lead to
-            //corrupting the data of the mistaken logger as it will mix
-            //new unrelated data to it's log leading to parsing errors etc.
-            //this test test that we are able to check  that and fail fast
-            //if such situations are encountered.
-
-            BackupManager.getInstance(new PoorlyImplementedLogger1());
-            BackupManager.getInstance(new PoorlyImplementedLogger2());
-            fail("must catch poor logger implementations and fail fast");
-        } catch (RuntimeException e) {
-            System.out.println("correctly threw " + e.getClass().getName());
-        }
-
     }
 
     @Test
     public void log() throws Exception {
-        WellImplementedLogger logger = new WellImplementedLogger("group");
+        LoggerImplTest logger = new LoggerImplTest("group");
         assertEquals(logger.entries.size(), 0); //check to ensure things are alright
 
         BackupManager manager = BackupManager.getInstance(logger);
@@ -118,7 +95,7 @@ public class BackupManagerTest {
 
     @Test
     public void restore() throws Exception {
-        WellImplementedLogger logger = new WellImplementedLogger("group");
+        LoggerImplTest logger = new LoggerImplTest("group");
         logger = PowerMockito.spy(logger);
         BackupManager.ProgressListener listener = PowerMockito.mock(BackupManager.ProgressListener.class);
         BackupManager manager = BackupManager.getInstance(logger);
@@ -143,7 +120,7 @@ public class BackupManagerTest {
 
     @Test
     public void stats() throws Exception {
-        WellImplementedLogger logger = new WellImplementedLogger("group");
+        LoggerImplTest logger = new LoggerImplTest("group");
         BackupManager manager = BackupManager.getInstance(logger);
         InsertOperation operation = mock(InsertOperation.class);
         when(operation.data()).thenReturn(new JsonObject());
@@ -165,12 +142,12 @@ public class BackupManagerTest {
 
     }
 
-    public static class WellImplementedLogger implements Logger {
+    public static class LoggerImplTest implements Logger {
         private final String collectionName;
         List<LogEntry> entries;
         private long lastModified;
 
-        public WellImplementedLogger(String collectionName) {
+        public LoggerImplTest(String collectionName) {
             entries = new LinkedList<>();
             lastModified = System.currentTimeMillis();
             this.collectionName = collectionName;
@@ -213,93 +190,12 @@ public class BackupManagerTest {
         }
     }
 
-    private static class PoorlyImplementedLogger1 implements Logger {
-        @Override
-        public void appendEntry(@NonNull LogEntry logEntry) throws BackupException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void retrieveAllEntries(@NonNull RestoreHandler handler) throws BackupException {
-            throw new UnsupportedOperationException();
-        }
-
-        @NonNull
-        @Override
-        public BackupStats stats() throws BackupException {
-            return null;
-        }
-
-        @NonNull
-        @Override
-        public DependencyInjector getInjector() {
-            return INJECTOR;
-        }
-
-        @Override
-        public String getCollectionName() {
-            return "group";
-        }
-
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-        @Override
-        public boolean equals(Object o) {
-            return true;
-        }
-
-
-        @Override
-        public int hashCode() {
-            return 1;
-        }
-    }
-
-    private static class PoorlyImplementedLogger2 implements Logger {
-        @Override
-        public void appendEntry(@NonNull LogEntry logEntry) throws BackupException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void retrieveAllEntries(@NonNull RestoreHandler handler) throws BackupException {
-            throw new UnsupportedOperationException();
-        }
-
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-        @Override
-        public boolean equals(Object o) {
-            return true;
-        }
-
-        @NonNull
-        @Override
-        public BackupStats stats() throws BackupException {
-            return null;
-        }
-
-        @NonNull
-        @Override
-        public DependencyInjector getInjector() {
-            return INJECTOR;
-        }
-
-        @Override
-        public String getCollectionName() {
-            return "group";
-        }
-
-        @Override
-        public int hashCode() {
-            return 1;
-        }
-    }
-
     private static DependencyInjector INJECTOR = new DependencyInjector() {
         @Override
         public void inject(Operation operation) {
             if (operation instanceof InsertOperation) {
                 ((InsertOperation) operation)
-                        .setDataBase(new MockDataBase(BackupManager.getInstance(new WellImplementedLogger("group"))));
+                        .setDataBase(new MockDataBase(BackupManager.getInstance(new LoggerImplTest("group"))));
             }
         }
     };

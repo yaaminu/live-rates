@@ -64,7 +64,7 @@ public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
         ButterKnife.bind(this, v);
         BaseExpenditureProvider provider =
                 new BaseExpenditureProvider(
-                        ((Zealous) getActivity().getApplication()).getExpenseBackupManager(injector));
+                        ((Zealous) getActivity().getApplication()).getExpenseBackupManager());
         dataSource = provider.createDataSource(provider.getExpenditureRealm(provider.getConfiguration()));
         setCancelable(true);
         return v;

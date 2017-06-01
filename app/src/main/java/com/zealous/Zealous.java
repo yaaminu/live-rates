@@ -9,6 +9,7 @@ import com.backup.GoogleDriveStorage;
 import com.backup.LocalFileSystemStorage;
 import com.backup.LogEntryGsonSerializer;
 import com.backup.LoggerImpl;
+import com.backup.Operation;
 import com.birbit.android.jobqueue.JobManager;
 import com.birbit.android.jobqueue.TagConstraint;
 import com.birbit.android.jobqueue.config.Configuration;
@@ -21,8 +22,6 @@ import com.zealous.utils.PLog;
 import com.zealous.utils.Task;
 import com.zealous.utils.TaskManager;
 
-import java.io.File;
-
 import io.realm.Realm;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
@@ -32,8 +31,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class Zealous extends Application {
 
-    private static final String OPERATION_LOG = "operation.log";
+    public static final String OPERATION_LOG = "operation.log";
     public static final String ENABLE_GDRIVE_BACKUP = "sync.backup.gdrive.enable";
+    private static final String BACKUP_FILE_NAME = "backup";
     private JobRunnerImpl runner;
     private ExpenseActivityComponent expenseActivityComponent;
 
@@ -59,29 +59,29 @@ public class Zealous extends Application {
         expenseActivityComponent = DaggerExpenseActivityComponent.create();
     }
 
-    public BackupManager getExpenseBackupManager(DependencyInjector injector) {
-        return doGetBackupManager(injector, OPERATION_LOG);
+    public BackupManager getExpenseBackupManager() {
+        return doGetBackupManager();
     }
 
     @NonNull
-    private BackupManager doGetBackupManager(DependencyInjector injector, String collectionName) {
+    private BackupManager doGetBackupManager() {
         LocalFileSystemStorage localStorage =
-                new LocalFileSystemStorage(new File(Config.getAppBinFilesBaseDir(), "backup"));
+                new LocalFileSystemStorage(Config.getBackupDir());
 
         if (isGoogleDriveBackupEnabled()) {
-            return BackupManager.getInstance(new LoggerImpl(collectionName, injector, new LogEntryGsonSerializer(),
+            return BackupManager.getInstance(new LoggerImpl(OPERATION_LOG, injector, new LogEntryGsonSerializer(),
                     new MultipleStorage(localStorage, new GoogleDriveStorage(this))));
         }
-        return BackupManager.getInstance(new LoggerImpl(collectionName, injector,
+        return BackupManager.getInstance(new LoggerImpl(OPERATION_LOG, injector,
                 new LogEntryGsonSerializer(), localStorage));
     }
 
     public static boolean isGoogleDriveBackupEnabled() {
         return Config.getApplicationWidePrefs().getBoolean(ENABLE_GDRIVE_BACKUP, false);
     }
-    
-    public BackupManager getNewsBackupManager(DependencyInjector injector) {
-        return doGetBackupManager(injector, OPERATION_LOG);
+
+    public BackupManager getNewsBackupManager() {
+        return doGetBackupManager();
     }
 
     static class JobRunnerImpl implements TaskManager.JobRunner {
@@ -108,4 +108,11 @@ public class Zealous extends Application {
             manager.start();
         }
     }
+
+    private final DependencyInjector injector = new DependencyInjector() {
+        @Override
+        public void inject(Operation operation) {
+            throw new UnsupportedOperationException();
+        }
+    };
 }

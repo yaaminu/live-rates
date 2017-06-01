@@ -1,8 +1,10 @@
 package com.zealous.utils;
 
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
 
@@ -123,4 +125,28 @@ public class Config {
         return getApplicationContext().getSharedPreferences(s, Context.MODE_PRIVATE);
     }
 
+    public static File getBackupDir() {
+        return new File(getAppBinFilesBaseDir(), "backup");
+    }
+
+    public static void enableComponent(Class clazz) {
+        PLog.d(TAG, "enabling " + clazz.getSimpleName());
+        ComponentName receiver = new ComponentName(Config.getApplication(), clazz);
+
+        PackageManager pm = Config.getApplication().getPackageManager();
+
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
+    }
+
+//    public static void disableComponent(Class clazz) {
+//        PLog.d(TAG, "disabling " + clazz.getSimpleName());
+//        ComponentName receiver = new ComponentName(Config.getApplication(), clazz);
+//
+//        PackageManager pm = Config.getApplication().getPackageManager();
+//        pm.setComponentEnabledSetting(receiver,
+//                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//                PackageManager.DONT_KILL_APP);
+//    }
 }

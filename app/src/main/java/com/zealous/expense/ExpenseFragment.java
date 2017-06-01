@@ -112,7 +112,7 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        BackupManager backupManager = ((Zealous) getActivity().getApplication()).getExpenseBackupManager(injector);
+        BackupManager backupManager = ((Zealous) getActivity().getApplication()).getExpenseBackupManager();
 
         DaggerExpenseFragmentComponent
                 .builder()

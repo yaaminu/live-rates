@@ -83,7 +83,7 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
         Bundle arguments = getArguments();
         GenericUtils.ensureNotNull(arguments);
         DaggerNewsFragmentComponent.builder()
-                .baseNewsProvider(new BaseNewsProvider(((Zealous) getActivity().getApplication()).getNewsBackupManager(injector)))
+                .baseNewsProvider(new BaseNewsProvider(((Zealous) getActivity().getApplication()).getNewsBackupManager()))
                 .newsFragmentProvider(new NewsFragmentProvider(this, arguments.getBoolean(IS_FAVORITES)))
                 .build()
                 .inject(this);

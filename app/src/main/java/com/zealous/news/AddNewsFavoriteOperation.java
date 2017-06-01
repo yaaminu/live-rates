@@ -1,5 +1,7 @@
 package com.zealous.news;
 
+import android.support.annotation.NonNull;
+
 import com.backup.BackupException;
 import com.backup.Operation;
 import com.google.gson.JsonObject;
@@ -12,7 +14,7 @@ public class AddNewsFavoriteOperation implements Operation {
 
     //will be injected
     @android.support.annotation.Nullable
-    NewsDataSource dataSource;
+    public NewsDataSource dataSource;
 
     @android.support.annotation.NonNull
     private JsonObject data;
@@ -25,6 +27,7 @@ public class AddNewsFavoriteOperation implements Operation {
         this.data = newsItem.toJson();
     }
 
+    @NonNull
     @Override
     public JsonObject data() {
         return data;
@@ -37,9 +40,10 @@ public class AddNewsFavoriteOperation implements Operation {
 
     @Override
     public void replay() throws BackupException {
-        if (dataSource == null) {
-            throw new IllegalStateException("did you forget to inject the deps?");
-        }
-        dataSource.update(NewsItem.fromJson(data));
+//        if (dataSource == null) {
+//            throw new IllegalStateException("did you forget to inject the deps?");
+//        }
+//        dataSource.update(NewsItem.fromJson(data));
+        System.out.println(AddNewsFavoriteOperation.class.getName() + " is a no-op");
     }
 }

@@ -7,4 +7,5 @@
     <item name="tab_tools" type="id" />
     <item name="view_budget_fab" type="id" />
     <item name="add_new_expenditure" type="id" />
+    <item name="action_skip" type="id" />
 </resources>

@@ -4,9 +4,6 @@ package com.backup;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A backup manager is a simple utility for backing up files in an incremental
  * fashion instead of the rather inefficient whole database file backup
@@ -18,7 +15,6 @@ import java.util.Map;
  */
 public class BackupManager {
 
-    private static Map<Logger, BackupManager> INSTANCES;
 
     @NonNull
     private final Logger logger;
@@ -69,45 +65,15 @@ public class BackupManager {
 
 
     /**
-     * Retrieves the singleton {@link BackupManager} instance for the logger of type T
-     * or creates a new one if it does not exist. This means that  any {@link Logger}
-     * implementation can only be used with only one instance of Backup manager. Essentially
-     * this makes BackupManager a partial singleton
-     * <p>
-     * <p>
-     * Backup manager attempts to check poorly implemented  hashcode()/equals() and
-     * throws if it detects one. This is only a fail-fast mechanism so clients must never rely on
-     * this check since a "clever" buggy code can outwit this check. It's your responsibility
-     * to implement them well to ensure good behaviour of backup manager
-     *
      * @return the {@link BackupManager}. never null
      * @throws RuntimeException when a it detects poor equals() and hashcode()
      *                          implementations in a {@link Logger}.
      */
     @NonNull
     public static synchronized <T extends Logger> BackupManager getInstance(@NonNull T logger) {
-        if (logger == null) throw new IllegalArgumentException("logger==null");
-
-        if (INSTANCES == null) {
-            INSTANCES = new HashMap<>(2);
-        }
-
-        BackupManager instance = INSTANCES.get(logger);
-        if (instance == null) {
-            instance = new BackupManager(logger);
-            INSTANCES.put(logger, instance);
-        } else {
-            checkPoorHashcodeEqualsImplementation(instance, logger);
-        }
-        return instance;
+        return new BackupManager(logger);
     }
 
-    private static <T extends Logger> void checkPoorHashcodeEqualsImplementation(BackupManager instance, T logger) {
-        if (instance.logger.getClass() != logger.getClass()) {
-            throw new RuntimeException("improper hashcode/equals implementation: " + logger.getClass().getName()
-                    + " and " + instance.logger.getClass().getName() + " hash colliding hashcode/equals");
-        }
-    }
 
     /**
      * logs an operation to the backup log.

@@ -93,9 +93,9 @@ public class NewsDataSource implements Closeable {
         ensureNotClosed();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(item);
-        if (manager != null) {
-            manager.log(new AddNewsFavoriteOperation(), System.currentTimeMillis());
-        }
+//        if (manager != null) {
+//            manager.log(new AddNewsFavoriteOperation(), System.currentTimeMillis());
+//        }
         realm.commitTransaction();
     }
 }

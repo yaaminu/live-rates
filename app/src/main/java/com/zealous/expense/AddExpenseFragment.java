@@ -218,7 +218,7 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         BackupManager bm = ((Zealous) getActivity().getApplication())
-                .getExpenseBackupManager(injector);
+                .getExpenseBackupManager();
         DaggerAddExpenditureComponent.builder()
                 .addExpenseFragmentProvider(
                         new AddExpenseFragmentProvider(bm, this, delegate, attachmentAdapterDelegate))

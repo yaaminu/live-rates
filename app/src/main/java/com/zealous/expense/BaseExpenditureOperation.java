@@ -15,7 +15,7 @@ public class BaseExpenditureOperation implements Operation {
 
     //will be injected
     @Nullable
-    ExpenditureDataSource dataSource;
+    public ExpenditureDataSource dataSource;
 
     protected JsonObject data;
 

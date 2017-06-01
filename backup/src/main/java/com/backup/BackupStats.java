@@ -1,5 +1,7 @@
 package com.backup;
 
+import java.util.Date;
+
 /**
  * Created by yaaminu on 5/17/17.
  */
@@ -43,5 +45,13 @@ public class BackupStats {
         int result = (int) (size ^ (size >>> 32));
         result = 31 * result + (int) (lastModified ^ (lastModified >>> 32));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "BackupStats{" +
+                "size=" + (size > 1024 ? (size / 1024) + "KB" : (size + "B") )+
+                ", lastModified=" + new Date(lastModified) +
+                '}';
     }
 }

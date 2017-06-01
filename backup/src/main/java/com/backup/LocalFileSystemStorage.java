@@ -9,16 +9,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created by yaaminu on 5/21/17.
  */
 
 public class LocalFileSystemStorage implements Storage {
-    private static final String BACKUP_LOG_SUFFIX = "-backup.log";
 
     private final File dir;
 
+    private static final Semaphore lock = new Semaphore(1, true);
 
     public LocalFileSystemStorage(@NonNull File dir) {
         checkArgs(dir);
@@ -42,13 +43,13 @@ public class LocalFileSystemStorage implements Storage {
     @NonNull
     @Override
     public OutputStream newAppendableOutPutStream(@NonNull String collectionName) throws IOException {
-        return new FileOutputStream(new File(dir, collectionName), true);
+        return new LockAwareOutPutStream(new FileOutputStream(new File(dir, collectionName), true), lock);
     }
 
     @NonNull
     @Override
     public InputStream newInputStream(@NonNull String collectionName) throws IOException {
-        return new FileInputStream(new File(dir, collectionName));
+        return new LockAwareInputStream(new FileInputStream(new File(dir, collectionName)), lock);
     }
 
     public File getBackupFile(@NonNull String collectionName) {
@@ -57,11 +58,21 @@ public class LocalFileSystemStorage implements Storage {
 
     @Override
     public long size(@NonNull String collectionName) throws IOException {
-        return new File(dir, collectionName).length();
+        try {
+            lock.acquireUninterruptibly();
+            return new File(dir, collectionName).length();
+        } finally {
+            lock.release();
+        }
     }
 
     @Override
     public long lastModified(@NonNull String collectionName) throws IOException {
-        return new File(dir, collectionName).lastModified();
+        try {
+            lock.acquireUninterruptibly();
+            return new File(dir, collectionName).lastModified();
+        } finally {
+            lock.release();
+        }
     }
 }

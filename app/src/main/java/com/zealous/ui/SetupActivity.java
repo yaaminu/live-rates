@@ -10,18 +10,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.backup.DependencyInjector;
-import com.backup.Operation;
 import com.zealous.BuildConfig;
 import com.zealous.R;
-import com.zealous.Zealous;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.exchangeRates.ExchangeRateManager;
 import com.zealous.expense.BaseExpenditureProvider;
 import com.zealous.expense.ExpenditureCategory;
 import com.zealous.utils.Config;
 import com.zealous.utils.TaskManager;
-import com.zealous.utils.ThreadUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -41,24 +37,19 @@ public class SetupActivity extends AppCompatActivity {
         @Override
         public void run() {
             //don't touch ui elements here
-            if (ThreadUtils.isMainThread()) {
-                gotoMainActivity();
+            if (!isSetup()) {
+                setupRates();
+                setupExpenditureCategories();
+                Intent intent = new Intent(SetupActivity.this, SetupBackup.class);
+                startActivity(intent);
+                finish();
             } else {
-                if (!isSetup()) {
-                    setupRates();
-                    setupExpenditureCategories();
-                    Config.getApplicationWidePrefs().edit()
-                            .putBoolean(KEY_ZEALOUS_SETUP_COMPLETED, true)
-                            .apply();
-                    new Handler(Looper.getMainLooper())
-                            .postDelayed(this, TimeUnit.SECONDS.toMillis(3));
-                } else {
-                    runOnUiThread(this);
-                }
+                SetupBackup.gotoMainActivity(SetupActivity.this);
             }
         }
 
     };
+    private String KEY_ZEALOUS_SPLSH_COMPLETED = "setup.splash.shown";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +59,7 @@ public class SetupActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (Config.getApplicationWidePrefs().getBoolean(KEY_ZEALOUS_SETUP_COMPLETED, false)) {
+        if (Config.getApplicationWidePrefs().getBoolean(KEY_ZEALOUS_SPLSH_COMPLETED, false)) {
             TaskManager.executeNow(initRunnable, false);
         } else {
             setContentView(R.layout.activity_splash);
@@ -105,6 +96,8 @@ public class SetupActivity extends AppCompatActivity {
                     .postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            Config.getApplicationWidePrefs().edit()
+                                    .putBoolean(KEY_ZEALOUS_SPLSH_COMPLETED, true).apply();
                             TaskManager.executeNow(initRunnable, false);
                         }
                     }, TimeUnit.SECONDS.toMillis(9));
@@ -127,16 +120,9 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    private final DependencyInjector injector = new DependencyInjector() {
-        @Override
-        public void inject(Operation operation) {
-            throw new UnsupportedOperationException();
-        }
-    };
-
     void setupExpenditureCategories() {
         BaseExpenditureProvider provider =
-                new BaseExpenditureProvider(((Zealous) getApplication()).getExpenseBackupManager(injector));
+                new BaseExpenditureProvider(null);
         Realm realm = provider.getExpenditureRealm(provider.getConfiguration());
         InputStream inputStream = null;
         try {
@@ -162,9 +148,4 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    private void gotoMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
 }

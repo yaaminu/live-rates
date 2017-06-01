@@ -25,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,56 +47,44 @@ public class GoogleDriveStorage implements Storage {
             return -1;
         }
     };
-    private final Semaphore lock;
-    private final LocalFileSystemStorage storage;
-
+    private static final Semaphore lock = new Semaphore(1, true);
+    private final File waitingDir;
     @Nullable
     private GoogleApiClient apiClient;
-    private OutputStream outputStream;
 
     public GoogleDriveStorage(Context context) {
-        lock = new Semaphore(1, true);
-        this.storage = new LocalFileSystemStorage(
-                context.getDir(DRIVE_BACKUP_BACKUPLOG_DIRNAME, MODE_APPEND));
+        this.waitingDir = context.getDir(DRIVE_BACKUP_BACKUPLOG_DIRNAME, MODE_APPEND);
     }
 
     public void initiaize(final Context context) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                lock.acquireUninterruptibly();
-                try {
-                    if (apiClient == null) {
-                        apiClient = new GoogleApiClient.Builder(context)
-                                .addApi(Drive.API)
-                                .addScope(Drive.SCOPE_APPFOLDER)
-                                .build();
-                        ConnectionResult result = apiClient.blockingConnect();
-                        if (result.getErrorCode() != ConnectionResult.SUCCESS) {
-                            // TODO: 5/22/17 post this to the notification panel
-                            throw new RuntimeException();
-                        }
-                    }
-                } finally {
-                    lock.release();
+        if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
+            throw new IllegalStateException("call must be made off the main thread!!!");
+        }
+        lock.acquireUninterruptibly();
+        try {
+            if (apiClient == null) {
+                apiClient = new GoogleApiClient.Builder(context)
+                        .addApi(Drive.API)
+                        .addScope(Drive.SCOPE_APPFOLDER)
+                        .build();
+                ConnectionResult result = apiClient.blockingConnect();
+                if (result.getErrorCode() != ConnectionResult.SUCCESS) {
+                    // TODO: 5/22/17 post this to the notification panel
+                    throw new RuntimeException();
                 }
             }
-        };
-        if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-            new Thread(runnable).start();
-        } else {
-            runnable.run();
+        } finally {
+            lock.release();
         }
     }
+
 
     @NonNull
     @Override
     public OutputStream newAppendableOutPutStream(String collectionName) throws IOException {
         lock.acquireUninterruptibly();
         try {
-            if (outputStream == null) {
-                outputStream = storage.newAppendableOutPutStream(collectionName);
-            }
+            OutputStream outputStream = new FileOutputStream(new File(waitingDir, collectionName), true);
 
             //wrap the outputStream in another output stream so we
             //can play well with the lock.
@@ -109,6 +98,7 @@ public class GoogleDriveStorage implements Storage {
     @NonNull
     @Override
     public InputStream newInputStream(String collectionName) throws IOException {
+        ensureInitialised();
         MetadataBuffer metadataBuffer = null;
         try {
             lock.acquireUninterruptibly();
@@ -131,7 +121,7 @@ public class GoogleDriveStorage implements Storage {
 
             if (metadataBuffer.getCount() == 0) {
                 //first time.../ return nothing
-                return EMPTY_INPUT_STREAM;
+                return new LockAwareInputStream(EMPTY_INPUT_STREAM, lock);
             }
             DriveFile file = metadataBuffer.get(0).getDriveId().asDriveFile();
             DriveApi.DriveContentsResult driveContentResults = file.open(apiClient, DriveFile.MODE_READ_ONLY, null)
@@ -154,6 +144,7 @@ public class GoogleDriveStorage implements Storage {
 
     @Override
     public long size(String collectionName) throws IOException {
+        ensureInitialised();
         MetadataBuffer metadataBuffer = null;
         try {
             lock.acquireUninterruptibly();
@@ -177,8 +168,15 @@ public class GoogleDriveStorage implements Storage {
         }
     }
 
+    private void ensureInitialised() {
+        if (apiClient == null) {
+            throw new IllegalStateException("not initialised");
+        }
+    }
+
     @Override
     public long lastModified(String collectionName) throws IOException {
+        ensureInitialised();
         try {
             lock.acquireUninterruptibly();
             DriveApi.MetadataBufferResult result = Drive.DriveApi.getAppFolder(apiClient)
@@ -202,6 +200,7 @@ public class GoogleDriveStorage implements Storage {
     }
 
     public void sync(final String collectionName) throws BackupException {
+        ensureInitialised();
         try {
             lock.acquireUninterruptibly();
 
@@ -210,7 +209,7 @@ public class GoogleDriveStorage implements Storage {
 
             //we are dead sure that no one is modifying the temporary backup file now
             //since we hold the lock.
-            File copy = storage.getBackupFile(collectionName);
+            File copy = new File(waitingDir, collectionName);
             if (!copy.exists() || copy.length() == 0) { //we don't have a pending backup
                 System.out.println("back up complete");
                 return;

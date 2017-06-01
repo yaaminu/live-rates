@@ -57,7 +57,7 @@ public class BudgetFragment extends BaseFragment implements BudgetScreen {
         setHasOptionsMenu(true);
         DaggerBudgetFragmentComponent.builder()
                 .baseExpenditureProvider(new BaseExpenditureProvider(
-                        ((Zealous) getActivity().getApplication()).getExpenseBackupManager(injector)))
+                        ((Zealous) getActivity().getApplication()).getExpenseBackupManager()))
                 .budgetFragmentProvider(new BudgetFragmentProvider(this))
                 .build().inject(this);
         presenter.onCreate(savedInstanceState, this);

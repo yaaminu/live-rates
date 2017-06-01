@@ -145,6 +145,26 @@
     <string name="failed_to_delete">Failed to delete entry</string>
     <string name="failed_to_add_category">Failed to add category</string>
     <string name="failed_to_add_favorite">Unknown error while trying to add to favorites</string>
+    <string name="restore_data">Connect Your Google Account To Backup Your Data Safely In The Cloud</string>
+    <string name="restore_from_drive">Google Drive</string>
+    <string name="notice_gdrive">Requires a google account</string>
+    <string name="local_backup">Local Backup</string>
+    <string name="checking_play_services_avaibility">Checking play services availability</string>
+    <string name="connection_failed">Connection failed</string>
+    <string name="gdrive_success">Google drive backup setup successful</string>
+    <string name="g_drive_seup_failed">Failed to set up cloud backup</string>
+    <string name="please_wait">Please Wait</string>
+    <string name="skip">Skip</string>
+    <string name="setup_backup">Setup Cloud Backup</string>
+    <string name="play_services_not_available">Play services not available</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="preparing_restore">Preparing to restore backup</string>
+    <string name="backup_details" formatted="false">Last Backup: %s\nBackup size %s</string>
+    <string name="restoring_backup_progress" formatted="false">Restoring backup… %d/%d</string>
+    <string name="backup_failed_notice">Restore failed: %s</string>
+    <string name="connect_account">Connect Account</string>
+    <string name="restore_success">Restore Completed Successfully</string>
+    <string name="request_local_backup">There\'s a local backup available, Would like to restore that instead?</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

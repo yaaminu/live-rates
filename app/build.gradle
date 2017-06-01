@@ -38,6 +38,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
+    compile 'com.github.jlmd:AnimatedCircleLoadingView:1.1.5@aar'
 
     compile 'com.rometools:rome:1.7.2'
     compile 'com.google.dagger:dagger:2.4'
