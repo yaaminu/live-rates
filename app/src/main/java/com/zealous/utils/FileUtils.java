@@ -257,7 +257,7 @@ public class FileUtils {
     public static String sizeInLowestPrecision(long fileSizeBytes) {
         final Context applicationContext = Config.getApplicationContext();
 
-        if (fileSizeBytes <= 0) {
+        if (fileSizeBytes < 0) {
             throw new IllegalArgumentException("File size invalid");
         }
         if (fileSizeBytes < ONE_KB) {
