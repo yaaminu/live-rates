@@ -203,10 +203,10 @@ public class GoogleDriveStorage implements Storage {
         ensureInitialised();
         try {
             lock.acquireUninterruptibly();
-
+            Status status = Drive.DriveApi.requestSync(apiClient).await().getStatus();
+            System.out.println("Request for sync " + (status.isSuccess() ? "succeeded" : "failed"));
 
             //TODO also check for the log of other devices, pull them and apply the changes locally.
-
             //we are dead sure that no one is modifying the temporary backup file now
             //since we hold the lock.
             File copy = new File(waitingDir, collectionName);
