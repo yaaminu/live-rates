@@ -99,9 +99,11 @@ public class GoogleDriveStorage implements Storage {
     @Override
     public InputStream newInputStream(String collectionName) throws IOException {
         ensureInitialised();
+
         MetadataBuffer metadataBuffer = null;
         try {
             lock.acquireUninterruptibly();
+            Drive.DriveApi.requestSync(apiClient).await();
             if (apiClient == null) {
                 throw new IllegalStateException("did you forget to init()");
             }
@@ -148,6 +150,8 @@ public class GoogleDriveStorage implements Storage {
         MetadataBuffer metadataBuffer = null;
         try {
             lock.acquireUninterruptibly();
+            Drive.DriveApi.requestSync(apiClient).await();
+
             DriveApi.MetadataBufferResult result = Drive.DriveApi.getAppFolder(apiClient)
                     .queryChildren(apiClient,
                             new Query.Builder()
@@ -179,6 +183,8 @@ public class GoogleDriveStorage implements Storage {
         ensureInitialised();
         try {
             lock.acquireUninterruptibly();
+            Drive.DriveApi.requestSync(apiClient).await();
+
             DriveApi.MetadataBufferResult result = Drive.DriveApi.getAppFolder(apiClient)
                     .queryChildren(apiClient,
                             new Query.Builder()
