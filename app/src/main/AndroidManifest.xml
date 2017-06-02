@@ -19,29 +19,39 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.SetupActivity">
+        <activity
+            android:name=".ui.SetupActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MainActivity" />
+        <activity
+            android:name=".ui.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".exchangeRates.ExchangeRateListActivity"
-            android:label="@string/select_currency" />
-        <activity android:name=".exchangeRates.ExchangeRateDetailActivity" />
+            android:label="@string/select_currency"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".exchangeRates.ExchangeRateDetailActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".bankRates.InterestRateCalculatorActivity"
             android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity" />
         </activity>
         <activity
+
             android:name=".expense.AddExpenditureActivity"
             android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -51,12 +61,15 @@
             android:name=".expense.BudgetActivity"
             android:label="@string/budget"
             android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity" />
         </activity>
-        <activity android:name=".ui.SetupBackup" />
+        <activity
+            android:name=".ui.SetupBackup"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".ui.BootReceiver"
