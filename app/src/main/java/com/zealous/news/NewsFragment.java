@@ -139,7 +139,9 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
             hideViews(newsList);
             showViews(emptyView);
             if (!isFavorites) {
-                showViews(tryAgain);
+                if (swipeRefresh.isRefreshing()) {
+                    hideViews(emptyView);
+                }
                 emptyOrLoadingTextView.setText(R.string.no_news);
             } else {
                 hideViews(tryAgain, loadingProgress);
@@ -148,6 +150,7 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
         } else {
             showViews(newsList);
             hideViews(emptyView);
+            hideViews(loadingProgress);
             adapter.notifyDataChanged("");
         }
     }
@@ -170,7 +173,8 @@ public class NewsFragment extends BaseFragment implements NewsScreen {
         if (!isViewDestroyed() && !presenter.isBookmarked()) {
             swipeRefresh.setRefreshing(loading);
             if (loading && newsItems.isEmpty()) {
-                showViews(emptyView, loadingProgress, emptyOrLoadingTextView);
+                hideViews(emptyView);
+                showViews(loadingProgress);
             } else {
                 hideViews(loadingProgress);
             }

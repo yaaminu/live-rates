@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.backup.BackupException;
 import com.zealous.R;
 import com.zealous.ui.BasePresenter;
+import com.zealous.utils.ConnectionUtils;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
 import com.zealous.utils.ThreadUtils;
@@ -173,7 +174,8 @@ public class NewsPresenter extends BasePresenter<NewsScreen> {
     };
 
     public void loadNewsItems() {
-        if (!bookmarked && (loadNewsSubscription == null || loadNewsSubscription.isUnsubscribed())) {
+
+        if (!bookmarked && (loadNewsSubscription == null || loadNewsSubscription.isUnsubscribed()) && ConnectionUtils.isConnected()) {
             loadNews();
         } else {
             assert screen != null;
