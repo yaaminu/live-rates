@@ -16,8 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.backup.BackupStats;
+import com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -75,6 +77,8 @@ public class SetupBackup extends BaseZealousActivity {
 
     @Bind(R.id.tv_heading)
     TextView noticeTextView;
+    @Bind(R.id.progress)
+    AnimatedCircleLoadingView progress;
 
     private ProgressDialog progressDialog;
     private GoogleApiClient apiClient;
@@ -127,7 +131,9 @@ public class SetupBackup extends BaseZealousActivity {
         ButterKnife.findById(this, R.id.cloud_icon).setVisibility(View.GONE);
         ButterKnife.findById(this, R.id.layout_google_drive).setVisibility(View.GONE);
         ButterKnife.findById(this, R.id.bt_try_again).setVisibility(View.GONE);
-        ButterKnife.findById(this, R.id.progress).setVisibility(View.VISIBLE);
+        progress.setVisibility(View.VISIBLE);
+        progress.resetLoading();
+        progress.startIndeterminate();
         noticeTextView.setText(R.string.preparing_restore);
 
         TaskManager.executeNow(new Runnable() {
@@ -183,25 +189,35 @@ public class SetupBackup extends BaseZealousActivity {
                     .setText(getString(R.string.backup_details,
                             new Date(stats.getLastModified()),
                             FileUtils.sizeInLowestPrecision(stats.getSize())));
+            progress.startDeterminate();
+            progress.setPercent(0);
         } else if (mapEvent.containsKey(EXPECTED)) {
             Long restored = (Long) mapEvent.get(RESTORED),
                     expected = (Long) mapEvent.get(EXPECTED);
             updateProgress(expected, restored);
         } else if (mapEvent.containsKey(END)) {
-            Throwable end = (Throwable) mapEvent.get(END);
+            final Throwable end = (Throwable) mapEvent.get(END);
             if (end == null) {
                 noticeTextView.setText(R.string.restore_success);
-                new Handler()
-                        .postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                completeSetup();
-                            }
-                        }, 1000);
+                progress.setPercent(100);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        completeSetup();
+                    }
+                }, 8000);
             } else {
                 restoring = false;
-                supportInvalidateOptionsMenu();
-                backupFailed(end);
+                progress.stopFailure();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress.resetLoading();
+                        supportInvalidateOptionsMenu();
+                        backupFailed(end);
+                    }
+                }, 1000);
             }
         }
 
@@ -209,7 +225,9 @@ public class SetupBackup extends BaseZealousActivity {
 
     private void updateProgress(Long expected, Long restored) {
         PLog.d(TAG, "restore progress %d/%d", restored, expected);
-        noticeTextView.setText(getString(R.string.restoring_backup_progress, restored, expected));
+        progress.setPercent((int) ((restored * 100) / expected));
+        noticeTextView.setText(getString(R.string.restoring_backup_progress, FileUtils.sizeInLowestPrecision(restored),
+                FileUtils.sizeInLowestPrecision(expected)));
     }
 
     private void backupFailed(Throwable throwable) {
@@ -331,7 +349,11 @@ public class SetupBackup extends BaseZealousActivity {
 
     @Override
     public void onBackPressed() {
-        //do nothing for the mean time
+        if (!restoring) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(this, R.string.cannot_restore_backup, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

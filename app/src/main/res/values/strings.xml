@@ -160,11 +160,13 @@
     <string name="error_unknown">Unknown error</string>
     <string name="preparing_restore">Preparing to restore backup</string>
     <string name="backup_details" formatted="false">Last Backup: %s\nBackup size %s</string>
-    <string name="restoring_backup_progress" formatted="false">Restoring backup… %d/%d</string>
+    <string name="restoring_backup_progress" formatted="false">Restoring backup… %s/%s</string>
     <string name="backup_failed_notice">Restore failed: %s</string>
     <string name="connect_account">Connect Account</string>
     <string name="restore_success">Restore Completed Successfully</string>
     <string name="request_local_backup">There\'s a local backup available, Would like to restore that instead?</string>
+    <string name="error_backup_restore">An unknown error occured</string>
+    <string name="cannot_restore_backup">Restore can\'t be stopped</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

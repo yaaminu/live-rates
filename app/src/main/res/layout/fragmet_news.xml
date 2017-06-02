@@ -17,6 +17,16 @@
 
         </android.support.v7.widget.RecyclerView>
 
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            tools:visibility="visible"
+            android:layout_marginBottom="@dimen/default_gap"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/empty_view"
             android:layout_width="match_parent"
@@ -24,13 +34,6 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/default_gap"
-                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/empty_text_view"

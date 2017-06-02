@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -23,12 +24,15 @@
             tools:visibility="visible" />
 
 
-        <ProgressBar
+        <com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView
             android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:visibility="gone"
-            tools:visibility="gone" />
+            app:checkMarkTintColor="@color/white"
+            app:mainColor="@color/colorAccent"
+            app:secondaryColor="@color/colorAccent"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/tv_heading"
