@@ -16,7 +16,8 @@ import com.backup.Operation;
 import com.backup.Storage;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
-import com.zealous.Zealous;
+import com.zealous.*;
+import com.zealous.R;
 import com.zealous.expense.BaseExpenditureOperation;
 import com.zealous.expense.ExpenditureDataSource;
 import com.zealous.expense.ExpenditureRepo;
@@ -130,7 +131,6 @@ public class RestoreJob extends Task {
             BackupStats stats = manager.stats();
             EventBus.getDefault()
                     .post(Collections.singletonMap(STATS, stats));
-            SystemClock.sleep(1000);
             manager.restore(new BackupManager.ProgressListener() {
                 @Override
                 public void onStart(long expected) {
@@ -139,6 +139,7 @@ public class RestoreJob extends Task {
                     params.put(RESTORED, 0L);
                     EventBus.getDefault()
                             .post(params);
+                    SystemClock.sleep(5000);
                 }
 
                 @Override
@@ -148,17 +149,25 @@ public class RestoreJob extends Task {
                     params.put(RESTORED, restored);
                     EventBus.getDefault()
                             .post(params);
+                    SystemClock.sleep(100);
                 }
 
                 @Override
                 public void done(BackupException e) {
-                    EventBus.getDefault()
-                            .post(Collections.singletonMap(END, e));
+                    if (e == null) {
+                        EventBus.getDefault()
+                                .post(Collections.singletonMap(END, null));
+                    } else {
+                        PLog.d(TAG, e.getMessage(), e);
+                        EventBus.getDefault()
+                                .post(Collections.singletonMap(END, new Throwable(getErrorMessage(e), e)));
+                    }
                 }
             });
         } catch (BackupException e) {
+            PLog.d(TAG, e.getMessage(), e);
             EventBus.getDefault()
-                    .post(Collections.singletonMap(END, e));
+                    .post(Collections.singletonMap(END, new Throwable(getErrorMessage(e), e)));
         } finally {
             if (expenseDatasource != null) {
                 expenseDatasource.close();
@@ -166,6 +175,16 @@ public class RestoreJob extends Task {
             if (newsDataSource != null) {
                 newsDataSource.close();
             }
+        }
+    }
+
+    private String getErrorMessage(BackupException exception) {
+        switch (exception.getErrorCode()) {
+            case BackupException.EIOERROR:
+                return GenericUtils.getString(R.string.no_internet_connection);
+            case BackupException.EUNKNOWN:
+            default:
+                return GenericUtils.getString(R.string.error_backup_restore);
         }
     }
 
