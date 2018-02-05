@@ -5,15 +5,16 @@ import android.widget.TextView;
 
 import com.zealous.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by yaaminu on 12/20/16.
  */
 public class SimpleListItemHolder extends BaseAdapter.Holder {
-    @Bind(R.id.tv_first)
+    @BindView(R.id.tv_first)
     public TextView first;
-    @Bind(R.id.tv_second)
+    @BindView(R.id.tv_second)
     public TextView second;
 
     public SimpleListItemHolder(View view) {

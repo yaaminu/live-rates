@@ -40,7 +40,7 @@
     <string name="arrow">Arrow</string>
     <string name="yesterday">Yesterday</string>
     <string name="_7_days_ago">7 days ago</string>
-    <string name="$28_days_ago">28 days ago</string>
+    <string name="_28_days_ago">28 days ago</string>
     <string name="back">Back</string>
     <string name="today_title">%s</string>
     <string name="missing">\?\?</string>

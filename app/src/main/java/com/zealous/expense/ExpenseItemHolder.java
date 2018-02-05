@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -15,17 +15,17 @@ import butterknife.OnClick;
  */
 public class ExpenseItemHolder extends BaseAdapter.Holder {
     private final ExpenseAdapter.Delegate delegate;
-    @Bind(R.id.expense_description)
+    @BindView(R.id.expense_description)
     TextView expeditureDescription;
-    @Bind(R.id.tv_location)
+    @BindView(R.id.tv_location)
     TextView expenseLocation;
-    @Bind(R.id.category_icon)
+    @BindView(R.id.category_icon)
     ImageView categoryIcon;
-    @Bind(R.id.tv_expense_amount)
+    @BindView(R.id.tv_expense_amount)
     TextView expenditureAmount;
-    @Bind(R.id.expenditure_time)
+    @BindView(R.id.expenditure_time)
     TextView expenditureTime;
-    @Bind(R.id.option_view)
+    @BindView(R.id.option_view)
     View optionsView;
 
     public ExpenseItemHolder(View v, ExpenseAdapter.Delegate delegate) {

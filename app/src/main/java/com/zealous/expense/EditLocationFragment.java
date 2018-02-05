@@ -11,7 +11,7 @@ import android.widget.EditText;
 import com.zealous.R;
 import com.zealous.utils.GenericUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -21,7 +21,7 @@ import butterknife.OnClick;
 public class EditLocationFragment extends BottomSheetDialogFragment {
 
     public static final String LOCATION = "location";
-    @Bind(R.id.edit_location)
+    @BindView(R.id.edit_location)
     EditText etLocation;
     @Nullable
     private String location;

@@ -15,25 +15,25 @@ import com.zealous.ui.BaseZealousActivity;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 
 public class InterestRateCalculatorActivity extends BaseZealousActivity {
 
-    @Bind(R.id.tv_interest)
+    @BindView(R.id.tv_interest)
     TextView interest;
-    @Bind(R.id.tv_amount)
+    @BindView(R.id.tv_amount)
     TextView amount;
     @NonNull
     InterestCalculator calculator = new CompoundInterestRateCalculator();
 
-    @Bind(R.id.sp_days_month_year)
+    @BindView(R.id.sp_days_month_year)
     Spinner durationSpinner;
 
-    @Bind(R.id.et_duration)
+    @BindView(R.id.et_duration)
     EditText duration;
-    @Bind(R.id.et_rate)
+    @BindView(R.id.et_rate)
     EditText etRate;
 
     @Override

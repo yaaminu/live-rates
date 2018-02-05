@@ -17,7 +17,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 
@@ -43,11 +43,11 @@ public class ExchangeRateFragment extends BaseFragment {
             adapter.notifyDataChanged("");
         }
     };
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-    @Bind(R.id.empty_view_no_internet)
+    @BindView(R.id.empty_view_no_internet)
     View emptyView;
-    @Bind(R.id.tv_last_updated)
+    @BindView(R.id.tv_last_updated)
     TextView tvLastUpdated;
 
     @Override
@@ -58,7 +58,7 @@ public class ExchangeRateFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         DaggerExchangeRateFragmentComponent.builder()
+        DaggerExchangeRateFragmentComponent.builder()
                 .exchangeRateFragmentModule(new ExchangeRateFragmentModule(this))
                 .build()
                 .inject(this);

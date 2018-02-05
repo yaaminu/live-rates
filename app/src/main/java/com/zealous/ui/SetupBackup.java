@@ -41,7 +41,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.Date;
 import java.util.Map;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observable;
@@ -70,14 +70,14 @@ public class SetupBackup extends BaseZealousActivity {
 
     private static final int REQUEST_CODE_SET_UP_GDRIVE_CLIENT = 1001;
 
-    @Bind(R.id.bt_restore_google_drive)
+    @BindView(R.id.bt_restore_google_drive)
     TextView btSetupBackup;
-    @Bind(R.id.gdrive_notice)
+    @BindView(R.id.gdrive_notice)
     TextView notice;
 
-    @Bind(R.id.tv_heading)
+    @BindView(R.id.tv_heading)
     TextView noticeTextView;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     AnimatedCircleLoadingView progress;
 
     private ProgressDialog progressDialog;

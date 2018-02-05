@@ -41,7 +41,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
@@ -69,25 +69,25 @@ public class ExpenseFragment extends BaseFragment implements ExpenseListScreen {
     @Inject
     EventBus eventBus;
 
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView expenseList;
-    @Bind(R.id.empty_view)
+    @BindView(R.id.empty_view)
     TextView emptyView;
 
-    @Bind(R.id.total_expenditure)
+    @BindView(R.id.total_expenditure)
     TextView totalExpenditure;
-    @Bind(R.id.monthly_budget)
+    @BindView(R.id.monthly_budget)
     TextView totalBudget;
-    @Bind(R.id.expenditure_range_text)
+    @BindView(R.id.expenditure_range_text)
     TextView rangeText;
-    @Bind(R.id.today_s_date)
+    @BindView(R.id.today_s_date)
     TextView todaysDate;
-    @Bind(R.id.year)
+    @BindView(R.id.year)
     TextView year;
 
-    @Bind(R.id.header)
+    @BindView(R.id.header)
     View totalView;
-    @Bind(R.id.fab)
+    @BindView(R.id.fab)
     FloatingActionsMenu fab;
     private CustomScrollListener listener;
     private FloatingActionButton addExpenditureFab;

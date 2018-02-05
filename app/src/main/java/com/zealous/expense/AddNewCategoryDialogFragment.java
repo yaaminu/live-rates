@@ -23,9 +23,10 @@ import com.zealous.utils.GenericUtils;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by yaaminu on 4/15/17.
@@ -36,13 +37,13 @@ public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
             CATEGORY_BUDGET_TYPE = "budgetType";
     @Nullable
     public String originalName;
-    @Bind(R.id.et_category_name)
+    @BindView(R.id.et_category_name)
     EditText categoryName;
-    @Bind(R.id.et_budget)
+    @BindView(R.id.et_budget)
     EditText budget;
-    @Bind(R.id.sp_budget_type)
+    @BindView(R.id.sp_budget_type)
     Spinner budgetType;
-    @Bind(R.id.bt_add)
+    @BindView(R.id.bt_add)
     Button btAdd;
     ExpenditureDataSource dataSource;
 
@@ -55,13 +56,14 @@ public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
             }
         }
     };
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_add_new_category, container, false);
-        ButterKnife.bind(this, v);
+        unbinder = ButterKnife.bind(this, v);
         BaseExpenditureProvider provider =
                 new BaseExpenditureProvider(
                         ((Zealous) getActivity().getApplication()).getExpenseBackupManager());
@@ -133,7 +135,7 @@ public class AddNewCategoryDialogFragment extends BottomSheetDialogFragment {
 
     @Override
     public void onDestroyView() {
-        ButterKnife.unbind(this);
+        unbinder.unbind();
         super.onDestroyView();
     }
 

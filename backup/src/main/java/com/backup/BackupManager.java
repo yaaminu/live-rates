@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
  * @see Operation
  * @see LogEntry
  */
+@SuppressWarnings("JavaDoc")
 public class BackupManager {
 
 
@@ -25,8 +26,7 @@ public class BackupManager {
         private final Logger logger;
         private long processed;
 
-        public RestoreHandlerImpl(Logger logger, long size, @NonNull ProgressListener listener) {
-            if (listener == null) throw new IllegalArgumentException();
+        RestoreHandlerImpl(Logger logger, long size, @NonNull ProgressListener listener) {
             this.listener = listener;
             this.size = size;
             this.processed = 0;
@@ -59,15 +59,12 @@ public class BackupManager {
     }
 
     private BackupManager(@NonNull Logger logger) {
-        if (logger == null) throw new IllegalArgumentException("logger==null");
         this.logger = logger;
     }
 
 
     /**
      * @return the {@link BackupManager}. never null
-     * @throws RuntimeException when a it detects poor equals() and hashcode()
-     *                          implementations in a {@link Logger}.
      */
     @NonNull
     public static synchronized <T extends Logger> BackupManager getInstance(@NonNull T logger) {
@@ -82,7 +79,6 @@ public class BackupManager {
      * @throws BackupException
      */
     public synchronized void log(@NonNull Operation operation, long timestamp) throws BackupException {
-        if (operation == null) throw new IllegalArgumentException("operation is null");
 
         if (timestamp < 0) {
             throw new IllegalArgumentException("timestamp < 0");
@@ -147,7 +143,7 @@ public class BackupManager {
 
     }
 
-    static final ProgressListener DUMMY_LISTENER = new ProgressListener() {
+    private static final ProgressListener DUMMY_LISTENER = new ProgressListener() {
         @Override
         public void onStart(long expected) {
 

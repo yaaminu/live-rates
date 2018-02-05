@@ -8,16 +8,17 @@ import android.view.View;
 
 import com.zealous.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by yaaminu on 4/28/17.
  */
 public class BusinessNewsFragmentParent extends BaseFragment {
 
-    @Bind(R.id.pager)
+    @BindView(R.id.pager)
     ViewPager pager;
-    @Bind(R.id.tab_strip)
+    @BindView(R.id.tab_strip)
     TabLayout tabLayout;
     private $PagerAdapter adapter;
 

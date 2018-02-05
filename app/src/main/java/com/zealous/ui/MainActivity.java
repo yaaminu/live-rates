@@ -29,7 +29,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import dagger.Lazy;
 
 import static com.zealous.exchangeRates.ExchangeRateListActivity.EVENT_RATE_SELECTED;
@@ -37,7 +37,7 @@ import static com.zealous.exchangeRates.ExchangeRateListActivity.SEARCH;
 
 public class MainActivity extends SearchActivity {
 
-    @Bind(R.id.bottomBar)
+    @BindView(R.id.bottomBar)
     BottomBar bottomBar;
 
     @Inject

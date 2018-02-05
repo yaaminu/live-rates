@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.zealous.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
@@ -23,7 +23,7 @@ public abstract class BaseZealousActivity extends AppCompatActivity {
 
     private static final String TAG = "BaseZealousActivity";
     @Nullable
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     protected Toolbar toolbar;
 
     @Override

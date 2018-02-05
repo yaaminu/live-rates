@@ -13,7 +13,8 @@ import com.zealous.adapter.BaseAdapter;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * @author by yaaminu on 1/3/17.
@@ -58,11 +59,11 @@ public class ExchangeRatesListAdapter extends BaseAdapter<ExchangeRatesListAdapt
     }
 
     public static class Holder extends BaseAdapter.Holder {
-        @Bind(R.id.iv_currency_icon)
+        @BindView(R.id.iv_currency_icon)
         ImageView currencyIcon;
-        @Bind(R.id.tv_currency_name)
+        @BindView(R.id.tv_currency_name)
         TextView currencyName;
-        @Bind(R.id.tv_rate)
+        @BindView(R.id.tv_rate)
         TextView currencyRate;
 
         public Holder(View v) {

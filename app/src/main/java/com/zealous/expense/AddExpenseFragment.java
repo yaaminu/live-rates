@@ -47,7 +47,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -78,21 +78,21 @@ public class AddExpenseFragment extends BaseFragment implements AddExpenseScreen
     @Inject
     ProgressDialog progressDialog;
 
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-    @Bind(R.id.attachments)
+    @BindView(R.id.attachments)
     RecyclerView attachmentRv;
-    @Bind(R.id.attachments_title)
+    @BindView(R.id.attachments_title)
     TextView attachmentTitle;
-    @Bind(R.id.tv_date)
+    @BindView(R.id.tv_date)
     TextView date;
-    @Bind(R.id.tv_location)
+    @BindView(R.id.tv_location)
     TextView location;
-    @Bind(R.id.et_description)
+    @BindView(R.id.et_description)
     EditText note;
-    @Bind(R.id.et_amount)
+    @BindView(R.id.et_amount)
     EditText amount;
-    @Bind(R.id.currency)
+    @BindView(R.id.currency)
     TextView currency;
 
 

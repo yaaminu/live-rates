@@ -21,13 +21,13 @@ import com.zealous.utils.UiHelpers;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 /**
  * Created by yaaminu on 4/14/17.
  */
 public class ToolsFragment extends BaseFragment {
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     private List<Tuple> items;
     private final SimpleRecyclerViewAdapter.Delegate<Tuple> delegate = new SimpleRecyclerViewAdapter.Delegate<Tuple>() {

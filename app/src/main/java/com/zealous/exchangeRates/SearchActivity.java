@@ -15,7 +15,7 @@ import com.zealous.ui.BaseZealousActivity;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.ViewUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
@@ -26,13 +26,13 @@ import butterknife.OnTextChanged;
 public abstract class SearchActivity extends BaseZealousActivity {
 
     @Nullable
-    @Bind(R.id.search_et)
+    @BindView(R.id.search_et)
     EditText searchEt;
     @Nullable
-    @Bind(R.id.clear_search)
+    @BindView(R.id.clear_search)
     ImageButton clearSearch;
     @Nullable
-    @Bind(R.id.search_view)
+    @BindView(R.id.search_view)
     View searchView;
 
     @Override

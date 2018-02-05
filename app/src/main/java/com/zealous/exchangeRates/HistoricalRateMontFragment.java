@@ -27,7 +27,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * @author by yaaminu on 1/4/17.
@@ -40,7 +41,7 @@ public class HistoricalRateMontFragment extends BaseFragment {
     public static final String ARG_FROM = "from";
     public static final String RATE_TO = "rateTo";
     private final EventBus eventBus = EventBus.builder().build();
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     List<HistoricalRateTuple> historicalRates;
     private ExchangeRateManager exchangeRateManager = new ExchangeRateManager(eventBus);

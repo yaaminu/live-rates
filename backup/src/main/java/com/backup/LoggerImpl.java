@@ -102,9 +102,7 @@ public class LoggerImpl implements Logger {
         } catch (IOException e) {
             throw new BackupException(EIOERROR, e.getMessage(), e);
         } finally {
-            if (stream != null) {
-                IOUtils.closeQuietly(stream);
-            }
+            IOUtils.closeQuietly(stream);
             lock.release();
         }
     }

@@ -23,7 +23,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by yaaminu on 4/17/17.
@@ -41,7 +42,7 @@ public class BudgetFragment extends BaseFragment implements BudgetScreen {
 
     List<ExpenditureCategory> dataSet = Collections.emptyList();
 
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
     DependencyInjector injector = new DependencyInjector() {

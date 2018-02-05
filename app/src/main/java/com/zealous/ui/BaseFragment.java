@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by yaaminu on 12/20/16.
@@ -18,13 +19,16 @@ public abstract class BaseFragment extends Fragment {
     private boolean viewIsDestroyed;
 
     @Nullable
+    Unbinder unbinder;
+
+    @Nullable
     @Override
     public final View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         int layout = getLayout();
         View view = null;
         if (layout != 0) {
             view = inflater.inflate(layout, container, false);
-            ButterKnife.bind(this, view);
+            unbinder = ButterKnife.bind(this, view);
         }
         viewIsDestroyed = false;
         return view;
@@ -61,7 +65,9 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroyView() {
         viewIsDestroyed = true;
-        ButterKnife.unbind(this);
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
         super.onDestroyView();
     }
 

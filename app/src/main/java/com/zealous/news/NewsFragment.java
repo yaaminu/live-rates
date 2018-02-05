@@ -27,7 +27,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.zealous.utils.ViewUtils.hideViews;
@@ -40,17 +40,17 @@ import static com.zealous.utils.ViewUtils.showViews;
 public class NewsFragment extends BaseFragment implements NewsScreen {
     public static final String
             IS_FAVORITES = "isFavorites";
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView newsList;
-    @Bind(R.id.empty_view)
+    @BindView(R.id.empty_view)
     View emptyView;
-    @Bind(R.id.bt_try_again)
+    @BindView(R.id.bt_try_again)
     View tryAgain;
-    @Bind(R.id.empty_text_view)
+    @BindView(R.id.empty_text_view)
     TextView emptyOrLoadingTextView;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     ProgressBar loadingProgress;
-    @Bind(R.id.swipe_refresh)
+    @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefresh;
 
     List<NewsItem> newsItems = Collections.emptyList();

@@ -15,7 +15,7 @@ import com.zealous.utils.PLog;
 import java.util.Calendar;
 import java.util.Date;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -27,7 +27,7 @@ public class EditDateFragment extends BottomSheetDialogFragment {
     public static final String DATE = "date";
     private static final String TAG = "EditDateFragment";
 
-    @Bind(R.id.date_picker)
+    @BindView(R.id.date_picker)
     DatePicker datePicker;
 
     @Nullable

@@ -16,14 +16,14 @@ import com.zealous.ui.BaseFragment;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import io.realm.Realm;
 
 /**
  * Created by yaaminu on 12/20/16.
  */
 public class ExchageRatesHome extends BaseFragment {
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     List<ExchangeRate> items;
     Realm realm;

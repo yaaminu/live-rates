@@ -7,21 +7,22 @@ import android.widget.TextView;
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by yaaminu on 4/17/17.
  */
 public class BudgetViewHolder extends BaseAdapter.Holder {
-    @Bind(R.id.category_name)
+    @BindView(R.id.category_name)
     TextView categoryName;
-    @Bind(R.id.tv_budgeted)
+    @BindView(R.id.tv_budgeted)
     TextView budget;
-    @Bind(R.id.tv_amount_spent)
+    @BindView(R.id.tv_amount_spent)
     TextView expenditure;
-    @Bind(R.id.tv_left)
+    @BindView(R.id.tv_left)
     TextView budgetDeficit;
-    @Bind(R.id.expense_meter)
+    @BindView(R.id.expense_meter)
     ProgressBar expenseMeter;
 
     public BudgetViewHolder(View v) {

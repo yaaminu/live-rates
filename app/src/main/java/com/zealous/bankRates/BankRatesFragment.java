@@ -18,13 +18,14 @@ import com.zealous.ui.BaseFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by yaaminu on 12/20/16.
  */
 public class BankRatesFragment extends BaseFragment {
-    @Bind(R.id.recycler_view)
+    @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     List<Tuple> items;
 

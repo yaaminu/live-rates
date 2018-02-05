@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.zealous.R;
 import com.zealous.adapter.BaseAdapter;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -17,19 +17,19 @@ import butterknife.OnClick;
 
 public class NewsItemHolder extends BaseAdapter.Holder {
     private final NewsAdapter adapter;
-    @Bind(R.id.tv_feed_title)
+    @BindView(R.id.tv_feed_title)
     TextView title;
-    @Bind(R.id.tv_date_published)
+    @BindView(R.id.tv_date_published)
     TextView datPublished;
-    @Bind(R.id.iv_feed_thumbnail)
+    @BindView(R.id.iv_feed_thumbnail)
     ImageView thumbnail;
-    @Bind(R.id.tv_source)
+    @BindView(R.id.tv_source)
     TextView source;
-    @Bind(R.id.source_bar)
+    @BindView(R.id.source_bar)
     View sourceBar;
-    @Bind(R.id.tv_description)
+    @BindView(R.id.tv_description)
     TextView description;
-    @Bind(R.id.ib_bookmark)
+    @BindView(R.id.ib_bookmark)
     ImageButton bookmarked;
 
     public NewsItemHolder(View itemView, NewsAdapter adapter) {

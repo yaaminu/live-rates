@@ -33,13 +33,13 @@ import static com.zealous.exchangeRates.ExchangeRate.FORMAT;
  */
 
 public class InsetRateCalculator extends BottomSheetDialogFragment {
-    //    @Bind(R.id.tv_currency_to_rate)
+    //    @BindView(R.id.tv_currency_to_rate)
     EditText etCurrencyToRate;
-    //    @Bind(R.id.tv_currency_from_rate)
+    //    @BindView(R.id.tv_currency_from_rate)
     EditText etCurrencyFromRate;
-    //    @Bind(R.id.iv_currency_icon_from)
+    //    @BindView(R.id.iv_currency_icon_from)
     ImageView currencyFromIcon;
-    //    @Bind(R.id.iv_currency_icon_to)
+    //    @BindView(R.id.iv_currency_icon_to)
     ImageView currencyToIcon;
 
 

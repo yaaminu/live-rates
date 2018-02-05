@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
@@ -64,29 +64,29 @@ public class ExchangeRateDetailActivity extends BaseZealousActivity {
     private final EventBus eventBus = EventBus.builder().build();
     @NonNull
     private final ExchangeRateManager exchangeRateManager = new ExchangeRateManager(eventBus);
-    @Bind(R.id.tv_currency_from_rate)
+    @BindView(R.id.tv_currency_from_rate)
     EditText currencyFromRate;
-    @Bind(R.id.tv_currency_to_rate)
+    @BindView(R.id.tv_currency_to_rate)
     EditText currencyToRate;
-    @Bind(R.id.tv_currency_from)
+    @BindView(R.id.tv_currency_from)
     TextView currencyFrom;
-    @Bind(R.id.tv_currency_to)
+    @BindView(R.id.tv_currency_to)
     TextView currencyTo;
-    @Bind(R.id.iv_currency_icon_to)
+    @BindView(R.id.iv_currency_icon_to)
     ImageView currencyIconTo;
-    @Bind(R.id.iv_currency_icon_from)
+    @BindView(R.id.iv_currency_icon_from)
     ImageView currencyIconFrom;
-    @Bind(R.id.tv_yesterday_rate)
+    @BindView(R.id.tv_yesterday_rate)
     TextView yesterdayRate;
-    @Bind(R.id.tv_7_days_ago_rate)
+    @BindView(R.id.tv_7_days_ago_rate)
     TextView $7daysAgoRate;
-    @Bind(R.id.tv_last_month_rate)
+    @BindView(R.id.tv_last_month_rate)
     TextView lastMonthRate;
-    @Bind(R.id.graph_view)
+    @BindView(R.id.graph_view)
     com.github.mikephil.charting.charts.LineChart lineChartView;
-    @Bind(R.id.drawer)
+    @BindView(R.id.drawer)
     DrawerLayout drawer;
-    @Bind(R.id.stale_rates)
+    @BindView(R.id.stale_rates)
     TextView staleRates;
 
     List<HistoricalRateTuple> historicalRates;

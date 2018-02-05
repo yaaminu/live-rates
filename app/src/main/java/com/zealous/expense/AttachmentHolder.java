@@ -10,16 +10,17 @@ import com.zealous.adapter.BaseAdapter;
 
 import org.w3c.dom.Text;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by yaaminu on 4/22/17.
  */
 public class AttachmentHolder extends BaseAdapter.Holder {
 
-    @Bind(R.id.preview)
+    @BindView(R.id.preview)
     ImageView preview;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView title;
 
     public AttachmentHolder(View itemView) {
