@@ -14,6 +14,7 @@ import com.zealous.adapter.SimpleListItemHolder;
 import com.zealous.adapter.SimpleRecyclerViewAdapter;
 import com.zealous.ui.BaseFragment;
 
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
