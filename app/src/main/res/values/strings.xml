@@ -65,7 +65,8 @@
     <string name="drop_down_icon">Drop down icon</string>
     <string name="calendar">Calendar</string>
     <string name="go_back">Go back</string>
-    <string name="news">News</string>
+    <string name="gse">Stocks</string>
+    <string name="news">Stocks</string>
     <string name="expenses">Expenses</string>
     <string name="live_rates">Live Rates</string>
     <string name="category">Category</string>

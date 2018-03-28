@@ -50,7 +50,7 @@ public class MainActivity extends SearchActivity {
     @Inject
     Lazy<ToolsFragment> toolsFragmentLazy;
     @Inject
-    Lazy<BusinessNewsFragmentParent> businessNewsFragmentLazy;
+    Lazy<GSEFragmentParent> gseFragmentLazy;
     private Fragment previousFragment;
 
     @Override
@@ -110,7 +110,7 @@ public class MainActivity extends SearchActivity {
         switch (id) {
             case R.id.tab_exchange_rates:
                 return R.color.exchangeRatePrimaryDark;
-            case R.id.tab_business_news:
+            case R.id.tab_gse:
                 return R.color.business_news_color_primary_dark;
             case R.id.tab_expenses:
                 return R.color.dark_violet;
@@ -126,7 +126,7 @@ public class MainActivity extends SearchActivity {
         switch (id) {
             case R.id.tab_exchange_rates:
                 return R.color.exchangeRatePrimary;
-            case R.id.tab_business_news:
+            case R.id.tab_gse:
                 return R.color.business_news_color_primary;
             case R.id.tab_expenses:
                 return R.color.light_violet;
@@ -141,7 +141,7 @@ public class MainActivity extends SearchActivity {
     protected boolean showSearch() {
         switch (bottomBar.getCurrentTabId()) {
             case R.id.tab_exchange_rates:
-            case R.id.tab_business_news:
+            case R.id.tab_gse:
                 return true;
             default:
                 return false;
@@ -161,8 +161,8 @@ public class MainActivity extends SearchActivity {
                 return expenseFragmentLazy.get();
             case R.id.tab_tools:
                 return toolsFragmentLazy.get();
-            case R.id.tab_business_news:
-                return businessNewsFragmentLazy.get();
+            case R.id.tab_gse:
+                return gseFragmentLazy.get();
             default:
                 throw new AssertionError();
         }

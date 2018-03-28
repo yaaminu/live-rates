@@ -28,7 +28,7 @@ public class MainActivityFragmentsProvider {
     }
 
     @Provides
-    public BusinessNewsFragmentParent businessNewsFragment() {
-        return new BusinessNewsFragmentParent();
+    public GSEFragmentParent businessNewsFragment() {
+        return new GSEFragmentParent();
     }
 }

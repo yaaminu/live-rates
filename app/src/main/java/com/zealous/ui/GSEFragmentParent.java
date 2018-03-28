@@ -14,29 +14,21 @@ import butterknife.BindView;
 /**
  * Created by yaaminu on 4/28/17.
  */
-public class BusinessNewsFragmentParent extends BaseFragment {
+public class GSEFragmentParent extends BaseFragment {
 
-    @BindView(R.id.pager)
-    ViewPager pager;
-    @BindView(R.id.tab_strip)
-    TabLayout tabLayout;
-    private $PagerAdapter adapter;
 
     @Override
     protected int getLayout() {
-        return R.layout.news_fragment_parent;
+        return R.layout.gse_fragment_parent;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new $PagerAdapter(getChildFragmentManager());
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        pager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(pager, true);
     }
 }
