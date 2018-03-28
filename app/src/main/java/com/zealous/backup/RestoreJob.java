@@ -21,9 +21,6 @@ import com.zealous.R;
 import com.zealous.expense.BaseExpenditureOperation;
 import com.zealous.expense.ExpenditureDataSource;
 import com.zealous.expense.ExpenditureRepo;
-import com.zealous.news.AddNewsFavoriteOperation;
-import com.zealous.news.BaseNewsProvider;
-import com.zealous.news.NewsDataSource;
 import com.zealous.utils.Config;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
@@ -47,8 +44,8 @@ public class RestoreJob extends Task {
 
     private static final String TAG = "RestoreJob";
 
-    public static final String ACTION_RESTORE_FROM = "restoreFrom",
-            RESTORE_LOCAL = "local", RESTORE_REMOTE = "remote";
+    public static final String RESTORE_LOCAL = "local";
+    public static final String RESTORE_REMOTE = "remote";
 
 
     public static final String EXPECTED = "expected";
@@ -106,26 +103,21 @@ public class RestoreJob extends Task {
         Storage storage;
         if (RESTORE_LOCAL.equals(restoreFrom)) {
             storage = new LocalFileSystemStorage(Config.getBackupDir());
-        } else if (RESTORE_REMOTE.equals(restoreFrom)) {
-            storage = new GoogleDriveStorage(Config.getApplicationContext());
-            ((GoogleDriveStorage) storage).initiaize(Config.getApplicationContext());
-        } else {
-            throw new RuntimeException();
-        }
+        } else //noinspection ConstantConditions
+            if (RESTORE_REMOTE.equals(restoreFrom)) {
+                storage = new GoogleDriveStorage(Config.getApplicationContext());
+                ((GoogleDriveStorage) storage).initiaize(Config.getApplicationContext());
+            } else {
+                throw new RuntimeException();
+            }
         ExpenditureDataSource expenseDatasource = null;
-        NewsDataSource newsDataSource = null;
         try {
 
-            BaseNewsProvider baseNewsProvider = new BaseNewsProvider(null);
-
-            newsDataSource = baseNewsProvider.createDataSource
-                    (Realm.getInstance(baseNewsProvider.getConfiguration()),
-                            baseNewsProvider.loader(baseNewsProvider.client(), baseNewsProvider.feedSources()));
 
             expenseDatasource = new ExpenditureDataSource(Realm.getInstance(configuration), null);
             BackupManager manager =
                     BackupManager.getInstance(new LoggerImpl(Zealous
-                            .OPERATION_LOG, new DepInjector(expenseDatasource, newsDataSource)
+                            .OPERATION_LOG, new DepInjector(expenseDatasource)
                             , new LogEntryGsonSerializer(), storage));
 
             BackupStats stats = manager.stats();
@@ -172,9 +164,6 @@ public class RestoreJob extends Task {
             if (expenseDatasource != null) {
                 expenseDatasource.close();
             }
-            if (newsDataSource != null) {
-                newsDataSource.close();
-            }
         }
     }
 
@@ -191,19 +180,15 @@ public class RestoreJob extends Task {
 
     private static class DepInjector implements DependencyInjector {
         private ExpenditureDataSource expenditureDataSource;
-        private NewsDataSource newsDataSource;
 
-        public DepInjector(ExpenditureDataSource expenseDatasources, NewsDataSource newsDataSource) {
+        public DepInjector(ExpenditureDataSource expenseDatasources) {
             this.expenditureDataSource = expenseDatasources;
-            this.newsDataSource = newsDataSource;
         }
 
         @Override
         public void inject(Operation operation) {
             if (operation instanceof BaseExpenditureOperation) {
                 ((BaseExpenditureOperation) operation).dataSource = expenditureDataSource;
-            } else if (operation instanceof AddNewsFavoriteOperation) {
-                ((AddNewsFavoriteOperation) operation).dataSource = newsDataSource;
             }
         }
     }

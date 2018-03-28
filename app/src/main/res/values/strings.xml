@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Zealous</string>
+    <string name="app_name">LiveRates</string>
     <string name="folder_name_files">Files</string>
     <string name="io_failure">I/O Error!!</string>
     <string name="Byte">Bytes</string>
