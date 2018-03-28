@@ -23,12 +23,7 @@ public class MainActivityFragmentsProvider {
     }
 
     @Provides
-    public ToolsFragment toolsFragment() {
-        return new ToolsFragment();
-    }
-
-    @Provides
-    public GSEFragmentParent businessNewsFragment() {
+    public GSEFragmentParent gseFragment() {
         return new GSEFragmentParent();
     }
 }

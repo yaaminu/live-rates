@@ -48,8 +48,6 @@ public class MainActivity extends SearchActivity {
     @Inject
     Lazy<ExpenseFragment> expenseFragmentLazy;
     @Inject
-    Lazy<ToolsFragment> toolsFragmentLazy;
-    @Inject
     Lazy<GSEFragmentParent> gseFragmentLazy;
     private Fragment previousFragment;
 
@@ -130,8 +128,6 @@ public class MainActivity extends SearchActivity {
                 return R.color.business_news_color_primary;
             case R.id.tab_expenses:
                 return R.color.light_violet;
-            case R.id.tab_tools:
-                return R.color.calculatorsPrimary;
             default:
                 throw new AssertionError();
         }
@@ -159,8 +155,6 @@ public class MainActivity extends SearchActivity {
                 return exchangeRateFragmentLazy.get();
             case R.id.tab_expenses:
                 return expenseFragmentLazy.get();
-            case R.id.tab_tools:
-                return toolsFragmentLazy.get();
             case R.id.tab_gse:
                 return gseFragmentLazy.get();
             default:
