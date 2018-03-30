@@ -83,9 +83,6 @@ public class Zealous extends Application {
         return Config.getApplicationWidePrefs().getBoolean(ENABLE_GDRIVE_BACKUP, false);
     }
 
-    public BackupManager getNewsBackupManager() {
-        return doGetBackupManager();
-    }
 
     static class JobRunnerImpl implements TaskManager.JobRunner {
 
