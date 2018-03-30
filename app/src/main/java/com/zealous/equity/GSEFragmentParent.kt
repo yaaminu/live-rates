@@ -3,6 +3,7 @@ package com.zealous.equity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
@@ -35,6 +36,7 @@ class GSEFragmentParent : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         val equities = ViewModelProviders.of(this).get(EquityViewModel::class.java).getEquities()
         equity_recycler_view.apply {
+            addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
             adapter = EquityAdapter(DelegateImpl(equities))
             layoutManager = LinearLayoutManager(context)
         }

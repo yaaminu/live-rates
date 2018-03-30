@@ -34,4 +34,5 @@
     <color name="reuters_color">#333333</color>
     <color name="my_joy_online_color">#FF0000</color>
     <color name="bbc_color">#a91717</color>
+    <color name="stock_up">#00ff00</color>
 </resources>
