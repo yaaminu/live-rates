@@ -37,7 +37,7 @@ class EquityViewModel : ViewModel() {
                     .use { realm ->
                         realm.transaction {
                             for (i in 1..100) {
-                                copyToRealmOrUpdate(Equity("sym $i", "name $i", "-2", 10 * i))
+                                copyToRealmOrUpdate(Equity("sym $i", "name $i", (if(i % 2 == 0) "+" else "-") + "2.4", 10 * i))
                             }
                         }
                     }
