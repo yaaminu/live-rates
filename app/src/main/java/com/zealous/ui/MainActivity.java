@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.zealous.R;
+import com.zealous.equity.GSEFragmentParent;
 import com.zealous.exchangeRates.DaggerMainActivityComponent;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.exchangeRates.ExchangeRateDetailActivity;

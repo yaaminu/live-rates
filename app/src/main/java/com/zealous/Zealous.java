@@ -23,6 +23,7 @@ import com.zealous.utils.Task;
 import com.zealous.utils.TaskManager;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -48,6 +49,8 @@ public class Zealous extends Application {
         Config.init(this);
         ConnectionUtils.init(this);
         Realm.init(this);
+        Realm.setDefaultConfiguration(new RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded().build());
         Configuration config = new Configuration.Builder(this)
                 .customLogger(new PLog("JobManager"))
                 .jobSerializer(new Task.JobSerializer())

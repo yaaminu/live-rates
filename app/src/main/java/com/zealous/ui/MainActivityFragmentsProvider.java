@@ -1,5 +1,6 @@
 package com.zealous.ui;
 
+import com.zealous.equity.GSEFragmentParent;
 import com.zealous.exchangeRates.ExchangeRateFragment;
 import com.zealous.expense.ExpenseFragment;
 
