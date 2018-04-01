@@ -83,13 +83,18 @@ public class ExchangeRateManager {
         try {
             InputStream inputStream = context.getAssets().open("currencies.json");
             JSONArray array = new JSONArray(IOUtils.toString(inputStream));
-            realm.beginTransaction();
+            boolean wasInTransaction = realm.isInTransaction();
+            if (!wasInTransaction) {
+                realm.beginTransaction();
+            }
             for (int i = 0; i < array.length(); i++) {
                 JSONObject entry = array.getJSONObject(i);
                 ExchangeRate rate = jsonObjectToExchangeRate(entry);
                 realm.copyToRealmOrUpdate(rate);
             }
-            realm.commitTransaction();
+            if (!wasInTransaction) {
+                realm.commitTransaction();
+            }
         } catch (IOException | JSONException e) {
             throw new RuntimeException(e);
         }

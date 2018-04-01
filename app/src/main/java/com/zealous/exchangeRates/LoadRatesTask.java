@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
+import com.zealous.utils.Config;
 import com.zealous.utils.PLog;
 import com.zealous.utils.Task;
 
@@ -74,6 +75,12 @@ public class LoadRatesTask extends Task {
     private void persistRates(Realm realm, JSONObject jsonObject) throws JSONException {
         Iterator<String> currencies = jsonObject.keys();
         double baseRate = jsonObject.getDouble("GHS");
+        if (realm.where(ExchangeRate.class).count() == 0) {
+            ExchangeRateManager.initialiseRates(Config.getApplicationContext(), realm);
+            if (realm.where(ExchangeRate.class).count() == 0) { //still not initialized?
+                throw new RuntimeException("failed to initialize rates");
+            }
+        }
         while (currencies.hasNext()) {
             String key = currencies.next();
             ExchangeRate rate = realm.where(ExchangeRate.class)
