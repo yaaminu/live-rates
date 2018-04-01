@@ -2,11 +2,11 @@ package com.zealous.equity
 
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Toast
 import com.zealous.R
 import com.zealous.adapter.BaseAdapter
 import com.zealous.stock.Equity
@@ -50,7 +50,8 @@ class GSEFragmentParent : BaseFragment() {
         override fun context(): Context = activity
 
         override fun onItemClick(adapter: BaseAdapter<EquityHolder, Equity>?, view: View?, position: Int, id: Long) {
-            Toast.makeText(context, "clicked " + position, Toast.LENGTH_LONG).show()
+            startActivity(Intent(context, EquityDetailActivity::class.java)
+                    .apply { putExtra(EQUITY, adapter!!.getItem(position)) })
         }
 
     }

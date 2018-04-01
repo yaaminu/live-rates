@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="1dp"
+    android:layout_marginRight="1dp"
+    android:layout_weight="1"
+    android:background="@drawable/equity_duration_bg"
+    android:gravity="center"
+    android:paddingBottom="2dp"
+    android:paddingTop="2dp"
+    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+    android:textColor="#222"
+    tools:text="hello" />

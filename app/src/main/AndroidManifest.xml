@@ -70,6 +70,7 @@
         <activity
             android:name=".ui.SetupBackup"
             android:screenOrientation="portrait" />
+        <activity android:name=".equity.EquityDetailActivity" />
 
         <receiver
             android:name=".ui.BootReceiver"

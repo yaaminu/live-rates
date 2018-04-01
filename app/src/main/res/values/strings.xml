@@ -168,6 +168,8 @@
     <string name="request_local_backup">There\'s a local backup available, Would like to restore that instead?</string>
     <string name="error_backup_restore">An unknown error occured</string>
     <string name="cannot_restore_backup">Restore can\'t be stopped</string>
+    <string name="overview">Overview</string>
+    <string name="extra_info">Extra Information</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
