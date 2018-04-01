@@ -11,8 +11,16 @@
         android:name="com.zealous.equity.EquityBasicInfoFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_gap"
         tools:layout="@layout/fragment_equity_basic_info" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="0dp"
+        android:background="@color/gray_light"
+        android:padding="@dimen/default_gap"
+        app:layout_columnSpan="2"
+        app:layout_columnWeight="1" />
 
     <fragment
         android:id="@+id/equity_overview"

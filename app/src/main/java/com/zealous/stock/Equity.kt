@@ -8,14 +8,22 @@ import io.realm.annotations.PrimaryKey
 
 const val FIELD_NAME = "name"
 
-open class Equity(@PrimaryKey var symbol: String, var name: String, var change: String, var price: Int) : RealmObject(), Parcelable {
+open class Equity(@PrimaryKey var symbol: String,
+                  var name: String, var change: String,
+                  var price: String, var shares: Long,
+                  var _24hrHi: Double, var _24hrLo: Double,
+                  var marketCap: Double, var marketOpen: Double,
+                  var isFavorite: Boolean = false) : RealmObject(), Parcelable {
+
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readInt())
+            parcel.readString(), parcel.readLong(),
+            parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(),
+            parcel.readByte() == 1.toByte())
 
-    constructor() : this("", "", "", 0)
+    constructor() : this("", "", "", "", 0L, 0.0, 0.0, 0.0, 0.0, false)
 
     companion object CREATOR : Parcelable.Creator<Equity> {
         override fun createFromParcel(parcel: Parcel): Equity {
@@ -31,7 +39,13 @@ open class Equity(@PrimaryKey var symbol: String, var name: String, var change: 
         parcel.writeString(symbol)
         parcel.writeString(name)
         parcel.writeString(change)
-        parcel.writeInt(price)
+        parcel.writeString(price)
+        parcel.writeLong(shares)
+        parcel.writeDouble(_24hrHi)
+        parcel.writeDouble(_24hrLo)
+        parcel.writeDouble(marketCap)
+        parcel.writeDouble(marketOpen)
+        parcel.writeByte(if (isFavorite) 1 else 0)
     }
 
     override fun describeContents(): Int {

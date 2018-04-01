@@ -170,6 +170,7 @@
     <string name="cannot_restore_backup">Restore can\'t be stopped</string>
     <string name="overview">Overview</string>
     <string name="extra_info">Extra Information</string>
+    <string name="add_to_watching_list">Add to watching list</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

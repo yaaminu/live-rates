@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.TextView
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
@@ -55,6 +56,7 @@ class EquityOverviewFragment : BaseFragment(), IAxisValueFormatter {
         xAxis.apply {
             valueFormatter = this@EquityOverviewFragment
             setAvoidFirstLastClipping(true)
+            position = XAxis.XAxisPosition.BOTTOM
         }
         line_chart.axisLeft.setDrawZeroLine(false)
         line_chart.setDrawGridBackground(false)
@@ -71,20 +73,18 @@ class EquityOverviewFragment : BaseFragment(), IAxisValueFormatter {
 
     private fun renderGraph(xaxisLabel: String, entries: List<LineChartEntry>) {
         line_chart.clear()
-        if (!entries.isEmpty()) {
-            val lineDataSet = LineDataSet(entries, xaxisLabel)
-            lineDataSet.apply {
-                setDrawFilled(true)
-                setDrawCircles(false)
-                setDrawValues(false)
-                lineWidth = 2f
-                fillColor = resources.getColor(R.color.stock_up)
-                color = resources.getColor(R.color.green_dark)
-            }
-
-            val lineData = LineData(lineDataSet)
-            line_chart.data = lineData
+        val tmp = if (entries.isEmpty()) listOf(LineChartEntry("...", 0.0f, 0.0f, System.currentTimeMillis())) else entries
+        val lineDataSet = LineDataSet(tmp, xaxisLabel)
+        lineDataSet.apply {
+            setDrawFilled(true)
+            setDrawCircles(false)
+            setDrawValues(false)
+            lineWidth = 2f
+            fillColor = resources.getColor(R.color.faint_voilet)
+            color = resources.getColor(R.color.colorPrimaryDark)
         }
+        val lineData = LineData(lineDataSet)
+        line_chart.data = lineData
     }
 }
 

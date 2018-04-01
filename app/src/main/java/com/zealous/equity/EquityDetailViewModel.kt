@@ -9,6 +9,7 @@ import com.zealous.stock.Equity
 import com.zealous.utils.Config
 import com.zealous.utils.PLog
 import com.zealous.utils.TaskManager
+import io.realm.Realm
 import java.security.SecureRandom
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -20,7 +21,7 @@ class EquityDetailViewModel : ViewModel() {
     private var cache: LruCache<Int, List<LineChartEntry>> = LruCache(4)
     private var days = arrayOf("Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat")
     private var months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-
+    private var realm: Realm? = null
     var selectedItem: Int = 0
         set(value) {
             if (field != value) {
@@ -29,6 +30,17 @@ class EquityDetailViewModel : ViewModel() {
                 field = value
             }
         }
+
+    init {
+        realm = Realm.getDefaultInstance()
+    }
+
+    override fun onCleared() {
+        if (realm != null) {
+            realm?.close()
+            realm = null
+        }
+    }
 
     fun setData(equity: Equity) {
         this.equity.value = equity
@@ -144,6 +156,16 @@ class EquityDetailViewModel : ViewModel() {
             4 -> "Last 12 months"
             5 -> "All"
             else -> ""
+        }
+    }
+
+    fun updateFavorite(equity: Equity) {
+        if (realm != null) {
+            realm?.beginTransaction()
+            equity.isFavorite = !equity.isFavorite
+            val ret = realm?.copyToRealmOrUpdate(equity)
+            realm?.commitTransaction()
+            this.equity.value = realm?.copyFromRealm(ret)
         }
     }
 }

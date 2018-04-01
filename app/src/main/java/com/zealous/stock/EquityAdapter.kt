@@ -7,7 +7,6 @@ import android.widget.TextView
 import butterknife.BindView
 import com.zealous.R
 import com.zealous.adapter.BaseAdapter
-import com.zealous.exchangeRates.ExchangeRate
 
 
 class EquityAdapter(delegate: EquityAdapterDelegate) : BaseAdapter<EquityHolder, Equity>(delegate) {
@@ -21,7 +20,7 @@ class EquityAdapter(delegate: EquityAdapterDelegate) : BaseAdapter<EquityHolder,
             holder.apply {
                 symbol.text = item.symbol
                 companyName.text = item.name
-                price.text = ExchangeRate.FORMAT.format(item.price)
+                price.text = item.price
                 change.text = item.change
                 change.setTextColor(ContextCompat.getColor(context, if (item.change.startsWith("-")) R.color.red else R.color.stock_up))
             }
