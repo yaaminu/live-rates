@@ -7,12 +7,18 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.util.LruCache
 import android.support.v7.app.AppCompatActivity
+import android.text.format.DateUtils
+import android.text.format.DateUtils.formatDateTime
 import com.github.mikephil.charting.data.Entry
 import com.zealous.R
 import com.zealous.stock.Equity
+import com.zealous.utils.Config
 import com.zealous.utils.PLog
 import com.zealous.utils.TaskManager
+import java.lang.System.currentTimeMillis
 import java.security.SecureRandom
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 const val EQUITY = "equity"
 const val TAG = "EquityDetailActivity"
@@ -30,8 +36,10 @@ class EquityDetailActivity : AppCompatActivity() {
 class EquityDetailViewModel : ViewModel() {
     private var equity: MutableLiveData<Equity> = MutableLiveData()
     private var historicalRatesLive: MutableLiveData<Pair<Int, List<LineChartEntry>>> = MutableLiveData()
-    private var loading: HashSet<Int> = HashSet(5)
-    private var cache: LruCache<Int, List<LineChartEntry>> = android.support.v4.util.LruCache(5)
+    private var loading: HashSet<Int> = HashSet(4)
+    private var cache: LruCache<Int, List<LineChartEntry>> = android.support.v4.util.LruCache(4)
+    private var days = arrayOf("Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat")
+    private var months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
     var selectedItem: Int = 0
         set(value) {
@@ -64,12 +72,12 @@ class EquityDetailViewModel : ViewModel() {
     //TODO move this to  it's own class
     fun doLoadHistoricalRatesAsync(symbol: String, index: Int) {
         if (loading.add(index)) {
-            TaskManager.executeNow({
+            TaskManager.executeNow(false) {
                 Thread.sleep(4000)
                 val entries = ArrayList<LineChartEntry>(testGetNumOfDataPoints(index))
                 0.until(testGetNumOfDataPoints(index)).mapTo(entries) {
-                    LineChartEntry("$it:00 GMT",
-                            (it.toFloat()), getNextStockPrice(), System.currentTimeMillis())
+                    LineChartEntry(getLabel(index, it),
+                            (it.toFloat()), getNextStockPrice(), currentTimeMillis())
                 }
                 cache.put(index, entries)
                 loading.remove(index)
@@ -78,7 +86,44 @@ class EquityDetailViewModel : ViewModel() {
                         historicalRatesLive.value = index to entries
                     }
                 })
-            }, false)
+            }
+        }
+    }
+
+    private fun getLabel(index: Int, position: Int): String {
+        return when (index) {
+            0 -> {
+                val calendar = GregorianCalendar.getInstance()
+                calendar.time = Date(currentTimeMillis() - (TimeUnit.HOURS.toMillis(23 - position.toLong())))
+                "${calendar.get(Calendar.HOUR_OF_DAY)}:00 GMT"
+            }
+            1 -> {
+                val calendar = GregorianCalendar.getInstance()
+                calendar.time = Date(currentTimeMillis() - (TimeUnit.DAYS.toMillis(6 - position.toLong())))
+                days[calendar.get(Calendar.DAY_OF_WEEK) - 1] //
+            }
+            2 -> {
+                formatDateTime(
+                        Config.getApplicationContext(),
+                        currentTimeMillis() - (TimeUnit.DAYS.toMillis(29 - position.toLong())),
+                        DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_ABBREV_ALL)
+            }
+            3 -> {
+                val cal = GregorianCalendar.getInstance()
+                var tmp = cal.get(Calendar.MONTH) + (11 - position)
+                if (tmp > cal.getMaximum(Calendar.MONTH)) {
+                    tmp -= cal.getMaximum(Calendar.MONTH)
+                }
+                months[tmp]
+            }
+            4 -> {
+                val cal = GregorianCalendar.getInstance()
+                "${(cal.get(Calendar.YEAR) - position)}"
+            }
+            else -> {
+                val cal = GregorianCalendar.getInstance()
+                "${(cal.get(Calendar.YEAR) - position)}"
+            }
         }
     }
 

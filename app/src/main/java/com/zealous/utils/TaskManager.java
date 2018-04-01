@@ -110,6 +110,14 @@ public class TaskManager {
     private static final int maxLength = Runtime.getRuntime().availableProcessors() * 15;
 
 
+    public static void execute(boolean requiresNetwork, Runnable runnable) {
+        execute(runnable, requiresNetwork);
+    }
+
+    public static void executeNow(boolean requiresNetwork, Runnable runnable) {
+        executeNow(runnable, requiresNetwork);
+    }
+
     public static void executeNow(Runnable runnable, boolean requiresNetwork) {
         ensureInitialised();
         synchronized (expressQueueLock) {

@@ -32,7 +32,7 @@ class EquityOverviewFragment : BaseFragment(), IAxisValueFormatter {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val title = listOf(
-                "1D", "1W", "1M", "1Y", "MAX"
+                "24 Hours", "7 Days", "30 Days", "12 Months"
         )
 
         equityDetailViewModel = ViewModelProviders.of(activity)
@@ -47,12 +47,15 @@ class EquityOverviewFragment : BaseFragment(), IAxisValueFormatter {
         }
 
         equityDetailViewModel.getHistoricalData().observe(this, Observer {
-            renderGraph(equityDetailViewModel.describeIndex(it!!.first), "", it.second)
+            renderGraph(equityDetailViewModel.describeIndex(it!!.first), it.second)
         })
 
         duration_parent_layout.getChildAt(equityDetailViewModel.selectedItem).isSelected = true
         val xAxis = line_chart.xAxis
-        xAxis.valueFormatter = this
+        xAxis.apply {
+            valueFormatter = this@EquityOverviewFragment
+            setAvoidFirstLastClipping(true)
+        }
         line_chart.axisLeft.setDrawZeroLine(false)
         line_chart.setDrawGridBackground(false)
         line_chart.description = Description().apply { text = "" }
@@ -66,14 +69,13 @@ class EquityOverviewFragment : BaseFragment(), IAxisValueFormatter {
         }
     }
 
-    private fun renderGraph(xaxisLabel: String, description: String, entries: List<LineChartEntry>) {
+    private fun renderGraph(xaxisLabel: String, entries: List<LineChartEntry>) {
         line_chart.clear()
         if (!entries.isEmpty()) {
             val lineDataSet = LineDataSet(entries, xaxisLabel)
             lineDataSet.apply {
                 setDrawFilled(true)
                 setDrawCircles(false)
-                mode = LineDataSet.Mode.CUBIC_BEZIER
                 setDrawValues(false)
                 lineWidth = 2f
                 fillColor = resources.getColor(R.color.stock_up)

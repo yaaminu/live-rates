@@ -24,13 +24,12 @@
 
         <include layout="@layout/equity_price_duration" />
 
-        <include layout="@layout/equity_price_duration" />
-
     </LinearLayout>
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_weight="1" />
 </LinearLayout>
