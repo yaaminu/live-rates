@@ -1,7 +1,7 @@
 package com.zealous.ui;
 
 import com.zealous.equity.EquityFragmentParent;
-import com.zealous.exchangeRates.ExchangeRateFragment;
+import com.zealous.equity.ExchangeRateFragmentParent;
 import com.zealous.expense.ExpenseFragment;
 
 import dagger.Module;
@@ -19,8 +19,8 @@ public class MainActivityFragmentsProvider {
     }
 
     @Provides
-    public ExchangeRateFragment getExchangeRateFragment() {
-        return new ExchangeRateFragment();
+    public ExchangeRateFragmentParent getExchangeRateFragment() {
+        return new ExchangeRateFragmentParent();
     }
 
     @Provides
