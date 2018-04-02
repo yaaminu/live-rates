@@ -6,7 +6,7 @@
     android:layout_gravity="center_horizontal"
     android:layout_marginTop="@dimen/activity_vertical_margin"
     android:background="@drawable/simple_bar_background"
-    android:minWidth="300dp"
+    android:minWidth="250dp"
     android:orientation="horizontal"
     tools:showIn="@layout/equity_fragment_parent">
 
@@ -29,9 +29,9 @@
         android:id="@+id/watching"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/simple_bar_second_item_bg"
         android:layout_margin="1dp"
         android:layout_weight="1"
+        android:background="@drawable/simple_bar_second_item_bg"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center_horizontal"

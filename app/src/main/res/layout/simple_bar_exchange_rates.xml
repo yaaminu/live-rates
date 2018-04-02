@@ -6,7 +6,7 @@
     android:layout_gravity="center_horizontal"
     android:layout_marginTop="@dimen/activity_vertical_margin"
     android:background="@drawable/simple_bar_background"
-    android:minWidth="300dp"
+    android:minWidth="250dp"
     android:orientation="horizontal">
 
 
