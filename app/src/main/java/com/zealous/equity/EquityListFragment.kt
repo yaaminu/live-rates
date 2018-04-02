@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.gse_fragment_parent.*
 /**
  * Created by yaaminu on 4/28/17.
  */
-class GSEFragmentParent : BaseFragment() {
+class EquityListFragment : BaseFragment() {
 
 
     private val changeListener: (RealmResults<Equity>) -> Unit = { _ ->

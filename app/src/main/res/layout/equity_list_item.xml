@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:paddingBottom="@dimen/default_gap"
+    android:paddingBottom="4dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/default_gap"
+    android:paddingTop="4dp"
     app:columnCount="2"
     app:useDefaultMargins="true"
     tools:showIn="@layout/gse_fragment_parent">
@@ -16,7 +16,6 @@
     <TextView
         android:id="@+id/tv_symbol"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textColor="@color/white"
         app:layout_columnSpan="1"
         app:layout_columnWeight="0"
         tools:text="GCB" />
@@ -25,7 +24,6 @@
         android:id="@+id/tv_price"
         android:gravity="end"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textColor="@color/white"
         app:layout_columnSpan="1"
         app:layout_columnWeight="1"
         tools:text="11200.4" />
@@ -33,7 +31,7 @@
     <TextView
         android:id="@+id/tv_company_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:textColor="#bbb"
+        android:textColor="@color/bb_darkBackgroundColor"
         app:layout_columnSpan="1"
 
         tools:text="Ghana Commercial Bank" />

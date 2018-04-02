@@ -12,7 +12,7 @@ import android.support.v7.app.ActionBar;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.zealous.R;
-import com.zealous.equity.GSEFragmentParent;
+import com.zealous.equity.EquityFragmentParent;
 import com.zealous.exchangeRates.DaggerMainActivityComponent;
 import com.zealous.exchangeRates.ExchangeRate;
 import com.zealous.exchangeRates.ExchangeRateDetailActivity;
@@ -49,7 +49,7 @@ public class MainActivity extends SearchActivity {
     @Inject
     Lazy<ExpenseFragment> expenseFragmentLazy;
     @Inject
-    Lazy<GSEFragmentParent> gseFragmentLazy;
+    Lazy<EquityFragmentParent> equityFragmentParentLazy;
     private Fragment previousFragment;
 
     @Override
@@ -157,7 +157,7 @@ public class MainActivity extends SearchActivity {
             case R.id.tab_expenses:
                 return expenseFragmentLazy.get();
             case R.id.tab_gse:
-                return gseFragmentLazy.get();
+                return equityFragmentParentLazy.get();
             default:
                 throw new AssertionError();
         }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/simple_bar_background"
+    android:minWidth="300dp"
+    android:orientation="horizontal"
+    tools:showIn="@layout/equity_fragment_parent">
+
+    <TextView
+        android:id="@+id/watching"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@drawable/simple_bar_first_item_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/default_gap"
+        android:text="@string/watching"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+    <TextView
+        android:id="@+id/all_equities"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@drawable/simple_bar_second_item_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/default_gap"
+        android:text="@string/all_equities"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+</LinearLayout>

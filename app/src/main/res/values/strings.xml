@@ -171,6 +171,9 @@
     <string name="overview">Overview</string>
     <string name="extra_info">Extra Information</string>
     <string name="add_to_watching_list">Add to watching list</string>
+    <string name="watching">Watching</string>
+    <string name="all_equities">All</string>
+    <string name="show_on_home_screen">Show on home screen</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
