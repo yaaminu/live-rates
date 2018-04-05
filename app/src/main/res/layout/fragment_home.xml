@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#eee"
+            android:orientation="vertical">
+
+            <fragment
+                android:id="@+id/fragment_home_exchange_rates"
+                android:name="com.zealous.ui.HomeExchangeRateFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                tools:layout="@layout/fragment_home_exchange_rates" />
+
+            <fragment
+                android:id="@+id/fragment_home_stock"
+                android:name="com.zealous.ui.HomeStockFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout="@layout/fragment_home_stock" />
+
+            <fragment
+                android:id="@+id/fragment_home_expenses"
+                android:name="com.zealous.ui.HomeExpenseFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout="@layout/fragment_home_expenses" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

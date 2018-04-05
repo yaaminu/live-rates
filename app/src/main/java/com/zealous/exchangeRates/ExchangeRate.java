@@ -114,4 +114,8 @@ public class ExchangeRate extends RealmObject implements ITuple {
         }
         return res;
     }
+
+    public String getRateValue() {
+        return currencySymbol + " " + FORMAT.format(getRate());
+    }
 }

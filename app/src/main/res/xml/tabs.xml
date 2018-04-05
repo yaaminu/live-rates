@@ -2,6 +2,12 @@
 <tabs>
     <tab
         barColorWhenSelected="@color/light_violet"
+        icon="@drawable/ic_home_black_24dp"
+        id="@+id/tab_home"
+        title="@string/home" />
+
+    <tab
+        barColorWhenSelected="@color/light_violet"
         icon="@drawable/ic_exchange_rates_black_24dp"
         id="@+id/tab_exchange_rates"
         title="@string/live_rates" />

@@ -6,6 +6,7 @@
     "decimal_digits": 2,
     "rounding": 0,
     "code": "USD",
+    "watching": 1,
     "name_plural": "US dollars"
   },
   {
@@ -23,6 +24,7 @@
     "symbol_native": "€",
     "decimal_digits": 2,
     "rounding": 0,
+    "watching": 1,
     "code": "EUR",
     "name_plural": "euros"
   },
@@ -355,6 +357,7 @@
     "symbol_native": "£",
     "decimal_digits": 2,
     "rounding": 0,
+    "watching": 1,
     "code": "GBP",
     "name_plural": "British pounds sterling"
   },
@@ -1049,6 +1052,7 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "XOF",
+    "watching": 1,
     "name_plural": "West African CFA Franc"
   },
   {

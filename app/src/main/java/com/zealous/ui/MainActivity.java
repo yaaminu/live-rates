@@ -26,6 +26,10 @@ public class MainActivity extends BaseZealousActivity {
 
     @Inject
     Lazy<ExchangeRateFragmentParent> exchangeRateFragmentLazy;
+
+    @Inject
+    Lazy<HomeFragmentParent> homeFragmentLazy;
+
     @Inject
     Lazy<ExpenseFragment> expenseFragmentLazy;
     @Inject
@@ -61,6 +65,8 @@ public class MainActivity extends BaseZealousActivity {
 
     private Fragment getFragment(int tabId) {
         switch (tabId) {
+            case R.id.tab_home:
+                return homeFragmentLazy.get();
             case R.id.tab_exchange_rates:
                 return exchangeRateFragmentLazy.get();
             case R.id.tab_expenses:

@@ -102,10 +102,8 @@ public class ExchangeRateManager {
 
     private static ExchangeRate jsonObjectToExchangeRate(JSONObject entry) throws JSONException {
         String code = entry.getString("code");
-        boolean watching = (code.equals("USD") || code.equals("GBP") ||
-                code.equals("EUR") || code.equals("CAD") || code.equals("XOF") || code.equals("NGN"));
         return new ExchangeRate(code, entry.getString("name"),
-                entry.getString("symbol"), entry.getString("name_plural"), watching);
+                entry.getString("symbol"), entry.getString("name_plural"), entry.optInt("watching", 0) == 1);
     }
 
     public synchronized void loadRates() {

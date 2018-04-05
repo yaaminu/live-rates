@@ -23,6 +23,12 @@ public class MainActivityFragmentsProvider {
         return new ExchangeRateFragmentParent();
     }
 
+
+    @Provides
+    public HomeFragmentParent homeFragmentParent() {
+        return new HomeFragmentParent();
+    }
+
     @Provides
     public EquityFragmentParent equityFragmentParent() {
         return new EquityFragmentParent();
