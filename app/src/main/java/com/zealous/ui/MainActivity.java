@@ -9,10 +9,9 @@ import android.support.v4.app.FragmentTransaction;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.zealous.R;
-import com.zealous.equity.EquityFragmentParent;
+import com.zealous.equity.EquityListFragment;
 import com.zealous.equity.ExchangeRateFragmentParent;
 import com.zealous.exchangeRates.DaggerMainActivityComponent;
-import com.zealous.expense.ExpenseFragment;
 
 import javax.inject.Inject;
 
@@ -31,9 +30,8 @@ public class MainActivity extends BaseZealousActivity {
     Lazy<HomeFragmentParent> homeFragmentLazy;
 
     @Inject
-    Lazy<ExpenseFragment> expenseFragmentLazy;
-    @Inject
-    Lazy<EquityFragmentParent> equityFragmentParentLazy;
+    Lazy<EquityListFragment> equityFragmentParentLazy;
+
     private Fragment previousFragment;
 
     @Override
@@ -69,8 +67,6 @@ public class MainActivity extends BaseZealousActivity {
                 return homeFragmentLazy.get();
             case R.id.tab_exchange_rates:
                 return exchangeRateFragmentLazy.get();
-            case R.id.tab_expenses:
-                return expenseFragmentLazy.get();
             case R.id.tab_gse:
                 return equityFragmentParentLazy.get();
             default:

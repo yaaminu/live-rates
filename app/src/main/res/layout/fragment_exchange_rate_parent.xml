@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/simple_bar_exchange_rates" />
-
-    <FrameLayout
-        android:id="@+id/container"
+    <fragment
+        android:id="@+id/fragment_exchange_rates"
+        android:name="com.zealous.exchangeRates.ExchangeRateFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        tools:layout="@layout/activity_exchange_rate_list" />
 </LinearLayout>

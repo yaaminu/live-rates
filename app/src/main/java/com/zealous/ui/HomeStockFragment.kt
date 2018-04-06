@@ -74,25 +74,29 @@ class HomeStockFragment : BaseFragment() {
     }
 
     private val onHistory = Action1<Pair<String, List<LineChartEntry>>> {
-        GenericUtils.ensureConditionTrue(!it.second.isEmpty(), "can't be empty")
-        val dataSet = LineDataSet(it.second, "")
+        if (activity != null) {
+            GenericUtils.ensureConditionTrue(!it.second.isEmpty(), "can't be empty")
+            val dataSet = LineDataSet(it.second, "")
 
-        dataSet.apply {
-            setDrawCircles(false)
-            setDrawValues(false)
-            lineWidth = 1.5f
-            color = R.color.colorPrimaryDark
-        }
+            dataSet.apply {
+                setDrawCircles(false)
+                setDrawValues(false)
+                lineWidth = 1.5f
+                color = R.color.colorPrimaryDark
+            }
 
-        if (home_stock_line_chart.data == null) {
-            home_stock_line_chart.data = LineData(dataSet)
-        } else {
-            home_stock_line_chart.data.addDataSet(dataSet)
+            if (home_stock_line_chart.data == null) {
+                home_stock_line_chart.data = LineData(dataSet)
+            } else {
+                home_stock_line_chart.data.addDataSet(dataSet)
+            }
         }
     }
     private val onError = Action1<Throwable> {
-        PLog.e(TAG, it.message, it)
-        Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+        if (activity != null) {
+            PLog.e(TAG, it.message, it)
+            Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+        }
     }
 
     class DelegateImpl(val context: Context, var equities: List<Equity>) : HomeStockAdapter.Delegate {

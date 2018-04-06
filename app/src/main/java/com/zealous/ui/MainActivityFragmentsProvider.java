@@ -1,6 +1,6 @@
 package com.zealous.ui;
 
-import com.zealous.equity.EquityFragmentParent;
+import com.zealous.equity.EquityListFragment;
 import com.zealous.equity.ExchangeRateFragmentParent;
 import com.zealous.expense.ExpenseFragment;
 
@@ -23,14 +23,13 @@ public class MainActivityFragmentsProvider {
         return new ExchangeRateFragmentParent();
     }
 
-
     @Provides
     public HomeFragmentParent homeFragmentParent() {
         return new HomeFragmentParent();
     }
 
     @Provides
-    public EquityFragmentParent equityFragmentParent() {
-        return new EquityFragmentParent();
+    public EquityListFragment equityFragmentParent() {
+        return new EquityListFragment();
     }
 }

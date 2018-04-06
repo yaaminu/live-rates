@@ -13,12 +13,7 @@
         title="@string/live_rates" />
     <tab
         barColorWhenSelected="@color/light_violet"
-        icon="@drawable/ic_business_news_black_24dp"
+        icon="@drawable/ic_stock_market"
         id="@+id/tab_gse"
         title="@string/gse" />
-    <tab
-        barColorWhenSelected="@color/light_violet"
-        icon="@drawable/ic_expenses_white_24dp"
-        id="@+id/tab_expenses"
-        title="@string/expenses" />
 </tabs>

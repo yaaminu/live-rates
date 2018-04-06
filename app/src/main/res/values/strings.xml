@@ -65,10 +65,10 @@
     <string name="drop_down_icon">Drop down icon</string>
     <string name="calendar">Calendar</string>
     <string name="go_back">Go back</string>
-    <string name="gse">Stocks</string>
+    <string name="gse">Ghana Stock Exchange</string>
     <string name="news">Stocks</string>
     <string name="expenses">Expenses</string>
-    <string name="live_rates">Live Rates</string>
+    <string name="live_rates">Exchange Rates</string>
     <string name="category">Category</string>
     <string name="amount_format">- $%s</string>
     <string name="clear">Clear</string>
