@@ -30,7 +30,8 @@
         </activity>
         <activity
             android:name=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".exchangeRates.ExchangeRateListActivity"
             android:label="@string/select_currency"
