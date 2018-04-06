@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="80dp"
+    android:background="?attr/selectableItemBackground"
+    android:padding="@dimen/default_gap"
+    app:columnCount="2"
+    app:useDefaultMargins="true">
+
+    <View
+        android:id="@+id/side_bar"
+        android:layout_width="5dp"
+        android:layout_height="wrap_content"
+        android:background="@color/lemon"
+        app:layout_columnSpan="1"
+        app:layout_rowSpan="2" />
+
+    <TextView
+        android:id="@+id/tv_symbol"
+        android:layout_marginLeft="@dimen/default_gap"
+        android:layout_marginRight="@dimen/default_gap"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/lemon"
+        android:textStyle="bold"
+        app:layout_columnSpan="1"
+        app:layout_columnWeight="1"
+        tools:text="GCB" />
+
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_marginLeft="@dimen/default_gap"
+        android:layout_marginRight="@dimen/default_gap"
+        app:layout_columnSpan="1"
+        app:layout_columnWeight="1"
+        app:layout_gravity="bottom"
+        tools:text="43855" />
+</android.support.v7.widget.GridLayout>
