@@ -5,10 +5,10 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.ColorRes
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import butterknife.BindView
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
@@ -16,23 +16,13 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.zealous.R
 import com.zealous.adapter.BaseAdapter
-import com.zealous.equity.LineChartEntry
 import com.zealous.exchangeRates.ExchangeRate
-import com.zealous.utils.GenericUtils
-import com.zealous.utils.PLog
 import kotlinx.android.synthetic.main.fragment_home_exchange_rates.*
-import rx.Observable
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Action1
-import rx.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 
 
 const val TAG = "HomeExchangeRateFragment"
 
 class HomeExchangeRateFragment : BaseFragment() {
-    private var subscription: Subscription? = null
     override fun getLayout() = R.layout.fragment_home_exchange_rates
 
 
@@ -49,7 +39,7 @@ class HomeExchangeRateFragment : BaseFragment() {
                 .observe(this, Observer {
                     delegate.rates = it ?: emptyList()
                     adapter.notifyDataChanged("")
-                    subscription = loadHistoricalData(it!!)
+                    loadHistoricalData(it!!)
                 })
 
         val xAxis = home_exchange_rate_line_chart.xAxis
@@ -63,50 +53,26 @@ class HomeExchangeRateFragment : BaseFragment() {
         home_exchange_rate_line_chart.clear()
     }
 
-    private fun loadHistoricalData(currencies: List<ExchangeRate>): Subscription {
-        return ViewModelProviders.of(parentFragment)
+    private fun loadHistoricalData(currencies: List<ExchangeRate>) {
+        ViewModelProviders.of(parentFragment)
                 .get(HomeViewModel::class.java)
                 .getHistoricalRatesForWatchedCurrencies(currencies)
-                .subscribeOn(Schedulers.io())
-                .retryWhen {
-                    Observable.range(1, 3).flatMap {
-                        Observable.timer(3 * it.toLong(), TimeUnit.SECONDS)
+                .observe(this, Observer {
+                    val datasets: MutableList<LineDataSet> = ArrayList<LineDataSet>()
+
+                    if (it != null) {
+                        for (key in it.keys) {
+                            datasets.add(LineDataSet(it[key]!!, key).apply {
+                                setDrawCircles(false)
+                                setDrawValues(false)
+                                lineWidth = 1.5f
+                                color = getLinColor(key)
+                            })
+                        }
                     }
-                }
-                .take(3)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onHistory, onError)
-    }
-
-    override fun onDestroyView() {
-        subscription?.unsubscribe()
-        super.onDestroyView()
-    }
-
-
-    val xVals = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
-            "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30")
-
-    private val onHistory = Action1<Pair<String, List<LineChartEntry>>> {
-        GenericUtils.ensureConditionTrue(!it.second.isEmpty(), "can't be empty")
-        val dataSet = LineDataSet(it.second, "")
-
-        dataSet.apply {
-            setDrawCircles(false)
-            setDrawValues(false)
-            lineWidth = 1.5f
-            color = getLinColor(it.first)
-        }
-
-        if (home_exchange_rate_line_chart.data == null) {
-            home_exchange_rate_line_chart.data = LineData(dataSet)
-        } else {
-            home_exchange_rate_line_chart.data.addDataSet(dataSet)
-        }
-    }
-    private val onError = Action1<Throwable> {
-        PLog.e(TAG, it.message, it)
-        Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                    home_exchange_rate_line_chart.clear()
+                    home_exchange_rate_line_chart.data = LineData(datasets.toList())
+                })
     }
 
     class DelegateImpl(val context: Context, var rates: List<ExchangeRate>) : HomeExchangeRateAdapter.Delegate {
@@ -122,11 +88,12 @@ class HomeExchangeRateFragment : BaseFragment() {
     }
 
     @ColorRes
-    fun getLinColor(currency: String): Int {
+    private fun getLinColor(currency: String): Int {
         return when (currency) {
-            "GBP" -> R.color.green_dark
-            "EUR" -> R.color.red
-            "USD" -> R.color.dark_blue
+            "GBP" -> ContextCompat.getColor(context, R.color.green_dark)
+            "EUR" -> ContextCompat.getColor(context, R.color.red)
+            "USD" -> ContextCompat.getColor(context, R.color.dark_blue)
+            "XOF" -> ContextCompat.getColor(context, R.color.dark_violet)
             else -> R.color.dark_violet
         }
     }

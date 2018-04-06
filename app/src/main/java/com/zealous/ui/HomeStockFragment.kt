@@ -5,10 +5,10 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.ColorRes
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import butterknife.BindView
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
@@ -16,20 +16,14 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.zealous.R
 import com.zealous.adapter.BaseAdapter
-import com.zealous.equity.LineChartEntry
 import com.zealous.stock.Equity
-import com.zealous.utils.GenericUtils
-import com.zealous.utils.PLog
 import kotlinx.android.synthetic.main.fragment_home_stock.*
-import rx.Observable
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Action1
-import rx.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
+
+
+@ColorRes
+private val lineColors = arrayOf(R.color.green_dark, R.color.red, R.color.light_blue, R.color.dark_violet)
 
 class HomeStockFragment : BaseFragment() {
-    private var subscription: Subscription? = null
 
     override fun getLayout() = R.layout.fragment_home_stock
 
@@ -44,7 +38,7 @@ class HomeStockFragment : BaseFragment() {
                 .observe(this, Observer {
                     delegate.equities = it ?: emptyList()
                     adapter.notifyDataChanged("")
-                    subscription = loadHistoricalData(it!!)
+                    loadHistoricalData(it!!)
                 })
 
         val xAxis = home_stock_line_chart.xAxis
@@ -58,46 +52,28 @@ class HomeStockFragment : BaseFragment() {
     }
 
 
-    private fun loadHistoricalData(equities: List<Equity>): Subscription {
-        return ViewModelProviders.of(parentFragment)
+    private fun loadHistoricalData(equities: List<Equity>) {
+        ViewModelProviders.of(parentFragment)
                 .get(HomeViewModel::class.java)
                 .getHistoricalRatesForWatchedEquities(equities)
-                .subscribeOn(Schedulers.io())
-                .retryWhen {
-                    Observable.range(1, 3).flatMap {
-                        Observable.timer(3 * it.toLong(), TimeUnit.SECONDS)
+                .observe(this, Observer {
+                    val datasets: MutableList<LineDataSet> = ArrayList<LineDataSet>()
+
+                    if (it != null) {
+                        for ((i, key) in it.keys.withIndex()) {
+                            datasets.add(LineDataSet(it[key]!!, key).apply {
+                                setDrawCircles(false)
+                                setDrawValues(false)
+                                lineWidth = 1.5f
+                                color = ContextCompat.getColor(context, lineColors[i % lineColors.size])
+                            })
+                        }
                     }
-                }
-                .take(3)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onHistory, onError)
+                    home_stock_line_chart.clear()
+                    home_stock_line_chart.data = LineData(datasets.toList())
+                })
     }
 
-    private val onHistory = Action1<Pair<String, List<LineChartEntry>>> {
-        if (activity != null) {
-            GenericUtils.ensureConditionTrue(!it.second.isEmpty(), "can't be empty")
-            val dataSet = LineDataSet(it.second, "")
-
-            dataSet.apply {
-                setDrawCircles(false)
-                setDrawValues(false)
-                lineWidth = 1.5f
-                color = R.color.colorPrimaryDark
-            }
-
-            if (home_stock_line_chart.data == null) {
-                home_stock_line_chart.data = LineData(dataSet)
-            } else {
-                home_stock_line_chart.data.addDataSet(dataSet)
-            }
-        }
-    }
-    private val onError = Action1<Throwable> {
-        if (activity != null) {
-            PLog.e(TAG, it.message, it)
-            Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
-        }
-    }
 
     class DelegateImpl(val context: Context, var equities: List<Equity>) : HomeStockAdapter.Delegate {
 
@@ -117,7 +93,7 @@ class HomeStockFragment : BaseFragment() {
 class HomeStockAdapter(delegate: Delegate) : BaseAdapter<HomeStockAdapter.Holder, Equity>(delegate) {
 
     override fun doBindHolder(holder: Holder?, position: Int) {
-        val color = holder!!.context.resources.getColor(colors[position % colors.size])
+        val color = holder!!.context.resources.getColor(lineColors[position % lineColors.size])
         holder.sideBar.setBackgroundColor(color)
         holder.symbol.text = getItem(position).symbol
         holder.symbol.setTextColor(color)
@@ -137,8 +113,5 @@ class HomeStockAdapter(delegate: Delegate) : BaseAdapter<HomeStockAdapter.Holder
         lateinit var price: TextView
 
     }
-
-    @ColorRes
-    val colors = arrayOf(R.color.green_dark, R.color.red, R.color.light_blue, R.color.dark_violet)
 
 }
