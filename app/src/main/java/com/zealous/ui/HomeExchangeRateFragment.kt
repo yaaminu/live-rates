@@ -60,6 +60,7 @@ class HomeExchangeRateFragment : BaseFragment() {
         home_exchange_rate_line_chart.axisLeft.setDrawZeroLine(false)
         home_exchange_rate_line_chart.setDrawGridBackground(false)
         home_exchange_rate_line_chart.description = Description().apply { text = "" }
+        home_exchange_rate_line_chart.clear()
     }
 
     private fun loadHistoricalData(currencies: List<ExchangeRate>): Subscription {
@@ -157,6 +158,6 @@ class HomeExchangeRateAdapter(delegate: Delegate) : BaseAdapter<HomeExchangeRate
     }
 
     @ColorRes
-    val colors = arrayOf(R.color.green_dark, R.color.red, R.color.light_blue, R.color.dark_violet)
+    private val colors = arrayOf(R.color.green_dark, R.color.red, R.color.light_blue, R.color.dark_violet)
 
 }

@@ -13,11 +13,11 @@
         app:columnCount="2">
 
         <TextView
-            android:background="@color/colorPrimary"
+            android:background="@drawable/title_bg"
             android:gravity="center_horizontal"
             android:padding="@dimen/default_gap"
             android:text="@string/simple_converter"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="@color/white"
             app:layout_columnSpan="2"
             app:layout_columnWeight="1" />
@@ -27,14 +27,16 @@
             android:id="@+id/tv_currency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/lemon"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
             android:drawablePadding="@dimen/default_gap"
-            android:drawableRight="@drawable/ic_arrow_drop_down_white_24dp"
+            android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+            android:focusable="true"
             android:gravity="center_horizontal"
             android:minWidth="100dp"
             android:padding="@dimen/default_gap"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="@color/black"
             app:layout_column="0"
             app:layout_columnSpan="1"
             tools:text="USD" />
@@ -54,13 +56,14 @@
             android:lines="1"
             android:paddingLeft="@dimen/default_gap"
             android:paddingRight="@dimen/default_gap"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_columnSpan="1"
             app:layout_columnWeight="1"
             tools:hint="Amount In $" />
 
         <View
             android:layout_height="0.8dp"
-            android:background="@color/lemon"
+            android:background="@color/gray_light"
             app:layout_columnSpan="2"
             app:layout_columnWeight="1" />
 
@@ -70,7 +73,7 @@
             android:gravity="center_horizontal"
             android:hint="@string/results_will_appear_here"
             android:padding="@dimen/default_gap"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_columnSpan="2"
             app:layout_columnWeight="1" />
     </android.support.v7.widget.GridLayout>

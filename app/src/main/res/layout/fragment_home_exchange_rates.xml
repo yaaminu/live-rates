@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:showIn="@layout/fragment_home">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,11 +15,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/title_bg"
             android:gravity="center_horizontal"
             android:padding="@dimen/default_gap"
             android:text="@string/popular_currencies"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="@color/white" />
 
         <android.support.v7.widget.RecyclerView

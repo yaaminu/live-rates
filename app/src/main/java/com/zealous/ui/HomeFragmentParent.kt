@@ -1,6 +1,7 @@
 package com.zealous.ui
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.zealous.R
 import com.zealous.equity.LineChartEntry
@@ -9,6 +10,8 @@ import com.zealous.stock.Equity
 import com.zealous.utils.Config
 import io.realm.Realm
 import rx.Observable
+import java.math.BigDecimal
+import java.math.MathContext
 import java.security.SecureRandom
 
 class HomeFragmentParent : BaseFragment() {
@@ -23,6 +26,37 @@ class HomeViewModel : ViewModel() {
     private val stockRealm: Realm = Realm.getDefaultInstance()
     private val watchedCurrencies: WatchedCurrencies = WatchedCurrencies(exchangeRateRealm)
     private val watchedStocks: WatchedStock = WatchedStock(stockRealm)
+    private val selectedCurrencyIndex: MutableLiveData<Int> = MutableLiveData()
+    private val converter = Converter(null, 0.0)
+
+    init {
+        selectedCurrencyIndex.value = 0
+    }
+
+    fun getSelectedCurrencyIndex(): LiveData<Int> {
+        return selectedCurrencyIndex
+    }
+
+    fun updateInput(input: String) {
+        converter.input = try {
+            java.lang.Double.parseDouble(input)
+        } catch (e: NumberFormatException) {
+            0.0
+        }
+    }
+
+    fun getExchangeRateByIndex(position: Int): ExchangeRate? {
+        return watchedCurrencies.value?.get(position)
+    }
+
+    fun updateSelectedItem(position: Int) {
+        if (selectedCurrencyIndex.value != position) {
+            selectedCurrencyIndex.value = position
+        }
+        if (converter.currency != watchedCurrencies.value?.get(position)) {
+            converter.currency = watchedCurrencies.value?.get(position)
+        }
+    }
 
     fun getWatchedCurrencies(): LiveData<List<ExchangeRate>> = watchedCurrencies
 
@@ -92,4 +126,25 @@ class HomeViewModel : ViewModel() {
         }
         return Observable.just(symbol to list)
     }
+
+    fun getConvertedValue(): LiveData<String> {
+        return converter
+    }
+}
+
+class Converter(currency: ExchangeRate?, input: Double) : LiveData<String>() {
+    var input = input
+        set(value) {
+            field = value
+            setValue(if (currency == null || value == 0.0) "" else ExchangeRate.FORMAT.format(BigDecimal.valueOf(value)
+                    .divide(BigDecimal.valueOf(currency!!.rate), MathContext.DECIMAL128)))
+        }
+    var currency = currency
+        set(value) {
+            field = value
+            setValue(if (value == null || input == 0.0) "" else
+                ExchangeRate.FORMAT.format(BigDecimal.valueOf(input)
+                        .divide(BigDecimal.valueOf(value.rate), MathContext.DECIMAL128)))
+        }
+
 }

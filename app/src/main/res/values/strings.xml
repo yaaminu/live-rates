@@ -182,6 +182,7 @@
     <string name="amount_in">Amount In %s</string>
     <string name="results_will_appear_here">Amount In GH₵</string>
     <string name="simple_converter">Simple Converter</string>
+    <string name="amount_results">GH₵ %s</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

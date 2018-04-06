@@ -3,19 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:padding="@dimen/default_gap"
-    app:columnCount="2"
-    app:useDefaultMargins="true">
+    app:columnCount="2">
 
-    <View
+    <TextView
         android:id="@+id/side_bar"
         android:layout_width="5dp"
         android:layout_height="wrap_content"
         android:background="@color/lemon"
+        android:maxHeight="40dp"
         app:layout_columnSpan="1"
-        app:layout_rowSpan="2" />
+        app:layout_rowSpan="2"
+        app:layout_rowWeight="1" />
 
     <TextView
         android:id="@+id/tv_currency_name"
@@ -32,6 +33,7 @@
         android:id="@+id/tv_currency_rate"
         android:layout_marginLeft="@dimen/default_gap"
         android:layout_marginRight="@dimen/default_gap"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_columnSpan="1"
         app:layout_columnWeight="1"
         app:layout_gravity="bottom"

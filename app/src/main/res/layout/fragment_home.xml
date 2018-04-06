@@ -10,14 +10,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <fragment
-            android:id="@+id/fragment_home_exchange_rates"
-            android:name="com.zealous.ui.HomeExchangeRateFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            tools:layout="@layout/fragment_home_exchange_rates" />
-
 
         <fragment
             android:id="@+id/fragment_easy_convert"
@@ -25,15 +17,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/default_gap"
+            android:layout_marginRight="@dimen/default_gap"
+            android:layout_marginTop="@dimen/default_gap"
             tools:layout="@layout/fragment_easy_convert" />
+
+        <fragment
+            android:id="@+id/fragment_home_exchange_rates"
+            android:name="com.zealous.ui.HomeExchangeRateFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/default_gap"
+            android:layout_marginRight="@dimen/default_gap"
+            tools:layout="@layout/fragment_home_exchange_rates" />
+
 
         <fragment
             android:id="@+id/fragment_home_stock"
             android:name="com.zealous.ui.HomeStockFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_gap"
+            android:layout_marginRight="@dimen/default_gap"
             tools:layout="@layout/fragment_home_stock" />
-
 
     </LinearLayout>
 </ScrollView>
