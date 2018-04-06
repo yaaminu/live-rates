@@ -18,12 +18,23 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             tools:layout="@layout/fragment_home_exchange_rates" />
 
+
+        <fragment
+            android:id="@+id/fragment_easy_convert"
+            android:name="com.zealous.ui.FragmentEasyConvert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            tools:layout="@layout/fragment_easy_convert" />
+
         <fragment
             android:id="@+id/fragment_home_stock"
             android:name="com.zealous.ui.HomeStockFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/fragment_home_stock" />
+
+
     </LinearLayout>
 </ScrollView>
 

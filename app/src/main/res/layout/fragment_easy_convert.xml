@@ -1,40 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    tools:showIn="@layout/fragment_home_exchange_rates">
+    android:layout_margin="@dimen/default_gap"
+    tools:showIn="@layout/fragment_home">
 
-    <Spinner
-        android:id="@+id/currency_to_convert"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.GridLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp" />
+        app:columnCount="2">
 
-    <EditText
-        android:id="@+id/et_input_exchange_rate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/default_gap"
-        android:layout_marginRight="@dimen/default_gap"
-        android:layout_weight="1"
-        android:digits="1234567890."
-        android:gravity="center"
-        android:hint="@string/input"
-        android:inputType="number"
-        android:lines="1"
-        android:paddingLeft="@dimen/default_gap"
-        android:paddingRight="@dimen/default_gap" />
+        <TextView
+            android:background="@color/colorPrimary"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/default_gap"
+            android:text="@string/simple_converter"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1" />
 
-    <TextView
-        android:id="@+id/tv_exchange_conversion_results"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:text="GH₵ 0.00"
-        tools:text="GH₵ 1,3343.5" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tv_currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/lemon"
+            android:drawablePadding="@dimen/default_gap"
+            android:drawableRight="@drawable/ic_arrow_drop_down_white_24dp"
+            android:gravity="center_horizontal"
+            android:minWidth="100dp"
+            android:padding="@dimen/default_gap"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_column="0"
+            app:layout_columnSpan="1"
+            tools:text="USD" />
+
+        <EditText
+            android:id="@+id/et_input_exchange_rate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_gap"
+            android:layout_marginRight="@dimen/default_gap"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:digits="1234567890."
+            android:gravity="center"
+            android:hint="@string/amount_in"
+            android:inputType="number"
+            android:lines="1"
+            android:paddingLeft="@dimen/default_gap"
+            android:paddingRight="@dimen/default_gap"
+            app:layout_columnSpan="1"
+            app:layout_columnWeight="1"
+            tools:hint="Amount In $" />
+
+        <View
+            android:layout_height="0.8dp"
+            android:background="@color/lemon"
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1" />
+
+        <TextView
+            android:id="@+id/tv_results"
+            android:background="@color/transparent"
+            android:gravity="center_horizontal"
+            android:hint="@string/results_will_appear_here"
+            android:padding="@dimen/default_gap"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1" />
+    </android.support.v7.widget.GridLayout>
+</android.support.v7.widget.CardView>
