@@ -5,7 +5,9 @@
     android:layout_width="fill_parent"
     android:layout_height="?actionBarSize"
     android:background="?colorPrimary"
+    app:navigationIcon="@drawable/ic_home_black_24dp"
     app:theme="@style/ThemeOverlay.AppCompat.Dark"
+    app:title="@string/app_name"
     app:titleTextColor="@android:color/white">
 
     <FrameLayout
