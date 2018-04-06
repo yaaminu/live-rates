@@ -3,6 +3,7 @@ package com.zealous.ui
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
@@ -16,6 +17,8 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.zealous.R
 import com.zealous.adapter.BaseAdapter
+import com.zealous.equity.EQUITY
+import com.zealous.equity.EquityDetailActivity
 import com.zealous.stock.Equity
 import kotlinx.android.synthetic.main.fragment_home_stock.*
 
@@ -80,6 +83,8 @@ class HomeStockFragment : BaseFragment() {
         override fun context() = context
 
         override fun onItemClick(adapter: BaseAdapter<HomeStockAdapter.Holder, Equity>?, view: View?, position: Int, id: Long) {
+            context.startActivity(Intent(context, EquityDetailActivity::class.java)
+                    .apply { putExtra(EQUITY, adapter!!.getItem(position)) })
         }
 
         override fun onItemLongClick(adapter: BaseAdapter<HomeStockAdapter.Holder, Equity>?, view: View?, position: Int, id: Long) = true

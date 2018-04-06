@@ -3,6 +3,7 @@ package com.zealous.ui
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
@@ -17,6 +18,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.zealous.R
 import com.zealous.adapter.BaseAdapter
 import com.zealous.exchangeRates.ExchangeRate
+import com.zealous.exchangeRates.ExchangeRateDetailActivity
 import kotlinx.android.synthetic.main.fragment_home_exchange_rates.*
 
 
@@ -80,6 +82,11 @@ class HomeExchangeRateFragment : BaseFragment() {
         override fun context() = context
 
         override fun onItemClick(adapter: BaseAdapter<HomeExchangeRateAdapter.Holder, ExchangeRate>?, view: View?, position: Int, id: Long) {
+            val intent = Intent(context, ExchangeRateDetailActivity::class.java)
+            intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_SOURCE, "GHS")
+            intent.putExtra(ExchangeRateDetailActivity.EXTRA_START_WITH, if (adapter!!.getItem(position).rate >= 1) "GHS" else adapter.getItem(position).currencyIso)
+            intent.putExtra(ExchangeRateDetailActivity.EXTRA_CURRENCY_TARGET, adapter.getItem(position).currencyIso)
+            context.startActivity(intent)
         }
 
         override fun onItemLongClick(adapter: BaseAdapter<HomeExchangeRateAdapter.Holder, ExchangeRate>?, view: View?, position: Int, id: Long) = true
