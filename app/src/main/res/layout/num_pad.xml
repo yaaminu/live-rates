@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/number_input"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/default_gap"
+    android:visibility="gone"
+    app:columnCount="3"
+    app:useDefaultMargins="true"
+    tools:ignore="HardcodedText"
+    tools:showIn="@layout/fragment_verification"
+    tools:visibility="visible">
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="1"
+        app:layout_columnWeight="1" />
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="2"
+        app:layout_columnWeight="1" />
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="3"
+        app:layout_columnWeight="1" />
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="4"
+        app:layout_columnWeight="1" />
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="5"
+        app:layout_columnWeight="1" />
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="6"
+        app:layout_columnWeight="1" />
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="7"
+        app:layout_columnWeight="1" />
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="8"
+        app:layout_columnWeight="1" />
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="9"
+        app:layout_columnWeight="1" />
+
+    <android.support.v4.widget.Space app:layout_columnWeight="1" />
+
+    <TextView
+        style="@style/number_input_style"
+        android:text="0"
+        app:layout_columnWeight="1" />
+
+    <FrameLayout
+        style="@style/number_input_style"
+        android:background="?attr/selectableItemBackground"
+        app:layout_columnWeight="1">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/transparent"
+            android:clickable="false"
+            android:foregroundGravity="center"
+            android:padding="@dimen/default_gap"
+            android:src="@drawable/ic_backspace_black_24dp" />
+    </FrameLayout>
+</android.support.v7.widget.GridLayout>
