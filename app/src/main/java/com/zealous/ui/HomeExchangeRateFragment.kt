@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.ColorRes
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -42,29 +41,17 @@ class HomeExchangeRateFragment : BaseFragment() {
         val delegate = DelegateImpl(context, emptyList())
         val adapter = HomeExchangeRateAdapter(delegate)
         home_exchange_rate_recycler_view.adapter = adapter
-        val spinnerAdapter = SpinnerAdapter(emptyList())
-        currency_to_convert.adapter = spinnerAdapter
-        val viewModel = ViewModelProviders.of(parentFragment)
-                .get(HomeViewModel::class.java)
 
-        viewModel
+
+        ViewModelProviders.of(parentFragment)
+                .get(HomeViewModel::class.java)
                 .getWatchedCurrencies()
                 .observe(this, Observer {
                     delegate.rates = it ?: emptyList()
-                    spinnerAdapter.items = it ?: emptyList()
-                    spinnerAdapter.notifyDataSetChanged()
                     adapter.notifyDataChanged("")
-                    subscription = viewModel.getHistoricalRatesForWatchedCurrencies(it!!)
-                            .subscribeOn(Schedulers.io())
-                            .retryWhen {
-                                Observable.range(1, 3).flatMap {
-                                    Observable.timer(3 * it.toLong(), TimeUnit.SECONDS)
-                                }
-                            }
-                            .take(3)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(onHistory, onError)
+                    subscription = loadHistoricalData(it!!)
                 })
+
         val xAxis = home_exchange_rate_line_chart.xAxis
         xAxis.apply {
             setAvoidFirstLastClipping(true)
@@ -75,14 +62,30 @@ class HomeExchangeRateFragment : BaseFragment() {
         home_exchange_rate_line_chart.description = Description().apply { text = "" }
     }
 
+    private fun loadHistoricalData(currencies: List<ExchangeRate>): Subscription {
+        return ViewModelProviders.of(parentFragment)
+                .get(HomeViewModel::class.java)
+                .getHistoricalRatesForWatchedCurrencies(currencies)
+                .subscribeOn(Schedulers.io())
+                .retryWhen {
+                    Observable.range(1, 3).flatMap {
+                        Observable.timer(3 * it.toLong(), TimeUnit.SECONDS)
+                    }
+                }
+                .take(3)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onHistory, onError)
+    }
+
     override fun onDestroyView() {
         subscription?.unsubscribe()
         super.onDestroyView()
     }
 
-    //
-//    val xVals = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
-//            "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30")
+
+    val xVals = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
+            "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30")
+
     private val onHistory = Action1<Pair<String, List<LineChartEntry>>> {
         GenericUtils.ensureConditionTrue(!it.second.isEmpty(), "can't be empty")
         val dataSet = LineDataSet(it.second, "")
@@ -128,26 +131,6 @@ class HomeExchangeRateFragment : BaseFragment() {
     }
 }
 
-
-class SpinnerAdapter(var items: List<ExchangeRate>) : android.widget.BaseAdapter() {
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val convertView = convertView ?: LayoutInflater.from(parent!!.context)
-                .inflate(android.R.layout.simple_list_item_1, parent, false)
-        (convertView as TextView).text = getItem(position).currencyIso
-        return convertView
-    }
-
-    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        return getView(position, convertView, parent)
-    }
-
-    override fun getItem(position: Int) = items[position]
-
-    override fun getItemId(position: Int) = 0L
-
-    override fun getCount() = items.size
-}
 
 class HomeExchangeRateAdapter(delegate: Delegate) : BaseAdapter<HomeExchangeRateAdapter.Holder, ExchangeRate>(delegate) {
 

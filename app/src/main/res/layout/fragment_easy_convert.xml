@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    tools:showIn="@layout/fragment_home_exchange_rates">
+
+    <Spinner
+        android:id="@+id/currency_to_convert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp" />
+
+    <EditText
+        android:id="@+id/et_input_exchange_rate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/default_gap"
+        android:layout_marginRight="@dimen/default_gap"
+        android:layout_weight="1"
+        android:digits="1234567890."
+        android:gravity="center"
+        android:hint="@string/input"
+        android:inputType="number"
+        android:lines="1"
+        android:paddingLeft="@dimen/default_gap"
+        android:paddingRight="@dimen/default_gap" />
+
+    <TextView
+        android:id="@+id/tv_exchange_conversion_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="GH₵ 0.00"
+        tools:text="GH₵ 1,3343.5" />
+
+</LinearLayout>
