@@ -14,7 +14,7 @@ open class Equity(@PrimaryKey var symbol: String,
                   var price: String, private var shares: Long,
                   var _24hrHi: Double, var _24hrLo: Double,
                   var marketCap: Double, var marketOpen: Double,
-                  private var volume: Int,
+                  var volume: Int,
                   var isFavorite: Boolean = false) : RealmObject(), Parcelable {
 
     constructor(parcel: Parcel) : this(
