@@ -20,6 +20,8 @@ import kotlinx.android.synthetic.main.gse_fragment_parent.*
 
 /**
  * Created by yaaminu on 4/28/17.
+ *
+ * Responsible for showing list of stocks
  */
 class EquityListFragment : BaseFragment() {
 
@@ -27,7 +29,9 @@ class EquityListFragment : BaseFragment() {
     private val changeListener: (RealmResults<Equity>) -> Unit = { _ ->
         equity_recycler_view.adapter.notifyDataSetChanged()
     }
-
+    /**
+     * @inheritDoc
+     */
     override fun getLayout(): Int {
         return R.layout.gse_fragment_parent
     }
@@ -45,10 +49,19 @@ class EquityListFragment : BaseFragment() {
 
     private inner class DelegateImpl(val equities: RealmResults<Equity>) : EquityAdapterDelegate {
 
+        /**
+         * @inheritDoc
+         */
         override fun dataSet(constrain: String?) = equities
 
+        /**
+         * @inheritDoc
+         */
         override fun context(): Context = activity
 
+        /**
+         * @inheritDoc
+         */
         override fun onItemClick(adapter: BaseAdapter<EquityHolder, Equity>?, view: View?, position: Int, id: Long) {
             startActivity(Intent(context, EquityDetailActivity::class.java)
                     .apply { putExtra(EQUITY, adapter!!.getItem(position)) })
