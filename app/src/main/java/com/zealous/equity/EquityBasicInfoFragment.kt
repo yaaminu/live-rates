@@ -28,13 +28,8 @@ class EquityBasicInfoFragment : BaseFragment() {
                     tv_price.text = equity.price
                     tv_symbol.text = equity.symbol
                     ib_fav_equity.setImageResource(if (equity.isFavorite) R.drawable.ic_notifications_active_black_24dp else R.drawable.ic_notifications_none_black_24dp)
-
-                    _24_hour_high.text = Html.fromHtml("<b>24 Hour Low:</b>  ${ExchangeRate.FORMAT.format(equity._24hrLo)}")
-                    _24_hour_low.text = Html.fromHtml("<b>24 Hour High:</b> ${ExchangeRate.FORMAT.format(equity._24hrHi)}")
-                    market_cap.text = Html.fromHtml("<b>Market Cap:</b>   ${ExchangeRate.FORMAT.format(equity.marketCap)}")
-                    open.text = Html.fromHtml("<b>Today Open:</b>  ${ExchangeRate.FORMAT.format(equity.marketOpen)}")
-                    close.text = Html.fromHtml("<b>Previous close:</b>  ${ExchangeRate.FORMAT.format(equity.marketOpen)}")
-                    volume.text = Html.fromHtml("<b>Today Open:</b>  ${equity.volume}")
+                    market_cap.text = Html.fromHtml("<b>Market Cap</b>   ${ExchangeRate.FORMAT.format(equity.marketCap)}")
+                    volume.text = Html.fromHtml("<b>Volume</b>  ${equity.volume}")
 
                     back.setOnClickListener {
                         activity.finish()
@@ -44,5 +39,18 @@ class EquityBasicInfoFragment : BaseFragment() {
                         viewModel.updateFavorite(equity)
                     }
                 })
+        viewModel.getStats().observe(this, Observer {
+            if (it == null) {
+                _24_hour_high.text = Html.fromHtml("<b>24 Hour Low</b>  ??")
+                _24_hour_low.text = Html.fromHtml("<b>24 Hour High</b> ??")
+                open.text = Html.fromHtml("<b>Today Open</b>  ??")
+                close.text = Html.fromHtml("<b>Previous close</b>  ??")
+            } else {
+                _24_hour_high.text = Html.fromHtml("<b>24 Hour Low</b>  ${ExchangeRate.FORMAT.format(it.dayLow)}")
+                _24_hour_low.text = Html.fromHtml("<b>24 Hour High</b> ${ExchangeRate.FORMAT.format(it.dayHigh)}")
+                open.text = Html.fromHtml("<b>Today Open</b>  ${ExchangeRate.FORMAT.format(it.open)}")
+                close.text = Html.fromHtml("<b>Previous close</b>  ${ExchangeRate.FORMAT.format(it.close)}")
+            }
+        })
     }
 }

@@ -133,13 +133,13 @@ class StockLoader {
     }
 
 
-    fun last24Hours(symbol: String): Observable<Pair<String, List<Double>>> {
+    private fun last24Hours(symbol: String): Observable<Pair<String, List<Double>>> {
         return Observable.just(symbol)
                 .map { getJsonFromServer(symbol, 24) } //24 hours
                 .flatMap { processData(symbol, it) }
     }
 
-    fun doLoadLastNMonths(symbol: String, months: Int): Observable<Pair<String, List<Double>>> {
+    private fun doLoadLastNMonths(symbol: String, months: Int): Observable<Pair<String, List<Double>>> {
         return Observable.just(Pair(symbol, months))
                 .map {
                     getJsonFromServer(it.first, it.second)
@@ -180,7 +180,7 @@ class StockLoader {
                 })
     }
 
-    fun getRandomRate(): Double {
+    private fun getRandomRate(): Double {
         val random = SecureRandom()
         //maximum of 10000 and minimum of 99999
         val num = Math.abs(random.nextDouble() * (2.8 - 1.5) + 1.5)
@@ -203,4 +203,27 @@ class StockLoader {
             else -> throw AssertionError()
         }
     }
+
+    fun loadStats(symbol: String): Observable<EquityStat> {
+        return getStatsFromServer(symbol)
+                .flatMap {
+                    getStatsFromServer(symbol).subscribeOn(Schedulers.io())
+                }.map {
+                    EquityStat(it.getDouble("high"), it.getDouble("low"),
+                            it.getDouble("open"), it.getDouble("close"))
+                }.delay(3, TimeUnit.SECONDS)
+    }
+
+    private fun getStatsFromServer(symbol: String): Observable<JSONObject> {
+        return Observable.just(symbol).flatMap {
+            Observable.just(JSONObject().put("open", 32.3)
+                    .put("close", 32.9)
+                    .put("high", 32.9)
+                    .put("low", 32.2))
+
+        }
+    }
+
 }
+
+data class EquityStat(val dayHigh: Double, val dayLow: Double, val open: Double, val close: Double)

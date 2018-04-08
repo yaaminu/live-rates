@@ -6,14 +6,15 @@ import android.arch.lifecycle.ViewModel
 import android.support.v4.util.LruCache
 import android.text.format.DateUtils
 import com.zealous.stock.Equity
+import com.zealous.ui.EquityStat
 import com.zealous.ui.StockLoader
 import com.zealous.utils.Config
 import com.zealous.utils.PLog
 import io.realm.Realm
 import rx.Observable
+import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import java.security.SecureRandom
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -25,6 +26,7 @@ class EquityDetailViewModel : ViewModel() {
     private var days = arrayOf("Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat")
     private var months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
     private var realm: Realm? = null
+
     var selectedItem: Int = 0
         set(value) {
             if (field != value) {
@@ -49,6 +51,9 @@ class EquityDetailViewModel : ViewModel() {
         this.equity.value = equity
         historicalRatesLive.value = selectedItem to (cache[selectedItem] ?: emptyList())
         doLoadHistoricalRatesAsync(equity.symbol, selectedItem)
+        if (stats.value == null) {
+            stats.doLoad(equity)
+        }
     }
 
     fun getItem(): LiveData<Equity> {
@@ -128,24 +133,6 @@ class EquityDetailViewModel : ViewModel() {
         }
     }
 
-    fun getNextStockPrice(): Float {
-        val random = SecureRandom()
-        //maximum of 10000 and minimum of 99999
-        val num = Math.abs(random.nextDouble() * (3000 - 2900) + 2900)
-        //we need an unsigned (+ve) number
-        return Math.abs(num).toFloat()
-    }
-
-    fun getNumOfDataPoints(index: Int): Int {
-        return when (index) {
-            0 -> 24
-            1 -> 7
-            2 -> 30
-            4 -> 12
-            else -> 12
-        }
-    }
-
     fun getxAxisLabel(value: Float): String {
         if (cache[selectedItem] != null) {
             try {
@@ -175,6 +162,51 @@ class EquityDetailViewModel : ViewModel() {
             val ret = realm?.copyToRealmOrUpdate(equity)
             realm?.commitTransaction()
             this.equity.value = realm?.copyFromRealm(ret)
+        }
+    }
+
+    fun getStats(): LiveData<EquityStat> {
+        return stats
+    }
+
+
+    @Suppress("UsePropertyAccessSyntax")
+    private var stats = object : MutableLiveData<EquityStat>() {
+        private var subscription: Subscription? = null
+        override fun onActive() {
+            super.onActive()
+            val equityValue = equity.value
+            if (equityValue != null) {
+                doLoad(equityValue)
+            }
+            setValue(value)
+        }
+
+        fun doLoad(equity: Equity) {
+            subscription = subscription ?: StockLoader().loadStats(equity.symbol)
+                    .subscribeOn(Schedulers.io())
+                    .retryWhen {
+                        it.zipWith(Observable.range(1, 3), { _, num ->
+                            num
+                        }).flatMap {
+                            Observable.timer(it * 3L, TimeUnit.SECONDS)
+                        }
+                    }.observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        value = it
+                        subscription = null
+                    }) {
+                        subscription = null
+                        PLog.e(TAG, it.message, it)
+                    }
+        }
+
+        override fun onInactive() {
+            if (subscription != null) {
+                subscription?.unsubscribe()
+                subscription = null
+            }
+            super.onInactive()
         }
     }
 }
