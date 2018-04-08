@@ -8,7 +8,7 @@ import rx.Completable
  * Created by yaaminu on 4/7/18.
  */
 
-class EquityRepository() {
+class EquityRepository {
 
     fun loadStocks(): Completable {
         return StockLoader().doLoad()
