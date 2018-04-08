@@ -56,22 +56,26 @@ class HomeStockFragment : BaseFragment() {
 
 
     private fun loadHistoricalData(equities: List<Equity>) {
-        ViewModelProviders.of(parentFragment)
+        val homeViewModel = ViewModelProviders.of(parentFragment)
                 .get(HomeViewModel::class.java)
+        homeViewModel
                 .getHistoricalRatesForWatchedEquities(equities)
                 .observe(this, Observer {
                     val datasets: MutableList<LineDataSet> = ArrayList<LineDataSet>()
 
                     if (it != null) {
-                        for ((i, key) in it.keys.withIndex()) {
-                            datasets.add(LineDataSet(it[key]!!, key).apply {
+                        for (key in it.keys) {
+                            datasets.add(LineDataSet(it[key]!!, key.symbol).apply {
                                 setDrawCircles(false)
                                 setDrawValues(false)
                                 lineWidth = 1.5f
-                                color = ContextCompat.getColor(context, lineColors[i % lineColors.size])
+                                mode = LineDataSet.Mode.CUBIC_BEZIER
+                                color = ContextCompat.getColor(context, lineColors[key.position % lineColors.size])
                             })
                         }
                     }
+                    home_stock_recycler_view.smoothScrollToPosition(it?.keys?.iterator()?.next()?.position
+                            ?: 0)
                     home_stock_line_chart.clear()
                     home_stock_line_chart.data = LineData(datasets.toList())
                 })

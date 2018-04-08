@@ -65,7 +65,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun getWatchedStock(): LiveData<List<Equity>> = watchedStocks
-    fun getHistoricalRatesForWatchedEquities(equities: List<Equity>): LiveData<Map<String, List<LineChartEntry>>> {
+    fun getHistoricalRatesForWatchedEquities(equities: List<Equity>): LiveData<Map<SelectedStock, List<LineChartEntry>>> {
         if (homHistoricalEquities.equities.isEmpty()) {
             homHistoricalEquities.equities = stockRealm.copyFromRealm(equities)
         }
