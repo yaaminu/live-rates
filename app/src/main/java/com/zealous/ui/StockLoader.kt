@@ -1,5 +1,6 @@
 package com.zealous.ui
 
+import com.google.gson.GsonBuilder
 import com.zealous.exchangeRates.ExchangeRate
 import com.zealous.stock.Equity
 import com.zealous.utils.PLog
@@ -12,6 +13,7 @@ import rx.Completable
 import rx.Observable
 import rx.schedulers.Schedulers
 import java.io.IOException
+import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 
 /**
@@ -128,5 +130,77 @@ class StockLoader {
     private fun getChangeInPercent(price: Double, change: Double): String {
         val previousPrice = price - (Math.abs(change)) //Math.abs() helps us deal with negative changes
         return "${ExchangeRate.FORMAT.format((change / previousPrice) * 100)}%"
+    }
+
+
+    fun last24Hours(symbol: String): Observable<Pair<String, List<Double>>> {
+        return Observable.just(symbol)
+                .map { getJsonFromServer(symbol, 24) } //24 hours
+                .flatMap { processData(symbol, it) }
+    }
+
+    fun doLoadLastNMonths(symbol: String, months: Int): Observable<Pair<String, List<Double>>> {
+        return Observable.just(Pair(symbol, months))
+                .map {
+                    getJsonFromServer(it.first, it.second)
+                }.flatMap {
+                    processData(symbol, it)
+                }
+    }
+
+    fun doLoadLastNDays(symbol: String, days: Int): Observable<Pair<String, List<Double>>> {
+        return Observable.just(Pair(symbol, days))
+                .map {
+                    getJsonFromServer(it.first, it.second)
+                }.flatMap {
+                    processData(symbol, it)
+                }
+    }
+
+    private fun processData(symbol: String, json: String): Observable<Pair<String, List<Double>>> {
+        return Observable.just(JSONArray(json))
+                .flatMap {
+                    Observable.from(MutableList(it.length()) { index ->
+                        Pair(it.getJSONObject(index).getDouble("price"), it.getJSONObject(index).getLong("date"))
+                    })
+                }.distinct { it.second }
+                .map { it.first }
+                .toList()
+                .map {
+                    symbol to it
+                }
+    }
+
+    private fun getJsonFromServer(symbol: String, days: Int): String {
+        //TODO replace this with a real network call
+        return GsonBuilder().create()
+                .toJson(MutableList(days) {
+                    MockData(symbol, System.currentTimeMillis()
+                            - TimeUnit.HOURS.toMillis(days.toLong() - it), getRandomRate(), 0.03)
+                })
+    }
+
+    fun getRandomRate(): Double {
+        val random = SecureRandom()
+        //maximum of 10000 and minimum of 99999
+        val num = Math.abs(random.nextDouble() * (2.8 - 1.5) + 1.5)
+        //we need an unsigned (+ve) number
+        return Math.abs(num)
+    }
+
+    private data class MockData(var
+                                symbol: String, var
+                                date: Long, var
+                                price: Double, var
+                                change: Double)
+
+    fun loadHistorical(symbol: String, position: Int): Observable<Pair<String, List<Double>>> {
+        return when (position) {
+            0 -> last24Hours(symbol)
+            1 -> doLoadLastNDays(symbol, 7) //last 7 days
+            2 -> doLoadLastNDays(symbol, 30)//last 30 days
+            3 -> doLoadLastNMonths(symbol, 12) //last 12 months
+            else -> throw AssertionError()
+        }
     }
 }

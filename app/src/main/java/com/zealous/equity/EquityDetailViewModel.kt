@@ -6,10 +6,13 @@ import android.arch.lifecycle.ViewModel
 import android.support.v4.util.LruCache
 import android.text.format.DateUtils
 import com.zealous.stock.Equity
+import com.zealous.ui.StockLoader
 import com.zealous.utils.Config
 import com.zealous.utils.PLog
-import com.zealous.utils.TaskManager
 import io.realm.Realm
+import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import java.security.SecureRandom
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -62,23 +65,29 @@ class EquityDetailViewModel : ViewModel() {
     }
 
     //TODO move this to  it's own class
-    fun doLoadHistoricalRatesAsync(symbol: String, index: Int) {
-        if (loading.add(index)) {
-            TaskManager.executeNow(false) {
-                Thread.sleep(4000)
-                val entries = ArrayList<LineChartEntry>(testGetNumOfDataPoints(index))
-                0.until(testGetNumOfDataPoints(index)).mapTo(entries) {
-                    LineChartEntry(getLabel(index, it),
-                            (it.toFloat()), getNextStockPrice(), System.currentTimeMillis())
-                }
-                cache.put(index, entries)
-                loading.remove(index)
-                TaskManager.executeOnMainThread({
-                    if (index == selectedItem) {
-                        historicalRatesLive.value = index to entries
+    private fun doLoadHistoricalRatesAsync(symbol: String, position: Int) {
+        if (loading.add(position)) {
+            Observable.just(Pair(symbol, position))
+                    .flatMap {
+                        StockLoader().loadHistorical(it.first, it.second)
                     }
-                })
-            }
+                    .subscribeOn(Schedulers.io())
+                    .map {
+                        MutableList(it.second.size) { index ->
+                            LineChartEntry(getLabel(position, index),
+                                    index.toFloat(), it.second[index].toFloat(), System.currentTimeMillis())
+                        }
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ lineChartEntries ->
+                        cache.put(position, lineChartEntries)
+                        loading.remove(position)
+                        if (position == selectedItem) {
+                            historicalRatesLive.value = position to lineChartEntries
+                        }
+                    }) {
+
+                    }
         }
     }
 
@@ -127,7 +136,7 @@ class EquityDetailViewModel : ViewModel() {
         return Math.abs(num).toFloat()
     }
 
-    fun testGetNumOfDataPoints(index: Int): Int {
+    fun getNumOfDataPoints(index: Int): Int {
         return when (index) {
             0 -> 24
             1 -> 7

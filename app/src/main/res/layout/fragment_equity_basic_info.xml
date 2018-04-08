@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     app:columnCount="2"
-    app:useDefaultMargins="true">
+    app:useDefaultMargins="true"
+    tools:showIn="@layout/activity_equity_details">
 
     <LinearLayout
         android:id="@+id/title_bar"
@@ -37,7 +38,7 @@
             android:ellipsize="middle"
             android:gravity="center_horizontal"
             android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="@color/white"
             tools:text="Ghana Commercial Bank" />
 
@@ -98,6 +99,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/middle_bar"
+        android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
         android:gravity="start"
         android:padding="@dimen/default_gap"
@@ -138,7 +140,7 @@
         android:layout_alignRight="@id/middle_bar"
         android:layout_below="@+id/middle_bar"
         android:layout_marginRight="@dimen/default_gap"
-        android:layout_marginTop="-24dp"
+        android:layout_marginTop="-25dp"
         android:src="@drawable/ic_notifications_active_black_24dp"
         app:fab_size="mini" />
 </RelativeLayout>

@@ -3,6 +3,7 @@ package com.zealous.ui
 import android.arch.lifecycle.LiveData
 import com.zealous.equity.LineChartEntry
 import com.zealous.stock.Equity
+import com.zealous.utils.PLog
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -16,11 +17,8 @@ class HomHistoricalEquities(var equities: List<Equity>) : LiveData<Map<String, L
     override fun onActive() {
         super.onActive()
         Observable.from(equities)
-                .map {
-                    it.symbol
-                }
                 .flatMap {
-                    loadLast30DaysQoutes(it)
+                    loadLast30DaysQoutes(it.symbol).subscribeOn(Schedulers.io())
                 }.map {
                     val tmp: MutableList<LineChartEntry> = ArrayList(it.second.size)
 
@@ -28,23 +26,22 @@ class HomHistoricalEquities(var equities: List<Equity>) : LiveData<Map<String, L
                         tmp.add(LineChartEntry("${index + 1}", index.toFloat(), i.toFloat(), System.currentTimeMillis()))
                     }
                     it.first to tmp
-                }.subscribeOn(Schedulers.io())
-                .retryWhen {
-                    Observable.range(1, 3).flatMap {
+                }.retryWhen {
+                    it.zipWith(Observable.range(1, 3), { _, num -> num }).flatMap {
                         Observable.timer(3 * it.toLong(), TimeUnit.SECONDS)
                     }
-                }
+                }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     map[it.first] = it.second.toList()
                     value = map
                 }, {
-
+                    PLog.e(TAG, it.message, it)
                 })
     }
 
     private fun loadLast30DaysQoutes(symbol: String): Observable<Pair<String, List<Double>>> {
-        return Observable.error(Exception())
+        return StockLoader().doLoadLastNDays(symbol, 30)
     }
 
 }
