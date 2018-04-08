@@ -94,8 +94,10 @@
     </style>
 
     <style name="stock_details_style">
+        <item name="android:drawablePadding">4dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:drawableLeft">@drawable/ic_dot_12dp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:layout_marginBottom">@dimen/default_gap</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>

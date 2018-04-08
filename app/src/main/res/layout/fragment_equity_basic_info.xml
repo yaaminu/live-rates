@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/equity_basic_info_bg"
-    android:padding="@dimen/default_gap"
+    android:orientation="vertical"
     app:columnCount="2"
     app:useDefaultMargins="true">
 
     <LinearLayout
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal"
+        android:paddingBottom="@dimen/default_gap"
+        android:paddingLeft="@dimen/default_gap"
+        android:paddingRight="@dimen/default_gap"
+        android:paddingTop="@dimen/activity_vertical_margin"
         app:layout_columnSpan="2"
         app:layout_columnWeight="1">
 
@@ -35,32 +42,36 @@
             tools:text="Ghana Commercial Bank" />
 
 
-        <ImageButton
-            android:id="@+id/ib_fav_equity"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@color/transparent"
-            android:contentDescription="@string/add_to_watching_list"
-            android:src="@drawable/ic_notifications_active_black_24dp"
-            app:layout_gravity="end" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_symbol"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textColor="@color/white"
-        app:layout_columnSpan="2"
-        app:layout_columnWeight="1"
-        tools:text="GCB" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/middle_bar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/title_bar"
         android:layout_marginBottom="0dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical"
+        android:minHeight="80dp"
         android:orientation="horizontal"
+        android:padding="@dimen/default_gap"
         app:layout_columnSpan="2"
         app:layout_columnWeight="1">
 
+        <TextView
+            android:id="@+id/tv_symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textColor="@color/white"
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1"
+            tools:text="GCB" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="32dp"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_price"
@@ -75,39 +86,59 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/default_gap"
+            android:gravity="bottom"
             android:textColor="@color/red"
             android:textSize="12sp"
             tools:text="+3.3 (33.4%)" />
     </LinearLayout>
 
-    <android.support.v4.widget.Space app:layout_columnWeight="1" />
 
-    <LinearLayout
+    <android.support.v7.widget.GridLayout
+        android:id="@+id/last_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/middle_bar"
         android:layout_marginTop="16dp"
         android:gravity="start"
-        android:orientation="vertical"
-        app:layout_columnSpan="1">
+        android:padding="@dimen/default_gap"
+        app:columnCount="2"
+        app:useDefaultMargins="true">
 
         <TextView
             android:id="@+id/_24_hour_high"
             style="@style/stock_details_style"
+            app:layout_columnWeight="1"
             tools:text="24 hr high: 233,3223" />
 
         <TextView
             android:id="@+id/_24_hour_low"
             style="@style/stock_details_style"
+            app:layout_columnWeight="1"
             tools:text="24 hr low: 233,3023" />
 
         <TextView
             android:id="@+id/open"
             style="@style/stock_details_style"
+            app:layout_columnWeight="1"
             tools:text="Opening Price: 233,3023" />
 
         <TextView
             android:id="@+id/market_cap"
             style="@style/stock_details_style"
+            app:layout_columnWeight="1"
             tools:text="Market Cap: 2323343,33" />
 
-    </LinearLayout>
+    </android.support.v7.widget.GridLayout>
 
-</android.support.v7.widget.GridLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/ib_fav_equity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/middle_bar"
+        android:layout_below="@+id/middle_bar"
+        android:layout_marginRight="@dimen/default_gap"
+        android:layout_marginTop="-24dp"
+        android:src="@drawable/ic_notifications_active_black_24dp"
+        app:fab_size="mini" />
+</RelativeLayout>
