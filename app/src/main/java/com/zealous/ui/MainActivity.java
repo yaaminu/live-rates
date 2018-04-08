@@ -76,6 +76,9 @@ public class MainActivity extends SearchActivity {
                 }
                 previousFragment = tmp;
                 supportInvalidateOptionsMenu();
+                if (toolbar != null) {
+                    toolbar.setTitle(tabId == R.id.tab_home ? getString(R.string.app_name) : bottomBar.getTabWithId(tabId).getTitle());
+                }
             }
         });
     }

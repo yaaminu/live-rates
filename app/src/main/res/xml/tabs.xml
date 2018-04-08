@@ -8,12 +8,13 @@
 
     <tab
         barColorWhenSelected="@color/light_violet"
-        icon="@drawable/ic_exchange_rates_black_24dp"
-        id="@+id/tab_exchange_rates"
-        title="@string/live_rates" />
-    <tab
-        barColorWhenSelected="@color/light_violet"
         icon="@drawable/ic_stock_market"
         id="@+id/tab_gse"
         title="@string/gse" />
+
+    <tab
+        barColorWhenSelected="@color/light_violet"
+        icon="@drawable/ic_exchange_rates_black_24dp"
+        id="@+id/tab_exchange_rates"
+        title="@string/live_rates" />
 </tabs>
