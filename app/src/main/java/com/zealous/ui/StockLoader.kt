@@ -68,8 +68,7 @@ class StockLoader {
                         if (!it.isSuccessful) throw IOException("request failed with a non 2xx error code ${it.code()}")
                         JSONArray(it.body()!!.string())
                     }.flatMap {
-                        val list: MutableList<Observable<Equity>> = ArrayList(it.length())
-                        0.until(it.length()).mapTo(list, { index ->
+                        val list: MutableList<Observable<Equity>> = MutableList(it.length(), { index ->
                             getEquityWithBasicCompanyInfo(it.getJSONObject(index).getString("name")).subscribeOn(Schedulers.io())
                         })
                         Observable.merge(list)
@@ -106,17 +105,28 @@ class StockLoader {
     }
 
     private fun processJson(payload: String) {
+
         Realm.getDefaultInstance().use { realm ->
             val json = JSONArray(payload)
             realm.beginTransaction()
             0.until(json.length()).forEach {
                 val item = json.getJSONObject(it)
                 val equity = realm.where(Equity::class.java).equalTo("symbol", item.getString("name")).findFirst()!!
-                equity.change = ExchangeRate.FORMAT.format(item.getDouble("change"))
+                val rawStockChange = item.getDouble("change")
+                val rawPrice = item.getDouble("price")
+                equity.change = "${ExchangeRate.FORMAT.format(rawStockChange)} (${getChangeInPercent(rawPrice, rawStockChange)})"
+                if (rawStockChange > 0) {
+                    equity.change = "+${equity.change}"
+                }
                 equity.volume = item.getInt("volume")
-                equity.price = ExchangeRate.FORMAT.format(item.getDouble("price"))
+                equity.price = ExchangeRate.FORMAT.format(rawPrice)
             }
             realm.commitTransaction()
         }
+    }
+
+    private fun getChangeInPercent(price: Double, change: Double): String {
+        val previousPrice = price - (Math.abs(change)) //Math.abs() helps us deal with negative changes
+        return "${ExchangeRate.FORMAT.format((change / previousPrice) * 100)}%"
     }
 }

@@ -6,7 +6,6 @@ import com.zealous.stock.Equity
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 
 /**
@@ -21,7 +20,7 @@ class HomHistoricalEquities(var equities: List<Equity>) : LiveData<Map<String, L
                     it.symbol
                 }
                 .flatMap {
-                    loadLast7DaysQoutes(it)
+                    loadLast30DaysQoutes(it)
                 }.map {
                     val tmp: MutableList<LineChartEntry> = ArrayList(it.second.size)
 
@@ -44,19 +43,8 @@ class HomHistoricalEquities(var equities: List<Equity>) : LiveData<Map<String, L
                 })
     }
 
-    private fun loadLast7DaysQoutes(symbol: String): Observable<Pair<String, List<Double>>> {
-        val list: MutableList<Double> = ArrayList(7)
-        0.until(7).forEach {
-            list.add(getRandomRate().toDouble())
-        }
-        return Observable.just(symbol to list)
+    private fun loadLast30DaysQoutes(symbol: String): Observable<Pair<String, List<Double>>> {
+        return Observable.error(Exception())
     }
 
-    fun getRandomRate(): Float {
-        val random = SecureRandom()
-        //maximum of 10000 and minimum of 99999
-        val num = Math.abs(random.nextDouble() * (8 - 4) + 4)
-        //we need an unsigned (+ve) number
-        return Math.abs(num).toFloat()
-    }
 }
