@@ -9,7 +9,10 @@ import com.zealous.stock.Equity
 import com.zealous.utils.Config
 import io.realm.Realm
 
+const val SELECTED_CURRENCY = "selected"
+
 class HomeViewModel : ViewModel() {
+
     private val exchangeRateRealm: Realm = ExchangeRate.Realm(Config.getApplicationContext())
     private val stockRealm: Realm = Realm.getDefaultInstance()
     private val watchedCurrencies: WatchedCurrencies = WatchedCurrencies(exchangeRateRealm)

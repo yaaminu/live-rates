@@ -7,22 +7,22 @@ import com.zealous.utils.Config;
 import com.zealous.utils.GenericUtils;
 import com.zealous.utils.PLog;
 
-import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import rx.Observable;
-import rx.Subscriber;
 
 /**
  * @author by yaaminu on 12/23/16.
@@ -47,7 +47,7 @@ class ExchangeRateLoader {
         }
     }
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint({"CommitPrefEdits", "ApplySharedPref"})
     @NonNull
     private static JSONObject doLoadRates(String endPoint) throws IOException, JSONException {
         String json;
@@ -62,8 +62,9 @@ class ExchangeRateLoader {
                 PLog.d(TAG, "url %s recieved %s response code", url, response.code());
                 throw new IOException("server responded with non-200 response code. code is: " + response.code());
             }
-            InputStream in = response.body().byteStream();
-            json = IOUtils.toString(in);
+            ResponseBody body = response.body();
+            assert body != null;
+            json = body.string();
             PLog.d(TAG, "loaded %s from %s", json, url);
             PLog.d(TAG, "caching resources");
             Config.getPreferences(PREF_CACHE_$_RATES_$$$$)
@@ -77,22 +78,20 @@ class ExchangeRateLoader {
         final String cache = Config.getPreferences(PREF_CACHE_$_RATES_$$$$)
                 .getString(url.toExternalForm(), null);
         if (!GenericUtils.isEmpty(cache)) {
-            PLog.d(TAG, "cache hit for url ", url);
+            PLog.d(TAG, "counter: %s, cache hit for url %s", String.valueOf(counter.get()), url);
         } else {
-            PLog.d(TAG, "cache miss for url ", url);
+            PLog.d(TAG, "cache miss for url %s", url);
         }
         return cache;
     }
 
+    public static AtomicInteger counter = new AtomicInteger(0);
+
     public static Observable<JSONObject> loadHistoricalRate(final Date date) {
-        return Observable.create(new Observable.OnSubscribe<JSONObject>() {
+        return Observable.fromCallable(new Callable<JSONObject>() {
             @Override
-            public void call(Subscriber<? super JSONObject> subscriber) {
-                try {
-                    subscriber.onNext(doLoadRates("/historical/" + formatDate(date) + ".json"));
-                } catch (IOException | JSONException e) {
-                    subscriber.onError(e);
-                }
+            public JSONObject call() throws Exception {
+                return doLoadRates("/historical/" + formatDate(date) + ".json");
             }
         });
     }
