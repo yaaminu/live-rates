@@ -72,13 +72,16 @@ class HomHistoricalEquities(var equities: List<Equity>) : LiveData<Map<SelectedS
             timerSubscription = timerSubscription ?: Observable.interval(7, TimeUnit.SECONDS).startWith(0L)
                     .scan(0, { accum, _ -> accum + 1 }) //we need only the counts
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
+                    .subscribe({
                         if (!stocks.isEmpty()) {
                             map.clear()
                             val position = it % stocks.size
                             map[SelectedStock(equities[position].symbol, position)] = stocks[position]
                             value = map
                         }
+                    }) {
+                        PLog.e(TAG, it.message, it)
+                        startTimer()
                     }
         }
     }
