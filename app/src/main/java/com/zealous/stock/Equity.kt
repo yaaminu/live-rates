@@ -59,7 +59,4 @@ open class Equity(@PrimaryKey var symbol: String,
         return ExchangeRate.FORMAT.format(marketCap)
     }
 
-    fun volumeFormated(): CharSequence? {
-        return ExchangeRate.FORMAT.format(volume)
-    }
 }

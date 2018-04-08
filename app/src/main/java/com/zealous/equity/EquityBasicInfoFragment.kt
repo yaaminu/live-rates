@@ -33,6 +33,8 @@ class EquityBasicInfoFragment : BaseFragment() {
                     _24_hour_low.text = Html.fromHtml("<b>24 Hour High:</b> ${ExchangeRate.FORMAT.format(equity._24hrHi)}")
                     market_cap.text = Html.fromHtml("<b>Market Cap:</b>   ${ExchangeRate.FORMAT.format(equity.marketCap)}")
                     open.text = Html.fromHtml("<b>Today Open:</b>  ${ExchangeRate.FORMAT.format(equity.marketOpen)}")
+                    close.text = Html.fromHtml("<b>Previous close:</b>  ${ExchangeRate.FORMAT.format(equity.marketOpen)}")
+                    volume.text = Html.fromHtml("<b>Today Open:</b>  ${equity.volume}")
 
                     back.setOnClickListener {
                         activity.finish()

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -14,13 +15,15 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/iv_app_icon"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/app_icon"
-            android:src="@mipmap/ic_launcher" />
+
+        <com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView
+            android:id="@+id/progress"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:checkMarkTintColor="@color/white"
+            app:mainColor="@color/colorAccent"
+            app:secondaryColor="@color/colorAccent"
+            tools:visibility="visible" />
 
 
         <TextView

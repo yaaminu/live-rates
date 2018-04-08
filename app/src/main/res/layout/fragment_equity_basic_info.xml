@@ -7,6 +7,7 @@
     android:orientation="vertical"
     app:columnCount="2"
     app:useDefaultMargins="true"
+    tools:ignore="MissingPrefix"
     tools:showIn="@layout/activity_equity_details">
 
     <LinearLayout
@@ -32,6 +33,7 @@
 
         <TextView
             android:id="@+id/tv_company_name"
+            fontPath="fonts/roboto-light.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -62,6 +64,7 @@
 
         <TextView
             android:id="@+id/tv_symbol"
+            fontPath="fonts/roboto-light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
@@ -76,6 +79,7 @@
 
         <TextView
             android:id="@+id/tv_price"
+            fontPath="fonts/roboto-light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
@@ -84,10 +88,12 @@
 
         <TextView
             android:id="@+id/tv_change"
+            fontPath="fonts/roboto-light.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/default_gap"
             android:gravity="bottom"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="@color/red"
             android:textSize="12sp"
             tools:text="+3.3 (33.4%)" />
@@ -122,7 +128,19 @@
             android:id="@+id/open"
             style="@style/stock_details_style"
             app:layout_columnWeight="1"
-            tools:text="Opening Price: 233,3023" />
+            tools:text="Opening Price 233,3023" />
+
+        <TextView
+            android:id="@+id/close"
+            style="@style/stock_details_style"
+            app:layout_columnWeight="1"
+            tools:text="Opening Price 233,3023" />
+
+        <TextView
+            android:id="@+id/volume"
+            style="@style/stock_details_style"
+            app:layout_columnWeight="1"
+            tools:text="Volume 233,3023" />
 
         <TextView
             android:id="@+id/market_cap"
