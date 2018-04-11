@@ -147,9 +147,9 @@ class HomeExchangeRateAdapter(delegate: Delegate) : BaseAdapter<HomeExchangeRate
         holder.currency.text = item.currencyIso
         holder.currency.setTextColor(color)
 
-        var reversed = BigDecimal.ONE.divide(BigDecimal.valueOf(item.rate), MathContext.DECIMAL128).toDouble()
+        var reversed = if (item.rate == 0.0) 0.0 else BigDecimal.ONE.divide(BigDecimal.valueOf(item.rate), MathContext.DECIMAL128).toDouble()
         var base = 1
-        while (reversed < 1) {
+        while (reversed != 0.0 && reversed < 1) {
             reversed *= 10
             base *= 10
         }
