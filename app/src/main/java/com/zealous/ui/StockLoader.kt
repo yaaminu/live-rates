@@ -1,6 +1,5 @@
 package com.zealous.ui
 
-import com.google.gson.GsonBuilder
 import com.zealous.exchangeRates.ExchangeRate
 import com.zealous.stock.Equity
 import com.zealous.utils.PLog
@@ -11,14 +10,16 @@ import org.json.JSONArray
 import org.json.JSONObject
 import rx.Completable
 import rx.Observable
+import rx.exceptions.Exceptions
 import rx.schedulers.Schedulers
 import java.io.IOException
-import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 
 /**
  * Created by yaaminu on 4/7/18.
  */
+
+const val BASE_URL = "https://live-rates.herokuapp.com/api/gse/"
 
 class StockLoader {
     private val client: Lazy<OkHttpClient> = lazy { OkHttpClient() }
@@ -40,7 +41,7 @@ class StockLoader {
     private fun loadStockData(): Completable {
         return Completable.fromEmitter {
             val request = Request.Builder()
-                    .url("https://dev.kwayisi.org/apis/gse/live/")
+                    .url("${BASE_URL}live")
                     .get().build()
             val response = client.value.newCall(request)
                     .execute()
@@ -61,7 +62,7 @@ class StockLoader {
                     .count()
         }
         return if (count == 0L) {
-            Completable.fromObservable(Observable.just("https://dev.kwayisi.org/apis/gse/equities")
+            Completable.fromObservable(Observable.just("${BASE_URL}equities")
                     .map { url ->
                         client.value.newCall(Request.Builder()
                                 .url(url).build()).execute()
@@ -93,7 +94,7 @@ class StockLoader {
         return Observable.just(symbol)
                 .map {
                     val response = client.value.newCall(Request.Builder()
-                            .url("https://dev.kwayisi.org/apis/gse/equities/$symbol").build()).execute()
+                            .url("${BASE_URL}equities/$symbol").build()).execute()
                     if (!response.isSuccessful) throw IOException("request failed with a non 2xx error code ${response.code()}")
                     JSONObject(response.body()!!.string())
 
@@ -135,14 +136,14 @@ class StockLoader {
 
     private fun last24Hours(symbol: String): Observable<Pair<String, List<Double>>> {
         return Observable.just(symbol)
-                .map { getJsonFromServer(symbol, 24) } //24 hours
+                .map { getHourlyJsonData(symbol) } //24 hours
                 .flatMap { processData(symbol, it) }
     }
 
     private fun doLoadLastNMonths(symbol: String, months: Int): Observable<Pair<String, List<Double>>> {
         return Observable.just(Pair(symbol, months))
                 .map {
-                    getJsonFromServer(it.first, it.second)
+                    getMonthlyJsonData(it.first, it.second)
                 }.flatMap {
                     processData(symbol, it)
                 }
@@ -151,7 +152,7 @@ class StockLoader {
     fun doLoadLastNDays(symbol: String, days: Int): Observable<Pair<String, List<Double>>> {
         return Observable.just(Pair(symbol, days))
                 .map {
-                    getJsonFromServer(it.first, it.second)
+                    getDailyJsonDataFromServer(it.first, it.second)
                 }.flatMap {
                     processData(symbol, it)
                 }
@@ -163,7 +164,7 @@ class StockLoader {
                     Observable.from(MutableList(it.length()) { index ->
                         Pair(it.getJSONObject(index).getDouble("price"), it.getJSONObject(index).getLong("date"))
                     })
-                }.distinct { it.second }
+                }
                 .map { it.first }
                 .toList()
                 .map {
@@ -171,27 +172,36 @@ class StockLoader {
                 }
     }
 
-    private fun getJsonFromServer(symbol: String, days: Int): String {
+    private fun getDailyJsonDataFromServer(symbol: String, days: Int): String {
         //TODO replace this with a real network call
-        return GsonBuilder().create()
-                .toJson(MutableList(days) {
-                    MockData(symbol, System.currentTimeMillis()
-                            - TimeUnit.HOURS.toMillis(days.toLong() - it), getRandomRate())
-                })
+        val response = client.value.newCall(Request.Builder()
+                .url("${BASE_URL}historical/daily/$symbol/$days").build())
+                .execute()
+        if (response.isSuccessful) {
+            return response.body()!!.string()
+        }
+        throw IOException("Error retrieving response from server ${response.code()}")
     }
 
-    private fun getRandomRate(): Double {
-        val random = SecureRandom()
-        //maximum of 10000 and minimum of 99999
-        val num = Math.abs(random.nextDouble() * (2.8 - 1.5) + 1.5)
-        //we need an unsigned (+ve) number
-        return Math.abs(num)
+    private fun getMonthlyJsonData(symbol: String, months: Int): String {
+        val response = client.value.newCall(Request.Builder()
+                .url("${BASE_URL}historical/monthly/$symbol/$months").build())
+                .execute()
+        if (response.isSuccessful) {
+            return response.body()!!.string()
+        }
+        throw IOException("Error retrieving response from server ${response.code()}")
     }
 
-    private data class MockData(var
-                                symbol: String, var
-                                date: Long, var
-                                price: Double)
+    private fun getHourlyJsonData(symbol: String): String {
+        val response = client.value.newCall(Request.Builder()
+                .url("${BASE_URL}historical/hourly/$symbol/").build())
+                .execute()
+        if (response.isSuccessful) {
+            return response.body()!!.string()
+        }
+        throw IOException("Error retrieving response from server ${response.code()}")
+    }
 
     fun loadHistorical(symbol: String, position: Int): Observable<Pair<String, List<Double>>> {
         return when (position) {
@@ -204,9 +214,9 @@ class StockLoader {
     }
 
     fun loadStats(symbol: String): Observable<EquityStat> {
-        return getStatsFromServer(symbol)
+        return Observable.just(symbol)
                 .flatMap {
-                    getStatsFromServer(symbol).subscribeOn(Schedulers.io())
+                    getStatsFromServer(it).subscribeOn(Schedulers.io())
                 }.map {
                     EquityStat(it.getDouble("high"), it.getDouble("low"),
                             it.getDouble("open"), it.getDouble("close"))
@@ -214,13 +224,16 @@ class StockLoader {
     }
 
     private fun getStatsFromServer(symbol: String): Observable<JSONObject> {
-        return Observable.just(symbol).flatMap {
-            Observable.just(JSONObject().put("open", 32.3)
-                    .put("close", 32.9)
-                    .put("high", 32.9)
-                    .put("low", 32.2))
+        return Observable.just(symbol)
+                .map {
+                    client.value.newCall(
+                            Request.Builder().url("${BASE_URL}live/stats/symbol").build()
+                    ).execute()
+                }.map {
+                    if (!it.isSuccessful) Exceptions.propagate(IOException("Request failed with ${it.code()}, ${it.message()}"))
+                    JSONObject(it.body()!!.string())
+                }
 
-        }
     }
 
 }
