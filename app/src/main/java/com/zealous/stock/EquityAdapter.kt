@@ -2,10 +2,12 @@ package com.zealous.stock
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import butterknife.BindView
 import com.zealous.R
 import com.zealous.adapter.BaseAdapter
+import com.zealous.utils.ViewUtils
 
 
 class EquityAdapter(delegate: EquityAdapterDelegate) : BaseAdapter<EquityHolder, Equity>(delegate) {
@@ -30,6 +32,8 @@ class EquityAdapter(delegate: EquityAdapterDelegate) : BaseAdapter<EquityHolder,
                 volume.text = context.getString(R.string.day_volume, item.volume)
                 itemView.setBackgroundResource(0)
                 itemView.setBackgroundResource(bgResource)
+                ViewUtils.showByFlag(item.isFavorite, isFavorite)
+                isFavorite.setImageResource(R.drawable.ic_notifications_active_black_24dp)
             }
         }
     }
@@ -54,4 +58,6 @@ class EquityHolder(view: View) : BaseAdapter.Holder(view) {
     lateinit var change: TextView
     @BindView(R.id.tv_market_volume)
     lateinit var volume: TextView
+    @BindView(R.id.ib_is_favorite)
+    lateinit var isFavorite: ImageButton
 }
