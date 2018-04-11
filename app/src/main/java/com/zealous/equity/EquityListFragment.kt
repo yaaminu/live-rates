@@ -5,8 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.view.View
 import com.zealous.R
 import com.zealous.adapter.BaseAdapter
@@ -38,9 +37,8 @@ class EquityListFragment : BaseFragment() {
         val delegate = DelegateImpl(emptyList())
         val equityAdapter = EquityAdapter(delegate)
         equity_recycler_view.apply {
-            addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
             adapter = equityAdapter
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = GridLayoutManager(context, 2)
         }
         ViewModelProviders.of(this).get(EquityViewModel::class.java).getEquities()
                 .observe(this, Observer {

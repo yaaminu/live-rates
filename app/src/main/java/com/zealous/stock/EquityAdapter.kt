@@ -1,6 +1,5 @@
 package com.zealous.stock
 
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -11,18 +10,26 @@ import com.zealous.adapter.BaseAdapter
 
 class EquityAdapter(delegate: EquityAdapterDelegate) : BaseAdapter<EquityHolder, Equity>(delegate) {
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): EquityHolder {
-        return EquityHolder(inflater.inflate(R.layout.equity_list_item, parent, false))
+        return EquityHolder(inflater.inflate(R.layout.stock_list_item, parent, false))
     }
 
     override fun doBindHolder(holder: EquityHolder?, position: Int) {
         if (holder != null) {
             val item = getItem(position)
+            val bgResource = when {
+                item.change.startsWith("-") -> R.drawable.stock_list_item_fall
+                item.change.startsWith("+") -> R.drawable.stock_list_item_rise
+                else -> R.drawable.equity_list_item_bg_no_change
+            }
+
             holder.apply {
                 symbol.text = item.symbol
                 companyName.text = item.name
-                price.text = item.price
+                price.text = context.getString(R.string.price_template, "GH₵", item.price)
                 change.text = item.change
-                change.setTextColor(ContextCompat.getColor(context, if (item.change.startsWith("-")) R.color.red else R.color.stock_up))
+                volume.text = context.getString(R.string.day_volume, item.volume)
+                itemView.setBackgroundResource(0)
+                itemView.setBackgroundResource(bgResource)
             }
         }
     }
@@ -45,4 +52,6 @@ class EquityHolder(view: View) : BaseAdapter.Holder(view) {
     lateinit var price: TextView
     @BindView(R.id.tv_change)
     lateinit var change: TextView
+    @BindView(R.id.tv_market_volume)
+    lateinit var volume: TextView
 }

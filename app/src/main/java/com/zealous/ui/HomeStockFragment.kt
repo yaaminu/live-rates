@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_home_stock.*
 
 
 @ColorRes
-private val lineColors = arrayOf(R.color.green_dark, R.color.red, R.color.light_blue, R.color.dark_violet)
+private val lineColors = arrayOf(R.color.green_dark, R.color.red, R.color.stock_no_change, R.color.orange)
 
 class HomeStockFragment : BaseFragment() {
 
