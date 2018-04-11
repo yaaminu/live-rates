@@ -80,6 +80,7 @@ class EquityOverviewFragment : BaseFragment(), IAxisValueFormatter {
             setDrawCircles(false)
             setDrawValues(false)
             lineWidth = 2f
+            mode = LineDataSet.Mode.CUBIC_BEZIER
             fillColor = resources.getColor(R.color.faint_voilet)
             color = resources.getColor(R.color.colorPrimaryDark)
         }
