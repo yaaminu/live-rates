@@ -176,7 +176,7 @@ class StockLoader {
         return GsonBuilder().create()
                 .toJson(MutableList(days) {
                     MockData(symbol, System.currentTimeMillis()
-                            - TimeUnit.HOURS.toMillis(days.toLong() - it), getRandomRate(), 0.03)
+                            - TimeUnit.HOURS.toMillis(days.toLong() - it), getRandomRate())
                 })
     }
 
@@ -191,8 +191,7 @@ class StockLoader {
     private data class MockData(var
                                 symbol: String, var
                                 date: Long, var
-                                price: Double, var
-                                change: Double)
+                                price: Double)
 
     fun loadHistorical(symbol: String, position: Int): Observable<Pair<String, List<Double>>> {
         return when (position) {

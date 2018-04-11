@@ -29,7 +29,7 @@ class EquityBasicInfoFragment : BaseFragment() {
                     tv_symbol.text = equity.symbol
                     ib_fav_equity.setImageResource(if (equity.isFavorite) R.drawable.ic_notifications_active_black_24dp else R.drawable.ic_notifications_none_black_24dp)
                     market_cap.text = Html.fromHtml("<b>Market Cap</b>   ${ExchangeRate.FORMAT.format(equity.marketCap)}")
-                    volume.text = Html.fromHtml("<b>Volume</b>  ${equity.volume}")
+                    volume.text = Html.fromHtml("<b>24H Volume</b>  ${equity.volume}")
 
                     back.setOnClickListener {
                         activity.finish()
