@@ -30,10 +30,9 @@ import rx.Observable;
 
 class ExchangeRateLoader {
 
-    public static final String BASE_URL = "http://openexchangerates.org/api";
+    public static final String BASE_URL = "https://live-rates.herokuapp.com/api/forex";
     private static final String TAG = "ExchangeRateLoader";
     public static final String PREF_CACHE_$_RATES_$$$$ = TAG + "Cache$rates$$$$";
-    private static final String APP_ID = "?app_id=3853267c76224d5ca095496d9f19ec40";
 
     public static JSONObject loadRates() throws IOException {
         try {
@@ -51,7 +50,7 @@ class ExchangeRateLoader {
     @NonNull
     private static JSONObject doLoadRates(String endPoint) throws IOException, JSONException {
         String json;
-        final URL url = new URL(BASE_URL + endPoint + APP_ID);
+        final URL url = new URL(BASE_URL + endPoint);
         json = checkCache(url);
         if (GenericUtils.isEmpty(json)) {
             Response response = new OkHttpClient().newCall(
