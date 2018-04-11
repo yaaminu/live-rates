@@ -3,6 +3,7 @@ package com.zealous.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
@@ -69,10 +70,12 @@ class StockListFactory(val context: Context) : RemoteViewsService.RemoteViewsFac
         })
 
         rv.setTextColor(R.id.tv_price, color)
+        val extras = Bundle()
+        extras.putInt(GSEAppWidgetProvider.EXTRA_ITEM, position)
         val fillInIntent = Intent()
         fillInIntent.putExtra(EQUITY, data)
+        fillInIntent.putExtras(extras)
         rv.setOnClickFillInIntent(R.id.home_stock_list_item_root, fillInIntent)
-
         return rv
     }
 

@@ -79,7 +79,7 @@ class GSEAppWidgetProvider : AppWidgetProvider() {
             // Register an list item click listener
             val viewDetailsIntent = Intent(context, EquityDetailActivity::class.java)
 
-            val pendingIntent = PendingIntent.getBroadcast(context,
+            val pendingIntent = PendingIntent.getActivity(context,
                     0, viewDetailsIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
             remoteViews.setPendingIntentTemplate(R.id.gse_widget_list, pendingIntent)
