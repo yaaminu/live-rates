@@ -9,7 +9,7 @@ class Converter(currency: ExchangeRate?, input: Double) : LiveData<String>() {
     var input = input
         set(value) {
             field = value
-            setValue(if (currency == null || value == 0.0) "" else ExchangeRate.FORMAT.format(BigDecimal.valueOf(value)
+            setValue(if (currency == null || currency?.rate == 0.0 || value == 0.0) "" else ExchangeRate.FORMAT.format(BigDecimal.valueOf(value)
                     .divide(BigDecimal.valueOf(currency!!.rate), MathContext.DECIMAL128)))
         }
     var currency = currency

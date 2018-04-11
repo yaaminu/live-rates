@@ -7,6 +7,7 @@ import android.support.v4.util.LruCache
 import android.text.format.DateUtils
 import com.zealous.stock.Equity
 import com.zealous.ui.EquityStat
+import com.zealous.ui.GSEAppWidgetProvider
 import com.zealous.ui.StockLoader
 import com.zealous.utils.Config
 import com.zealous.utils.PLog
@@ -17,6 +18,7 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class EquityDetailViewModel : ViewModel() {
     private var equity: MutableLiveData<Equity> = MutableLiveData()
@@ -161,6 +163,9 @@ class EquityDetailViewModel : ViewModel() {
             equity.isFavorite = !equity.isFavorite
             val ret = realm?.copyToRealmOrUpdate(equity)
             realm?.commitTransaction()
+
+            GSEAppWidgetProvider.update()
+
             this.equity.value = realm?.copyFromRealm(ret)
         }
     }

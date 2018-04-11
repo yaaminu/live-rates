@@ -186,6 +186,7 @@
     <string name="home_currency_template">%s%d=%s%s</string>
     <string name="day_volume">VOL %d</string>
     <string name="price_template">%s%s</string>
+    <string name="click_to_add_stocks">Click to add stocks to the home screen</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>
