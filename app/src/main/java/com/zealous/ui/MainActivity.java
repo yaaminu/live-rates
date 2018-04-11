@@ -130,6 +130,14 @@ public class MainActivity extends SearchActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (bottomBar.getCurrentTabId() == R.id.tab_home)
+            super.onBackPressed();
+        else
+            bottomBar.selectTabAtPosition(0,true);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
     }
