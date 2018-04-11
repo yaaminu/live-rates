@@ -183,6 +183,7 @@
     <string name="results_will_appear_here">Amount In GH₵</string>
     <string name="simple_converter">Simple Converter</string>
     <string name="amount_results">GH₵ %s</string>
+    <string name="home_currency_template">%s%d=%s%s</string>
     <array name="home_menu_titles">
         <item>@string/expense_tracker</item>
         <item>@string/live_exchange_rates</item>

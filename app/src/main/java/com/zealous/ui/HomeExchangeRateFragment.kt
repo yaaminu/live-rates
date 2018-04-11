@@ -23,6 +23,8 @@ import com.zealous.adapter.BaseAdapter
 import com.zealous.exchangeRates.ExchangeRate
 import com.zealous.exchangeRates.ExchangeRateDetailActivity
 import kotlinx.android.synthetic.main.fragment_home_exchange_rates.*
+import java.math.BigDecimal
+import java.math.MathContext
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -141,9 +143,18 @@ class HomeExchangeRateAdapter(delegate: Delegate) : BaseAdapter<HomeExchangeRate
     override fun doBindHolder(holder: Holder?, position: Int) {
         val color = holder!!.context.resources.getColor(colors[position % colors.size])
         holder.sideBar.setBackgroundColor(color)
-        holder.currency.text = getItem(position).currencyIso
+        val item = getItem(position)
+        holder.currency.text = item.currencyIso
         holder.currency.setTextColor(color)
-        holder.rate.text = getItem(position).rateValue
+
+        var reversed = BigDecimal.ONE.divide(BigDecimal.valueOf(item.rate), MathContext.DECIMAL128).toDouble()
+        var base = 1
+        while (reversed < 1) {
+            reversed *= 10
+            base *= 10
+        }
+        holder.rate.text = holder.context.getString(R.string.home_currency_template,
+                item.currencySymbol, base, "₵", ExchangeRate.FORMAT.format(reversed))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) = Holder(inflater.inflate(R.layout.home_exchange_rate_list_item, parent, false))

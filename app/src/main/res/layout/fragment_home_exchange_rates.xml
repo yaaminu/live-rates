@@ -26,6 +26,7 @@
             android:id="@+id/home_exchange_rate_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/default_gap"
             android:layout_marginRight="@dimen/default_gap"
             android:orientation="horizontal"

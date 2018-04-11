@@ -21,7 +21,6 @@
     <TextView
         android:id="@+id/tv_currency_name"
         android:layout_marginLeft="@dimen/default_gap"
-        android:layout_marginRight="@dimen/default_gap"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@color/lemon"
         android:textStyle="bold"
@@ -32,8 +31,8 @@
     <TextView
         android:id="@+id/tv_currency_rate"
         android:layout_marginLeft="@dimen/default_gap"
-        android:layout_marginRight="@dimen/default_gap"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textSize="10sp"
         app:layout_columnSpan="1"
         app:layout_columnWeight="1"
         app:layout_gravity="bottom"

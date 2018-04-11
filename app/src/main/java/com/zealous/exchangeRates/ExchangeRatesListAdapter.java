@@ -41,12 +41,12 @@ public class ExchangeRatesListAdapter extends BaseAdapter<ExchangeRatesListAdapt
         Context context = delegate.context();
         if (rate.getRate() == 0) return "??";
         if (rate.getRate() > 1) {
-            return context.getString(R.string.rate_template, delegate.baseRate().getCurrencySymbol(), ExchangeRate.FORMAT.format(1),
-                    rate.getCurrencySymbol(), ExchangeRate.FORMAT.format(rate.getRate()));
+            return context.getString(R.string.rate_template, rate.getCurrencySymbol(), ExchangeRate.FORMAT.format(rate.getRate()), delegate.baseRate().getCurrencySymbol(), ExchangeRate.FORMAT.format(1));
         }
 
-        return context.getString(R.string.rate_template, delegate.baseRate().getCurrencySymbol(), ExchangeRate.FORMAT.format(BigDecimal.ONE.divide(BigDecimal.valueOf(rate.getRate()),
-                MathContext.DECIMAL128)), rate.getCurrencySymbol(), ExchangeRate.FORMAT.format(1));
+        return context.getString(R.string.rate_template, rate.getCurrencySymbol(), ExchangeRate.FORMAT.format(1),
+                delegate.baseRate().getCurrencySymbol(), ExchangeRate.FORMAT.format(BigDecimal.ONE.divide(BigDecimal.valueOf(rate.getRate()),
+                        MathContext.DECIMAL128)));
     }
 
     @Override
