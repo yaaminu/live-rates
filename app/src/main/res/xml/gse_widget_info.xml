@@ -3,6 +3,7 @@
     android:initialLayout="@layout/gse_widget_layout"
     android:minHeight="110dp"
     android:minWidth="110dp"
+    android:previewImage="@drawable/home_screen_widget"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="keyguard|home_screen">
