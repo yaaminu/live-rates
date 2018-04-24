@@ -229,7 +229,7 @@ class StockLoader {
         return Observable.just(symbol)
                 .map {
                     client.value.newCall(
-                            Request.Builder().url("${BASE_URL}live/stats/symbol").build()
+                            Request.Builder().url("${BASE_URL}live/stats/$symbol").build()
                     ).execute()
                 }.map {
                     if (!it.isSuccessful) Exceptions.propagate(IOException("Request failed with ${it.code()}, ${it.message()}"))
