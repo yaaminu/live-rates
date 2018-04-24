@@ -38,12 +38,13 @@ class HomeHistoricalExchangeRates(var currencies: List<ExchangeRate>) : LiveData
             loadLast30DaysForCurrency(currencies[it].currencyIso)
         })
         return Observable.merge(observables)
-                .map {
-                    val tmp: MutableList<LineChartEntry> = MutableList(it.size, { index ->
-                        LineChartEntry(formatDate(it[index].date), index.toFloat(), it[index].rate.toFloat(), System.currentTimeMillis())
+                .map { it ->
+                    val rates = it.reversed()
+                    val tmp: MutableList<LineChartEntry> = MutableList(rates.size, { index ->
+                        LineChartEntry(formatDate(rates[index].date), index.toFloat(), rates[index].rate.toFloat(), System.currentTimeMillis())
                     })
                     //we are sure that the returned list is not  empty
-                    it[0].currencyIso to tmp
+                    rates[0].currencyIso to tmp
 
                 }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

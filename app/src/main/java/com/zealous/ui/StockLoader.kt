@@ -162,9 +162,11 @@ class StockLoader {
         return Observable.just(JSONArray(json))
                 .flatMap {
                     Observable.from(MutableList(it.length()) { index ->
-                        Pair(it.getJSONObject(index).getDouble("price"), it.getJSONObject(index).getLong("date"))
+                        val jsonObject = JSONObject(it.getString(index))
+                        Pair(jsonObject.getDouble("price"), jsonObject.getLong("date"))
                     })
                 }
+                .doOnError(::println)
                 .map { it.first }
                 .toList()
                 .map {
