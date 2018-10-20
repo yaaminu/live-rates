@@ -21,7 +21,7 @@ class ExchangeRateRepo {
                 .flatMap {
                     loadRatesForDate(currencyIso, Date(it)).subscribeOn(Schedulers.io())
                 }.toSortedList({ rhs, lhs ->
-                    if (rhs.date.time < lhs.date.time) -1 else if (rhs.date.time > lhs.date.time) 1 else 0
+                    if (rhs.date.time < lhs.date.time) 1 else if (rhs.date.time > lhs.date.time) -1 else 0
                 })
     }
 

@@ -131,7 +131,7 @@ class HomeExchangeRateFragment : BaseFragment() {
             "GBP" -> ContextCompat.getColor(context, R.color.green_dark)
             "EUR" -> ContextCompat.getColor(context, R.color.red)
             "USD" -> ContextCompat.getColor(context, R.color.dark_blue)
-            "XOF" -> ContextCompat.getColor(context, R.color.dark_violet)
+            "XOF" -> ContextCompat.getColor(context, R.color.orange)
             else -> R.color.dark_violet
         }
     }

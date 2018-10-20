@@ -162,8 +162,7 @@ class StockLoader {
         return Observable.just(JSONArray(json))
                 .flatMap {
                     Observable.from(MutableList(it.length()) { index ->
-                        val jsonObject = JSONObject(it.getString(index))
-                        Pair(jsonObject.getDouble("price"), jsonObject.getLong("date"))
+                        Pair(it.getJSONObject(index).getDouble("price"), it.getJSONObject(index).getLong("date"))
                     })
                 }
                 .doOnError(::println)
@@ -177,6 +176,7 @@ class StockLoader {
     private fun getDailyJsonDataFromServer(symbol: String, days: Int): String {
         //TODO replace this with a real network call
         val response = client.value.newCall(Request.Builder()
+                .header("api", "v2")
                 .url("${BASE_URL}historical/daily/$symbol/$days").build())
                 .execute()
         if (response.isSuccessful) {
@@ -187,6 +187,7 @@ class StockLoader {
 
     private fun getMonthlyJsonData(symbol: String, months: Int): String {
         val response = client.value.newCall(Request.Builder()
+                .header("api", "v2")
                 .url("${BASE_URL}historical/monthly/$symbol/$months").build())
                 .execute()
         if (response.isSuccessful) {
@@ -197,6 +198,7 @@ class StockLoader {
 
     private fun getHourlyJsonData(symbol: String): String {
         val response = client.value.newCall(Request.Builder()
+                .header("api", "v2")
                 .url("${BASE_URL}historical/hourly/$symbol/").build())
                 .execute()
         if (response.isSuccessful) {
@@ -229,7 +231,10 @@ class StockLoader {
         return Observable.just(symbol)
                 .map {
                     client.value.newCall(
-                            Request.Builder().url("${BASE_URL}live/stats/$symbol").build()
+                            Request.Builder()
+                                    .header("api", "v2")
+                                    .url("${BASE_URL}live/stats/$symbol")
+                                    .build()
                     ).execute()
                 }.map {
                     if (!it.isSuccessful) Exceptions.propagate(IOException("Request failed with ${it.code()}, ${it.message()}"))

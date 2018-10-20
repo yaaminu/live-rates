@@ -34,12 +34,11 @@ class HomeHistoricalExchangeRates(var currencies: List<ExchangeRate>) : LiveData
 
     private fun doLoad(): Subscription {
         rates.clear()
-        val observables = MutableList(currencies.size, {
-            loadLast30DaysForCurrency(currencies[it].currencyIso)
-        })
+        val observables = currencies.map {
+            loadLast30DaysForCurrency(it.currencyIso)
+        }
         return Observable.merge(observables)
-                .map { it ->
-                    val rates = it.reversed()
+                .map { rates ->
                     val tmp: MutableList<LineChartEntry> = MutableList(rates.size, { index ->
                         LineChartEntry(formatDate(rates[index].date), index.toFloat(), rates[index].rate.toFloat(), System.currentTimeMillis())
                     })

@@ -7,20 +7,26 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
+import android.support.v4.util.ArrayMap
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.zealous.R
 import com.zealous.adapter.BaseAdapter
 import com.zealous.equity.EQUITY
 import com.zealous.equity.EquityDetailActivity
 import com.zealous.stock.Equity
 import kotlinx.android.synthetic.main.fragment_home_stock.*
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 @ColorRes
@@ -48,10 +54,32 @@ class HomeStockFragment : BaseFragment() {
         xAxis.apply {
             setAvoidFirstLastClipping(true)
             position = XAxis.XAxisPosition.BOTTOM
+            valueFormatter = formatter
         }
         home_stock_line_chart.axisLeft.setDrawZeroLine(false)
         home_stock_line_chart.setDrawGridBackground(false)
         home_stock_line_chart.description = Description().apply { text = "" }
+    }
+
+
+    val dateCache: ArrayMap<Int, String> = ArrayMap(30)
+    private val dateFormatter = SimpleDateFormat("MMM dd", Locale.US)
+
+    private val formatter = object : IAxisValueFormatter {
+        override fun getFormattedValue(value: Float, axis: AxisBase?): String {
+            var date = dateCache[value.toInt()]
+            if (date == null) {
+                date = dateFormatter.format(Date(System.currentTimeMillis() - (value.toInt() * TimeUnit.HOURS.toMillis(24))))
+                dateCache[value.toInt()] = date
+            }
+            return date!!
+        }
+
+        override fun getDecimalDigits(): Int {
+            return -1
+        }
+
+
     }
 
 
