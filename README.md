@@ -1,4 +1,4 @@
-Zealous - An app for tracking live forex exchange rates and the Ghana stock exchange specifically built with 
+Liverates - An app for tracking live forex exchange rates and the Ghana stock exchange specifically built with 
          Ghanains in mind
 
 ### What zealous can do? ###

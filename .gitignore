@@ -9,3 +9,5 @@
 .externalNativeBuild
 /.idea
 *.apk
+keys
+zealoud-app-keys.jks
